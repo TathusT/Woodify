@@ -1,0 +1,10 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.Metrophobic {
+  font-family: 'Metrophobic', sans-serif;
+}
+.Kanit {
+  font-family: 'Kanit', sans-serif;
+}
