@@ -11,18 +11,17 @@ const LoginLine: React.FC = () => {
   const [username, setUsername] = useState<string>('')
   const [password, setPassword] = useState<string>('')
 
-  useEffect(() =>{
+  useEffect(() => {
     liff.init({
-      liffId : '2001173297-AoDv0582'
+      liffId: '2001173297-AoDv0582'
     })
   })
-
   return (
     <div className="Kanit bg-[#CEDEBD] min-h-screen flex flex-col">
       <div className="flex justify-center py-8">
         <img src={LogoWoodify} alt="" />
       </div>
-      <div className="pt-12 bg-white flex-grow" style={{borderTopLeftRadius : "2.5rem", borderTopRightRadius : "2.5rem"}}>
+      <div className="pt-12 bg-white flex-grow" style={{ borderTopLeftRadius: "2.5rem", borderTopRightRadius: "2.5rem" }}>
         <p className="text-center text-3xl">เข้าสู่ระบบ</p>
         <div className="px-12 pt-2 space-y-4">
           <div>
@@ -77,20 +76,27 @@ const LoginLine: React.FC = () => {
     </div>
   );
 
-  function signIn(){
+  function signIn() {
     users.forEach(user => {
-      if(user.username == username && user.password == password){
-        
+      if (user.username == username && user.password == password) {
+
       }
     });
   }
 
-  function loginLiff(){
+  async function loginLiff() {
+
     try {
-      liff.login();
+      if (!liff.isLoggedIn()) {
+        console.log(liff.isLoggedIn());
+
+        liff.login();
+      }
+      liff.getProfile().then(profile => {
+        console.log(profile)
+      });
     } catch (error) {
       console.log(error);
-      
     }
   }
 };
