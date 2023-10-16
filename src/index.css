@@ -8,3 +8,6 @@
 .Kanit {
   font-family: 'Kanit', sans-serif;
 }
+.pie-chart-container canvas {
+  margin: 0 !important;
+}

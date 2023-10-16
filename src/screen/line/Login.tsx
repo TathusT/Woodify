@@ -1,11 +1,22 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import LogoWoodify from "../../assets/logo_woodify.svg";
 import LogoLine from "../../assets/logo_line.svg";
 import LogoGoogle from "../../assets/logo_google.svg";
 import Line from "../../assets/line.svg";
+import users from '../../json/user.json'
 import { Link } from "react-router-dom";
+import liff from "@line/liff";
 
 const LoginLine: React.FC = () => {
+  const [username, setUsername] = useState<string>('')
+  const [password, setPassword] = useState<string>('')
+
+  useEffect(() =>{
+    liff.init({
+      liffId : '2001173297-AoDv0582'
+    })
+  })
+
   return (
     <div className="Kanit bg-[#CEDEBD] min-h-screen flex flex-col">
       <div className="flex justify-center py-8">
@@ -27,7 +38,7 @@ const LoginLine: React.FC = () => {
             <input
               className="shadow appearance-none border rounded-xl w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
               id="line_password"
-              type="text"
+              type="password"
             />
           </div>
           <div>
@@ -36,7 +47,9 @@ const LoginLine: React.FC = () => {
             </p>
           </div>
           <div className="bg-[#3C6255] rounded-xl py-2 px-3">
-            <p className="text-white text-center text-xl">เข้าสู่ระบบ</p>
+            <p onClick={() => {
+              signIn()
+            }} className="text-white text-center text-xl">เข้าสู่ระบบ</p>
           </div>
 
           <div className="flex justify-between gap-2 py-2">
@@ -44,7 +57,9 @@ const LoginLine: React.FC = () => {
             <p className="text-sm">หรือ</p>
             <img style={{ width: "38%" }} src={Line} alt="" />
           </div>
-          <div className="bg-[#06C654] rounded-xl py-2 px-3 flex justify-center space-x-4">
+          <div onClick={() => {
+            loginLiff()
+          }} className="bg-[#06C654] rounded-xl py-2 px-3 flex justify-center space-x-4">
             <img className="w-7" src={LogoLine} alt="" />
             <p className="text-white text-lg">เข้าสู่ระบบผ่าน Line</p>
           </div>
@@ -61,6 +76,23 @@ const LoginLine: React.FC = () => {
       </div>
     </div>
   );
+
+  function signIn(){
+    users.forEach(user => {
+      if(user.username == username && user.password == password){
+        
+      }
+    });
+  }
+
+  function loginLiff(){
+    try {
+      liff.login();
+    } catch (error) {
+      console.log(error);
+      
+    }
+  }
 };
 
 export default LoginLine;
