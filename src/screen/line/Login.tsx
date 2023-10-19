@@ -6,6 +6,8 @@ import Line from "../../assets/line.svg";
 import users from '../../json/user.json'
 import { Link } from "react-router-dom";
 import liff from "@line/liff";
+import axios from "axios";
+import path from '../../../path.tsx'
 
 const LoginLine: React.FC = () => {
   const [username, setUsername] = useState<string>('')
@@ -14,7 +16,14 @@ const LoginLine: React.FC = () => {
   useEffect(() => {
     liff.init({
       liffId: '2001173297-AoDv0582'
+    }).then(() => {
+      if (liff.isLoggedIn()) {
+        getProfileAndChangeRichmenu();
+      }
     })
+      .catch(err => {
+        console.error("Error initializing LIFF:", err);
+      });
   })
   return (
     <div className="Kanit bg-[#CEDEBD] min-h-screen flex flex-col">
@@ -87,18 +96,26 @@ const LoginLine: React.FC = () => {
   async function loginLiff() {
 
     try {
-      if (!liff.isLoggedIn()) {
-        console.log(liff.isLoggedIn());
-
-        liff.login();
-      }
-      liff.getProfile().then(profile => {
-        console.log(profile)
-      });
+      liff.login();
     } catch (error) {
       console.log(error);
     }
   }
+  function getProfileAndChangeRichmenu() {
+    liff.getProfile()
+      .then(profile => {
+        axios.post(`${path}/login`, {
+          lineProfile: profile
+        }).then((res) => {
+          console.log(res.data);
+          liff.closeWindow();
+        }).catch(() => {
+        })
+      })
+      .catch(err => {
+        console.error('Error getting profile:', err);
+      });
+  }
 };
-
 export default LoginLine;
+

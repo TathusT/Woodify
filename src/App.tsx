@@ -9,6 +9,7 @@ import ClassifyWood from "./screen/website/ClassifyWood";
 import Account from "./screen/website/Account";
 import HistoryClassify from "./screen/line/HistoryClassify";
 import ClassidyDetail from "./screen/line/ClassifyDetail";
+import Profile from "./screen/line/Profile";
 
 
 function App() {
@@ -30,6 +31,7 @@ function LineRoutes() {
       <Route path="signup" element={<RegisterLine />} />
       <Route path="history_classify" element={<HistoryClassify />} />
       <Route path="classify_detail" element={<ClassidyDetail />} />
+      <Route path="profile" element={<Profile />} />
     </Routes>
   );
 }

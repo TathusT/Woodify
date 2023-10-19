@@ -3,6 +3,7 @@ import classify from '../../json/classify.json'
 import Dot from '../../assets/classify_dot.svg'
 import StatusWait from '../../assets/wait_for_classify.svg'
 import Send from '../../assets/send.svg'
+import Wood from '../../assets/S12-3balau 2.png'
 
 const similarColor = [
     "text-green-500",
@@ -83,7 +84,7 @@ const ClassidyDetail: React.FC = () => {
     return (
         <div className="Kanit flex flex-col min-h-screen">
             <div className="flex justify-center">
-                <img className="h-96" src={classify.image} alt="" />
+                <img className="h-96" src={Wood} alt="" />
             </div>
             <div className="grid grid-cols-2 mx-6 shadow-lg rounded overflow-hidden">
                 <div onClick={() => {
