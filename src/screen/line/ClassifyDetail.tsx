@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import classify from '../../json/classify.json'
 import Dot from '../../assets/classify_dot.svg'
 import StatusWait from '../../assets/wait_for_classify.svg'
@@ -334,9 +334,18 @@ const ClassidyDetail: React.FC = () => {
 
 
     function RenderNote() {
+        const containerRef = useRef<HTMLDivElement | null>(null);
+
+        useEffect(() => {
+            // ทำ Auto-scroll ไปที่ล่างสุด
+            if (containerRef.current) {
+                // ทำ Auto-scroll ไปที่ล่างสุด
+                containerRef.current.scrollTop = containerRef.current.scrollHeight;
+              }
+        }, [messageNote]);
         return (
-            <div className="flex flex-col mx-6 py-4">
-                <div className="overflow-y-auto space-y-2 h-[19.5rem]">
+            <div className="flex flex-col mx-6 pb-4">
+                <div ref={containerRef} className="overflow-y-auto space-y-2 h-[19.5rem]">
                     {messageNote.map((note) => (
                         <div key={note.id} className={`${note.update_by == "User" ? 'bg-[#2B57CA] text-white' : 'bg-[#EAEAEA]'} rounded p-2`}>
                             <p className="text-sm">{note.message}</p>
