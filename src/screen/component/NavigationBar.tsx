@@ -125,10 +125,10 @@ const NavigationBar: React.FC = () => {
   }, [isOpen, location.pathname]);
 
   return (
-    <div className="flex Kanit">
-      <nav className='w-60 h-screen pt-4 border-r-2'>
+    <div className="flex Kanit h-screen">
+      <nav className='w-80 h-screen pt-4 border-r-2'>
         <div className='flex justify-center pb-6'>
-          <img src={LogoWoodify} alt="" />
+          <img className='max-w-[84px]' src={LogoWoodify} alt="" />
         </div>
         <ul className='text-[#A1A1A1]'>
           {
@@ -139,8 +139,8 @@ const NavigationBar: React.FC = () => {
                 return (
                   <div key={menu.name} className='flex relative'>
                     {active && <div className='bg-[#61876E] w-1.5 h-full rounded-full absolute top-0 left-0 z-50'></div>}
-                    <li className={`py-2 px-4 ${active ? 'bg-gradient-to-r from-[#F1EFEF]' : ''} w-full`}>
-                      <Link to={menu.path} className={`flex items-center gap-2 ${active ? 'text-[#3C6255]' : ''}`}>
+                    <li className={`py-4 pl-7 ${active ? 'bg-gradient-to-r from-[#F1EFEF]' : ''} w-full`}>
+                      <Link to={menu.path} className={`flex items-center gap-5 ${active ? 'text-[#3C6255]' : ''}`}>
                         <IconFucntion color={`${active ? '#3C6255' : '#A1A1A1'}`} /> {menu.name}
                       </Link>
                     </li>
@@ -149,10 +149,10 @@ const NavigationBar: React.FC = () => {
               }
               else {
                 return (
-                  <li key={menu.name} className={`${isOpen ? 'pb-2' : ''}`}>
+                  <li key={menu.name}>
                     <div className='flex relative'>
                       {submenuFocus && <div className='bg-[#61876E] w-1.5 h-full rounded-full absolute top-0 left-0 z-50'></div>}
-                      <button onClick={() => setIsOpen(!isOpen)} className={`flex items-center gap-2 w-full relative px-4 py-2 ${submenuFocus ? 'bg-gradient-to-r from-[#F1EFEF]' : ''}`}>
+                      <button onClick={() => setIsOpen(!isOpen)} className={`flex items-center gap-5 w-full relative pl-7 py-4 ${submenuFocus ? 'bg-gradient-to-r from-[#F1EFEF]' : ''}`}>
                         <IconFucntion color={`${submenuFocus ? '#3C6255' : '#A1A1A1'}`} />
                         {menu.name}
                         <img className={`absolute right-0 duration-500 ${isOpen ? 'rotate-90' : ''}`} src={Arrow} alt="" />
@@ -167,7 +167,7 @@ const NavigationBar: React.FC = () => {
                         const submenuActive = submenu.name == title;
                         const SubmenuIconFunction = submenu.icon;
                         return (
-                          <li key={submenu.name} className='pt-4 pl-6'><Link to={submenu.path} className={`flex items-center gap-2 ${submenuActive ? 'text-[#3C6255]' : ''}`}><SubmenuIconFunction color={`${submenuActive ? '#3C6255' : '#D9D9D9'}`} /> {submenu.name}</Link></li>
+                          <li key={submenu.name} className='py-4 pl-9'><Link to={submenu.path} className={`flex items-center gap-7 ${submenuActive ? 'text-[#3C6255]' : ''}`}><SubmenuIconFunction color={`${submenuActive ? '#3C6255' : '#D9D9D9'}`} /> {submenu.name}</Link></li>
                         )
                       })}
                     </ul>
@@ -178,8 +178,7 @@ const NavigationBar: React.FC = () => {
           }
         </ul>
       </nav>
-      <div className='px-4'>
-        <p className='text-3xl py-6'>{title}</p>
+      <div className='px-7 w-full bg-[#F5F6FA] overflow-y-auto'>
         <div id="content">
           <Outlet />
         </div>

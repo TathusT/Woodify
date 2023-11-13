@@ -8,6 +8,7 @@ import Manual from "./screen/website/Manual";
 import ClassifyWood from "./screen/website/ClassifyWood";
 import Account from "./screen/website/Account";
 import HistoryClassify from "./screen/line/HistoryClassify";
+import LoginWeb from "./screen/website/Login";
 
 
 function App() {
@@ -42,6 +43,7 @@ function AdminRoutes(){
         <Route path="manual" element={<Manual />} />
         <Route path="classify_wood" element={<ClassifyWood />} />
       </Route>
+      <Route path="login" element={<LoginWeb />} />
     </Routes>
   );
 }
