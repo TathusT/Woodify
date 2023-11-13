@@ -8,6 +8,7 @@ import Bin_Button from '../../assets/bin_button.svg'
 import Eye from '../../assets/eye.svg'
 import CloseEye from '../../assets/close_eye.svg'
 import { Pie } from "@ant-design/plots";
+import { useNavigate } from "react-router-dom";
 const { Option } = Select;
 
 const thaiMonths = [
@@ -15,7 +16,7 @@ const thaiMonths = [
     "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"
 ];
 
-const Pies : any = Pie;
+const Pies: any = Pie;
 
 interface HistoryItem {
     id: number;
@@ -36,7 +37,7 @@ type ConfigType = {
     label: {
         type: string;
         offset: string;
-        content: ({ percent } : { percent: any; }) => string;
+        content: ({ percent }: { percent: any; }) => string;
         style: {
             fontSize: number;
             textAlign: string;
@@ -46,10 +47,10 @@ type ConfigType = {
     interactions: Array<{ type: string }>;
 };
 
-type DataType = Array<{ 
-    typeWood: string; 
-    value: number; 
-    color: string 
+type DataType = Array<{
+    typeWood: string;
+    value: number;
+    color: string
 }>;
 
 function formatDateToThai(dateString: string) {
@@ -63,6 +64,7 @@ function formatDateToThai(dateString: string) {
 }
 
 const HistoryClassify: React.FC = () => {
+    const navigate = useNavigate();
     const [menuFocus, setMenuFocus] = useState('ประวัติการตรวจสอบ');
     const [backup, setBackUp] = useState([
         {
@@ -338,19 +340,23 @@ const HistoryClassify: React.FC = () => {
                     {
                         historys.map((history, index) => {
                             return (
-                                <div key={history.id} className="grid grid-cols-3 mx-6 bg-white p-2 rounded-lg">
-                                    <img className="w-20 h-20 object-cover rounded-xl col-span-1" src={history.img} alt="" />
-                                    <div className="col-span-2 relative">
-                                        <button onClick={() => {
-                                            setIsDelete(true);
-                                            setFocusHistoryDelete(history)
-                                            setFocusIndexDelete(index)
-                                        }} className="w-6 absolute right-0">
-                                            <img src={Bin} alt="" />
-                                        </button>
-                                        <p className="text-xl font-bold">{history.woodName}</p>
-                                        <p className="text-lg">ความคล้ายคลึง {history.similar}</p>
-                                        <p className="text-right text-[#AA9F9F]">{history.updateAt}</p>
+                                <div key={history.id} className="relative mx-6 bg-white p-2 rounded-lg">
+                                    <button onClick={() => {
+                                        setIsDelete(true);
+                                        setFocusHistoryDelete(history)
+                                        setFocusIndexDelete(index)
+                                    }} className="w-6 absolute right-1 top-1">
+                                        <img src={Bin} alt="" />
+                                    </button>
+                                    <div onClick={() =>{
+                                        navigate('/line/classify_detail');
+                                    }} className="grid grid-cols-3">
+                                        <img className="w-20 h-20 object-cover rounded-xl col-span-1" src={history.img} alt="" />
+                                        <div className="col-span-2">
+                                            <p className="text-xl font-bold">{history.woodName}</p>
+                                            <p className="text-lg">ความคล้ายคลึง {history.similar}</p>
+                                            <p className="text-right text-[#AA9F9F]">{history.updateAt}</p>
+                                        </div>
                                     </div>
                                 </div>
                             )
@@ -361,14 +367,14 @@ const HistoryClassify: React.FC = () => {
         )
     }
 
-    function deleteClassify(index : number){
-            let newHistorys = historys.filter((_, idx) => idx !== index);
-            setHistorys(newHistorys);
-            setIsDelete(false);
-        
+    function deleteClassify(index: number) {
+        let newHistorys = historys.filter((_, idx) => idx !== index);
+        setHistorys(newHistorys);
+        setIsDelete(false);
+
     }
 
-    function RenderGraph({ config } : {config : ConfigType}) {
+    function RenderGraph({ config }: { config: ConfigType }) {
         return (
             <div className="mx-6 space-y-4 pb-4">
                 <div className="m-0 bg-white rounded-lg">
@@ -378,7 +384,7 @@ const HistoryClassify: React.FC = () => {
         )
     }
 
-    function RenderValueGraph({ data } : {data : DataType}) {
+    function RenderValueGraph({ data }: { data: DataType }) {
         return (
             <div className="bg-white rounded-lg space-y-2 mx-6">
                 <p className="text-center text-xl pt-2">จำนวนของแต่ละพันธุ์ไม้ที่ตรวจสอบ</p>
@@ -437,13 +443,13 @@ const HistoryClassify: React.FC = () => {
         <div className="Kanit bg-[#CEDEBD] min-h-screen flex flex-col">
             {isDelete && (
                 <div>
-                    <div className="w-screen h-screen absolute bg-black opacity-50 z-40"></div>
-                    <div className="z-50 absolute w-11/12 p-5 bg-white rounded-2xl top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 space-y-4">
+                    <div className="w-screen h-screen fixed bg-black opacity-50 z-40"></div>
+                    <div className="z-50 fixed w-11/12 p-5 bg-white rounded-2xl top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 space-y-4">
                         <p className="text-center text-2xl">ลบประวัติการตรวจสอบ</p>
                         <img src={focusHistoryDelete?.img} alt="" />
                         <p className="text-center text-xl">คุณต้องการลบ ไม้ประดู่ ใช่หรือไม่</p>
                         <div className="grid grid-cols-2 gap-4">
-                            <button onClick={() =>{
+                            <button onClick={() => {
                                 deleteClassify(focusIndexDelete)
                             }} className="px-4 py-2 bg-[#FF6161] text-white flex item-center space-x-2 rounded-lg">
                                 <img src={Bin_Button} alt="" />
