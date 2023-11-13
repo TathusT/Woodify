@@ -12,6 +12,7 @@ import ClassidyDetail from "./screen/line/ClassifyDetail";
 import Profile from "./screen/line/Profile";
 import WoodDetail from "./screen/line/WoodDetail";
 import Notification from "./screen/line/Notification";
+import LoginWeb from "./screen/website/Login";
 
 
 function App() {
@@ -50,6 +51,7 @@ function AdminRoutes() {
         <Route path="manual" element={<Manual />} />
         <Route path="classify_wood" element={<ClassifyWood />} />
       </Route>
+      <Route path="login" element={<LoginWeb />} />
     </Routes>
   );
 }
