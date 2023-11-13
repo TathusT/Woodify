@@ -4,16 +4,51 @@ import Dot from '../../assets/classify_dot.svg'
 import StatusWait from '../../assets/wait_for_classify.svg'
 import Send from '../../assets/send.svg'
 import Wood from '../../assets/S12-3balau 2.png'
+import { Button, Modal, Select, Space, Input, message } from 'antd';
+import foreignCountry from '../../json/foreignCountry.json'
+import thailandCountry from '../../json/thailandCountry.json'
+import { useLocation } from "react-router-dom";
 
+const { Option } = Select;
+const { TextArea } = Input;
 const similarColor = [
     "text-green-500",
     "text-yellow-500",
     "text-red-500"
 ]
 
-function RenderClassifyInformation() {
+const optionsDate: Intl.DateTimeFormatOptions = {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: 'numeric',
+    second: 'numeric',
+    timeZoneName: 'short',
+};
+
+
+function RenderClassifyInformation({ state }) {
+    const [open, setOpen] = useState(false);
+    const [placeFound, setPlaceFound] = useState("incounty")
+    const [thailand, setThailand] = useState("")
+    const [foreign, setForeign] = useState("")
+    const [position, setPosition] = useState("");
+    function selectPosition(event: string) {
+        setPlaceFound(event)
+    }
+    const onChangeThai = (value: string) => {
+        setThailand(value)
+    };
+    const onChangeFor = (value: string) => {
+        setForeign(value)
+    };
+
+    const filterOption = (input: string, option?: { label: string; value: string }) =>
+        (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+
     return (
-        <div className="m-6 shadow border rounded p-4 space-y-4">
+        <div className="mx-6 mb-6 shadow border rounded p-4 space-y-4">
             <div className="flex items-center"><img className="pr-2" src={Dot} alt="" />ชื่อพันธ์ุไม้ : {classify.name}</div>
             <div className="grid grid-cols-2 items-start gap-4">
                 <p className="flex items-center "><img className="pr-2" src={Dot} alt="" />ผลการตรวจสอบ :</p>
@@ -40,53 +75,306 @@ function RenderClassifyInformation() {
             <div className="flex items-center space-x-2">
                 <img className="pr-2" src={Dot} alt="" />
                 สถานที่พบ :
-                <button className="bg-[#61876E] px-4 py-1 text-sm rounded-lg text-white">เพิ่มสถานที่</button>
+                {state && position == '' ? "ยังไม่มีข้อมูลสถานที่พบ" : position ? (
+                    <p>{position}</p>
+                ) : (
+                    <Button className="bg-[#61876E] text-white focus:none hover:none" onClick={() => setOpen(true)}>
+                        เพิ่มสถานที่
+                    </Button>
+                )}
+                <Modal
+                    className="text-center Kanit"
+                    centered
+                    open={open}
+                    footer={[
+                        <div key={"parent"} className="flex justify-between">
+                            <Button className="w-[45%] h-10 bg-[#C1C1C1] text-white" key="back" onClick={() => setOpen(false)}>
+                                ยกเลิก
+                            </Button>
+                            <Button className="w-[45%] h-10 bg-[#3C6255] text-white" key="submit"
+                                onClick={() => {
+                                    placeFound == "incounty" ? setPosition(`จังหวัด${thailand}`) : setPosition(`ประเทศ${foreign}`)
+                                    setOpen(false)
+                                }}>
+                                บันทึก
+                            </Button>
+                        </div>
+                    ]}
+                >
+                    <p className="text-center text-2xl font-bold">เพิ่มสถานที่พบไม้</p>
+                    <p>ตำแหน่งที่พบ</p>
+                    <Select
+                        defaultValue="incounty"
+                        className="w-full Kanit"
+                        onChange={selectPosition}
+                        options={[
+                            { value: 'incounty', label: 'ภายในประเทศ' },
+                            { value: 'foreign', label: 'ต่างประเทศ' },
+                        ]}
+                    />
+                    {placeFound == "incounty" ?
+                        (<div className="mt-2">
+                            <p>จังหวัดที่พบ</p>
+                            <Select
+                                showSearch
+                                value={thailand}
+                                className="w-full Kanit"
+                                placeholder="Select a person"
+                                optionFilterProp="children"
+                                onChange={onChangeThai}
+                                filterOption={filterOption}
+                                options={thailandCountry}
+                            />
+                        </div>) :
+                        (<div className="mt-2">
+                            <p>ประเทศที่พบ</p>
+                            <Select
+                                showSearch
+                                value={foreign}
+                                className="w-full Kanit"
+                                placeholder="Select a person"
+                                optionFilterProp="children"
+                                onChange={onChangeFor}
+                                filterOption={filterOption}
+                                options={foreignCountry}
+                            />
+                        </div>
+                        )}
+                </Modal>
             </div>
         </div>
     )
 }
 
-function RenderNote() {
-    return (
-        <div className="flex flex-col mx-6 py-4 flex-1">
-            <div className="overflow-y-auto flex-1">
-                <div className="bg-[#EAEAEA] rounded p-2">
-                    <p className="text-sm">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Aenean et tortor at risus viverra adipiscing. Euismod in pellentesque massa placerat. Massa sed elementum tempus egestas sed sed risus pretium. Sed arcu non odio euismod lacinia. Etiam erat velit scelerisque in. Consequat mauris nunc congue nisi vitae suscipit tellus mauris a. At elementum eu facilisis sed odio morbi quis. Venenatis a condimentum vitae sapien pellentesque habitant morbi tristique. Odio tempor orci dapibus ultrices in. Pharetra massa massa</p>
-                    <p className="text-right text-xs text-[#AA9F9F]">บันทึกเมื่อ 17 ตุลาคม 2566 11:46:30</p>
-                    <p className="text-right text-xs text-[#AA9F9F]">เขียนโดย Bot</p>
-                </div>
-                {/* <div className="bg-[#EAEAEA] rounded p-2">
-                    <p className="text-sm">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Aenean et tortor at risus viverra adipiscing. Euismod in pellentesque massa placerat. Massa sed elementum tempus egestas sed sed risus pretium. Sed arcu non odio euismod lacinia. Etiam erat velit scelerisque in. Consequat mauris nunc congue nisi vitae suscipit tellus mauris a. At elementum eu facilisis sed odio morbi quis. Venenatis a condimentum vitae sapien pellentesque habitant morbi tristique. Odio tempor orci dapibus ultrices in. Pharetra massa massa</p>
-                    <p className="text-right text-xs text-[#AA9F9F]">บันทึกเมื่อ 17 ตุลาคม 2566 11:46:30</p>
-                    <p className="text-right text-xs text-[#AA9F9F]">เขียนโดย Bot</p>
-                </div>
-                <div className="bg-[#EAEAEA] rounded p-2">
-                    <p className="text-sm">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Aenean et tortor at risus viverra adipiscing. Euismod in pellentesque massa placerat. Massa sed elementum tempus egestas sed sed risus pretium. Sed arcu non odio euismod lacinia. Etiam erat velit scelerisque in. Consequat mauris nunc congue nisi vitae suscipit tellus mauris a. At elementum eu facilisis sed odio morbi quis. Venenatis a condimentum vitae sapien pellentesque habitant morbi tristique. Odio tempor orci dapibus ultrices in. Pharetra massa massa</p>
-                    <p className="text-right text-xs text-[#AA9F9F]">บันทึกเมื่อ 17 ตุลาคม 2566 11:46:30</p>
-                    <p className="text-right text-xs text-[#AA9F9F]">เขียนโดย Bot</p>
-                </div> */}
-            </div>
-        </div>
-    )
-}
 
-function RenderInputSend() {
+function RenderVerify() {
+    const [openModalResult, setOpenModalResult] = useState(false)
+    const [selectWood, setSelectWood] = useState('ไม้ประดู่')
+    const [confirmWood, setConfirmWood] = useState('')
+    const [textAreaConfirm, setTextAreaConfirm] = useState('')
+    const [modalVerify, setModalVerify] = useState(false)
+    const [status, setStatus] = useState(true)
+    function ChangeResult(value) {
+        setOpenModalResult(true)
+        setConfirmWood(value)
+    }
+    const onChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        setTextAreaConfirm(e.target.value)
+    };
     return (
-        <div className="mx-6 bg-[#EAEAEA] p-1 rounded-lg mb-1 relative mt-auto">
-            <input className="py-1 px-2 rounded-lg w-full" type="text" placeholder="พิมพ์ข้อความ..." />
-            <button className="absolute z-50 right-2"><img className="w-8 h-8" src={Send} alt="" /></button>
+        <div className="mx-6 mb-4 shadow border rounded py-4 space-y-4 px-8">
+            <p className="text-center">เลือกเปลี่ยนผล</p>
+            <Select
+                style={{ width: '100%' }}
+                defaultValue={'ไม้ประดู่'}
+                value={selectWood}
+                onChange={(value) => ChangeResult(value)}
+            >
+                <Option value="ไม้ประดู่" label="ไม้ประดู่">
+                    <Space>
+                        <div className="rounded-full w-5 h-5 border border-black flex items-center justify-center">1</div> ไม้ประดู่ 98%
+                    </Space>
+                </Option>
+                <Option value="ไม้แดง" label="ไม้แดง">
+                    <Space>
+                        <div className="rounded-full w-5 h-5 border border-black flex items-center justify-center">2</div> ไม้แดง 60%
+                    </Space>
+                </Option>
+                <Option value="ไม้สัก" label="ไม้สัก">
+                    <Space>
+                        <div className="rounded-full w-5 h-5 border border-black flex items-center justify-center">3</div> ไม้สัก 50%
+                    </Space>
+                </Option>
+                <Option value="ไม้เต็ง" label="ไม้เต็ง">
+                    <Space>
+                        <div className="rounded-full w-5 h-5 border border-black flex items-center justify-center">4</div> ไม้เต็ง 47%
+                    </Space>
+                </Option>
+                <Option value="ไม้ชุมแพรก" label="ไม้ชุมแพรก">
+                    <Space>
+                        <div className="rounded-full w-5 h-5 border border-black flex items-center justify-center">5</div> ไม้ชุมแพรก 42%
+                    </Space>
+                </Option>
+                <Option value="ไม้ตะเคียนทอง" label="ไม้ตะเคียนทอง">
+                    <Space>
+                        <div className="rounded-full w-5 h-5 border border-black flex items-center justify-center">6</div> ไม้ตะเคียนทอง 36%
+                    </Space>
+                </Option>
+                <Option value="ไม้ตะเคียนราก" label="ไม้ตะเคียนราก">
+                    <Space>
+                        <div className="rounded-full w-5 h-5 border border-black flex items-center justify-center">7</div> ไม้ตะเคียนราก 32%
+                    </Space>
+                </Option>
+                <Option value="ไม้พะยอม" label="ไม้พะยอม">
+                    <Space>
+                        <div className="rounded-full w-5 h-5 border border-black flex items-center justify-center">8</div> ไม้พะยอม 29%
+                    </Space>
+                </Option>
+                <Option value="ไม้มะค่าโมง" label="ไม้มะค่าโมง">
+                    <Space>
+                        <div className="rounded-full w-5 h-5 border border-black flex items-center justify-center">9</div> ไม้มะค่าโมง 22%
+                    </Space>
+                </Option>
+                <Option value="ไม้ยางพารา" label="ไม้ยางพารา">
+                    <Space>
+                        <div className="rounded-full w-5 h-5 border border-black flex items-center justify-center">10</div> ไม้ยางพารา 19%
+                    </Space>
+                </Option>
+                <Option value="ไม้แอ๊ก" label="ไม้แอ๊ก">
+                    <Space>
+                        <div className="rounded-full w-5 h-5 border border-black flex items-center justify-center">11</div> ไม้แอ๊ก 14%
+                    </Space>
+                </Option>
+                <Option value="Rosewood" label="ไม้พะยูง">
+                    <Space>
+                        <div className="rounded-full w-5 h-5 border border-black flex items-center justify-center">12</div> ไม้พะยูง 9%
+                    </Space>
+                </Option>
+                <Option value="ไม้รัง" label="ไม้รัง">
+                    <Space>
+                        <div className="rounded-full w-5 h-5 border border-black flex items-center justify-center">13</div> ไม้รัง 7%
+                    </Space>
+                </Option>
+            </Select>
+            <div className="flex items-center justify-between">
+                <button onClick={() => {
+                    setStatus(true)
+                    setModalVerify(true)
+                }} className="bg-[#61876E] px-4 py-2 rounded-lg text-white text-sm text-center w-[48%]">ผ่านการรับรอง</button>
+                <button onClick={() => {
+                    setStatus(false)
+                    setModalVerify(true)
+                }} className="bg-[#FF5F5F] px-4 py-2 rounded-lg text-white text-sm text-center w-[48%]">ไม่ผ่านการรับรอง</button>
+            </div>
+            <Modal
+                className="text-center Kanit"
+                centered
+                open={openModalResult}
+                footer={[
+                    <div key={"parent"} className="flex justify-between">
+                        <Button className="w-[45%] h-10 bg-[#3C6255] text-white" key="submit"
+                            onClick={() => {
+                                setOpenModalResult(false)
+                                setSelectWood(confirmWood)
+                                setConfirmWood('')
+                            }}>
+                            ยืนยัน
+                        </Button>
+                        <Button className="w-[45%] h-10 bg-[#C1C1C1] text-white" key="back" onClick={() => {
+                            setOpenModalResult(false)
+                        }}>
+                            ยกเลิก
+                        </Button>
+                    </div>
+                ]}
+            >
+                <p className="text-center text-2xl font-bold">เปลี่ยนผลการตรวจสอบ</p>
+                <div className="p-4">
+                    <p className="text-lg">คุณต้องการเปลี่ยนผลการตรวจสอบ
+                        จาก <span className="text-red-500">{selectWood}</span> เป็น <span className="text-green-500">{confirmWood}</span> ใช่หรือไม่?</p>
+                </div>
+            </Modal>
+
+
+            <Modal
+                className="text-center Kanit"
+                centered
+                open={modalVerify}
+                footer={[
+                    <div key={"parent"} className="flex justify-between">
+                        <Button className="w-[45%] h-10 bg-[#3C6255] text-white" key="submit"
+                            onClick={() => {
+                                setModalVerify(false)
+                                setTextAreaConfirm('')
+                            }}>
+                            ยืนยัน
+                        </Button>
+                        <Button className="w-[45%] h-10 bg-[#C1C1C1] text-white" key="back" onClick={() => {
+                            setModalVerify(false)
+                            setTextAreaConfirm('')
+                        }}>
+                            ยกเลิก
+                        </Button>
+                    </div>
+                ]}
+            >
+                <p className="text-center text-2xl font-bold">การรับรอง</p>
+                <div className="p-4">
+                    <p className="text-lg">คุณต้องการตั้งสถานะการตรวจสอบ
+                        เป็น {status ? <span className="text-green-500">ผ่านการรับรอง</span> : <span className="text-red-500">ไม่ผ่านการรับรอง</span>} ใช่หรือไม่?</p>
+                </div>
+                <div className="pb-5">
+                    <p>บันทึกการรับรอง</p>
+                    <TextArea
+                        showCount
+                        value={textAreaConfirm}
+                        maxLength={300}
+                        onChange={onChange}
+                        // placeholder=""
+                        style={{ height: 120, resize: 'none' }}
+                    />
+                </div>
+            </Modal>
         </div>
     )
 }
 
 const ClassidyDetail: React.FC = () => {
     const [menuFocus, setMenuFocus] = useState('ข้อมูลการตรวจสอบ');
+    const location = useLocation();
+    const { state } = location;
+    const [messageNote, setMessageNote] = useState([
+        {
+            id: 1,
+            message: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Aenean et tortor at risus viverra adipiscing. Euismod in pellentesque massa placerat. Massa sed elementum tempus egestas sed sed risus pretium. Sed arcu non odio euismod lacinia. Etiam erat velit scelerisque in. Consequat mauris nunc congue nisi vitae suscipit tellus mauris a. At elementum eu facilisis sed odio morbi quis. Venenatis a condimentum vitae sapien pellentesque habitant morbi tristique. Odio tempor orci dapibus ultrices in. Pharetra massa massa",
+            create_at: "17 ตุลาคม 2566 11:46:30",
+            update_by: "Bot"
+        }
+    ]);
+
+
+    function RenderNote() {
+        return (
+            <div className="flex flex-col mx-6 py-4">
+                <div className="overflow-y-auto space-y-2 h-[19.5rem]">
+                    {messageNote.map((note) => (
+                        <div key={note.id} className={`${note.update_by == "User" ? 'bg-[#2B57CA] text-white' : 'bg-[#EAEAEA]'} rounded p-2`}>
+                            <p className="text-sm">{note.message}</p>
+                            <p className={`text-right text-xs ${note.update_by == "User" ? 'text-[#DCDCDC]' : "text-[#AA9F9F]"}`}>บันทึกเมื่อ {note.create_at}</p>
+                            <p className={`text-right text-xs ${note.update_by == "User" ? 'text-[#DCDCDC]' : "text-[#AA9F9F]"}`}>เขียนโดย {note.update_by}</p>
+                        </div>
+                    ))}
+                </div>
+            </div>
+        )
+    }
+
+    function RenderInputSend() {
+        const [inputMessage, setInputMessage] = useState('')
+        return (
+            <div className="mx-6 bg-[#EAEAEA] p-1 rounded-lg mb-4 relative mt-auto">
+                <input value={inputMessage} onChange={(text) => setInputMessage(text.target.value)} className="py-1 px-2 rounded-lg w-full" type="text" placeholder="พิมพ์ข้อความ..." />
+                <button onClick={() => {
+                    setMessageNote([...messageNote, {
+                        id: messageNote.length + 1,
+                        message: inputMessage,
+                        create_at: new Intl.DateTimeFormat('th-TH', optionsDate).format(new Date()).replace(' นาฬิกา ', ":").replace(" เวลา", "").replace(" วินาที GMT+7", "").replace(" นาที ", ":"),
+                        update_by: "User"
+                    }])
+                    setInputMessage('')
+                }} className="absolute z-50 right-2"><img className="w-8 h-8" src={Send} alt="" /></button>
+            </div>
+        )
+    }
+
+
+
     return (
         <div className="Kanit flex flex-col min-h-screen">
             <div className="flex justify-center">
                 <img className="h-96" src={Wood} alt="" />
             </div>
-            <div className="grid grid-cols-2 mx-6 shadow-lg rounded overflow-hidden">
+            <div className="grid grid-cols-2 mx-6 shadow-lg rounded overflow-hidden mb-4">
                 <div onClick={() => {
                     setMenuFocus('ข้อมูลการตรวจสอบ')
                 }} className={`${menuFocus == 'ข้อมูลการตรวจสอบ' ? 'bg-[#3C6255] text-white' : 'bg-[#ECECEC]'} py-2`}>
@@ -98,8 +386,11 @@ const ClassidyDetail: React.FC = () => {
                     <p className="text-center">บันทึก</p>
                 </div>
             </div>
+            {menuFocus == 'ข้อมูลการตรวจสอบ' && state
+                ? <RenderVerify />
+                : ""}
             {menuFocus == 'ข้อมูลการตรวจสอบ'
-                ? <RenderClassifyInformation />
+                ? <RenderClassifyInformation state={state} />
                 : <div className="flex-grow flex flex-col"><RenderNote /><RenderInputSend /></div>}
         </div>
     );

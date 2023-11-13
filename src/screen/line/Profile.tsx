@@ -1,59 +1,76 @@
 import React, { useState } from "react";
 import ProfileBg from '../../assets/profile_bg.png'
 import ProfileAvatar from '../../assets/profile.png'
+import { Input } from 'antd';
 import EditProfile from "../../assets/edit_profile.svg"
 
 const Profile: React.FC = () => {
     const { innerWidth: width, innerHeight: height } = window;
     const [changePassword, setChangePassword] = useState(false);
     const [editProfile, setEditProfile] = useState(false);
+    const [firstname, setFirstname] = useState('ทธรรษ');
+    const [lastname, setLastname] = useState('ธีรชูวิวัฒน์');
+    const [email, setEmail] = useState('tathuswork@gmail.com');
+    const [phone, setPhone] = useState('0945492954');
+    const [username, setUsername] = useState('tathus');
     return (
-        <div className="min-h-screen bg-[#BCBCBC] Kanit relative">
-            <div style={{ height: `${parseInt(Number(height / 2.5).toFixed(0))}px`, borderBottomLeftRadius: "5rem", borderBottomRightRadius: "5rem" }} className="bg-[#9DB485]">
-                <div>
-                    <div className="flex justify-center pt-20 pb-5">
+        <div className="min-h-screen bg-[#EBEBEB] Kanit relative">
+            <div style={{
+                height: `${parseInt(Number(height / 2.5).toFixed(0))}px`,
+                borderBottomLeftRadius: "5rem",
+                borderBottomRightRadius: "5rem"
+            }} className="bg-[#9DB485] shadow-xl">
+                <div className="z-50"> {/* <-- เพิ่ม mt-[402px] เพื่อปรับการตำแหน่ง */}
+                    <div className="flex justify-center pt-10 pb-5">
                         <img className="w-40 h-40" src={ProfileAvatar} alt="" />
                     </div>
                     <p className="text-center text-2xl text-white">ทธรรษ ธีรชูวิวัฒน์</p>
                     <p className="text-center text-2xl text-white">tathuswork@gmail.com</p>
+                    
                 </div>
             </div>
-            <div className="w-full mt-5">
+            <div className="w-full mt-5 text-lg">
                 <div className="bg-[#FDFDFD] mx-6 rounded-xl shadow-lg">
                     <div className="flex justify-between px-4 border-b-2 py-2">
-                        <p className="text-[#0D5D8A] text-2xl">ชื่อผู้ใช้ :</p>
-                        <p className="text-[#BCBCBC] text-2xl">tathus</p>
+                        <p className="text-[#0D5D8A]">ชื่อผู้ใช้ :</p>
+                        {editProfile ? <Input className="text-right w-3/4 text-[#BCBCBC] Kanit" value={username} /> : <p className="text-[#BCBCBC]">tathus</p>}
                     </div>
                     <div className="flex justify-between px-4 border-b-2 py-2">
-                        <p className="text-[#0D5D8A] text-2xl">ชื่อจริง :</p>
-                        <p className="text-[#BCBCBC] text-2xl">ทธรรษ</p>
+                        <p className="text-[#0D5D8A]">ชื่อจริง :</p>
+                        {editProfile ? <Input className="text-right w-3/4 text-[#BCBCBC] Kanit" value={firstname} /> : <p className="text-[#BCBCBC]">ทธรรษ</p>}
                     </div>
                     <div className="flex justify-between px-4 border-b-2 py-2">
-                        <p className="text-[#0D5D8A] text-2xl">นามสกุล :</p>
-                        <p className="text-[#BCBCBC] text-2xl">ธีรชูวิวัฒน์</p>
+                        <p className="text-[#0D5D8A]">นามสกุล :</p>
+                        {editProfile ? <Input className="text-right w-3/4 text-[#BCBCBC] Kanit" value={lastname} /> : <p className="text-[#BCBCBC]">ธีรชูวิวัฒน์</p>}
                     </div>
                     <div className="flex justify-between px-4 border-b-2 py-2">
-                        <p className="text-[#0D5D8A] text-2xl">อีเมล :</p>
-                        <p className="text-[#BCBCBC] text-2xl">tathuswork@gmail.com</p>
+                        <p className="text-[#0D5D8A]">อีเมล :</p>
+                        {editProfile ? <Input className="text-right w-3/4 text-[#BCBCBC] Kanit" value={email} /> : <p className="text-[#BCBCBC]">tathuswork@gmail.com</p>}
+                    </div>
+                    <div className="flex justify-between px-4 border-b-2 py-2">
+                        <p className="text-[#0D5D8A]">เบอร์โทรศัพท์ :</p>
+                        {editProfile ? <Input className="text-right w-2/4 text-[#BCBCBC] Kanit" value={phone} /> : <p className="text-[#BCBCBC]">0945492954</p>}
                     </div>
                     {
                         !changePassword && (
                             <div className="flex justify-between px-4 py-2">
-                                <p className="text-[#0D5D8A] text-2xl">รหัสผ่าน :</p>
-                                <p {...(editProfile ? {} : { onClick: () => setChangePassword(true) })} className={`${editProfile ? 'text-[#BCBCBC]' : 'text-[#5879CF]'} text-2xl`}>เปลี่ยนรหัสผ่าน</p>
+                                <p className="text-[#0D5D8A]">รหัสผ่าน :</p>
+                                <p {...(editProfile ? {} : { onClick: () => setChangePassword(true) })} className={`${editProfile ? 'text-[#BCBCBC]' : 'text-[#5879CF]'}`}>เปลี่ยนรหัสผ่าน</p>
                             </div>
                         )
                     }
                     {
                         changePassword && (
-                            <div>
+                            <div className="text-lg">
                                 <div className="flex justify-between px-4 border-b-2 py-2">
-                                    <p className="text-[#0D5D8A] text-2xl">รหัสผ่านใหม่ :</p>
-                                    <input className="text-right appearance-none focus:outline-none text-xl w-40" placeholder="*********" type="password" />
+                                    <p className="text-[#0D5D8A]">รหัสผ่านใหม่ :</p>
+                                    {/* <input className="text-right appearance-none focus:outline-none text-xl w-40" placeholder="*********" type="password" /> */}
+                                    <Input className="text-right w-2/4 text-[#BCBCBC] Kanit" placeholder="*********" type="password" />
                                 </div>
                                 <div className="flex justify-between px-4 border-b-2 py-2">
-                                    <p className="text-[#0D5D8A] text-2xl">ยืนยันรหัสผ่าน :</p>
-                                    <input className="text-right appearance-none focus:outline-none text-xl w-40" placeholder="*********" type="password" />
+                                    <p className="text-[#0D5D8A]">ยืนยันรหัสผ่าน :</p>
+                                    {/* <input className="text-right appearance-none focus:outline-none text-xl w-40" placeholder="*********" type="password" /> */}
+                                    <Input className="text-right w-2/4 text-[#BCBCBC] Kanit" placeholder="*********" type="password" />
                                 </div>
                                 <div className="py-2 flex justify-center items-center w-full px-4">
                                     <div className="w-full space-y-2">
@@ -73,7 +90,7 @@ const Profile: React.FC = () => {
                     </div>
                 </div>
             )}
-            { changePassword == false && editProfile && (
+            {changePassword == false && editProfile && (
                 <div className="absolute bottom-10 flex justify-center w-full">
                     <div className="w-full flex justify-between items-center space-x-4 px-6">
                         <button onClick={() => setEditProfile(false)} className="py-2 rounded-lg bg-[#FF6161] text-lg text-white px-4 w-[47%]">ยกเลิก</button>

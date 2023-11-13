@@ -11,3 +11,12 @@
 .pie-chart-container canvas {
   margin: 0 !important;
 }
+
+.custom-dashed {
+  border-style: dashed;
+  border-width: 2px; 
+}
+.ant-modal-footer .ant-btn-primary {
+  background-color: #1890ff;   /* ใส่สีที่คุณต้องการ */
+  border-color: #1890ff;       /* ใส่สีที่คุณต้องการ */
+}

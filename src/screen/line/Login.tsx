@@ -94,7 +94,6 @@ const LoginLine: React.FC = () => {
   }
 
   async function loginLiff() {
-
     try {
       liff.login();
     } catch (error) {

@@ -1,8 +1,19 @@
-import React from "react";
+import React, { useEffect } from "react";
 import LogoWoodify from "../../assets/logo_woodify.svg";
 import { Link } from "react-router-dom";
+import liff from "@line/liff";
 
 const RegisterLine: React.FC = () => {
+  useEffect(() => {
+    liff.init({
+      liffId: '2001173297-AoDv0582'
+    }).then(() => {
+      liff.logout();
+    })
+      .catch(err => {
+        console.error("Error initializing LIFF:", err);
+      });
+  })
   return (
     <div className="Kanit bg-[#CEDEBD] min-h-screen flex flex-col">
       <div className="flex justify-center py-8">
