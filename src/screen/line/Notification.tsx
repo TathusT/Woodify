@@ -6,6 +6,7 @@ import Wood from '../../assets/S12-3balau 2.png'
 import Unread from '../../assets/unread_message.svg'
 import Read from '../../assets/read_message.svg'
 import AllMessage from '../../assets/message.svg'
+import StatusWait from '../../assets/wait_for_classify.svg'
 import { useNavigate } from "react-router-dom";
 const { Option } = Select;
 
@@ -101,41 +102,139 @@ const Notification: React.FC = () => {
             message: 3
         },
     ])
+    const [backupHistory, setBackupHistory] = useState<HistoryItem[]>([
+        {
+            id: 1,
+            woodName: "ไม้ประดู่",
+            similar: "99%",
+            updateAt: formatDateToThai('17/10/2023 11:46:30'),
+            img: Wood,
+            message: 2
+        },
+        {
+            id: 2,
+            woodName: "ไม้ประดู่",
+            similar: "99%",
+            updateAt: formatDateToThai('17/10/2023 11:46:30'),
+            img: Wood,
+            message: 0
+        },
+        {
+            id: 3,
+            woodName: "ไม้ประดู่",
+            similar: "99%",
+            updateAt: formatDateToThai('17/10/2023 11:46:30'),
+            img: Wood,
+            message: 1
+        },
+        {
+            id: 4,
+            woodName: "ไม้ประดู่",
+            similar: "99%",
+            updateAt: formatDateToThai('17/10/2023 11:46:30'),
+            img: Wood,
+            message: 5
+        },
+        {
+            id: 5,
+            woodName: "ไม้ประดู่",
+            similar: "99%",
+            updateAt: formatDateToThai('17/10/2023 11:46:30'),
+            img: Wood,
+            message: 9
+        },
+        {
+            id: 6,
+            woodName: "ไม้ประดู่",
+            similar: "99%",
+            updateAt: formatDateToThai('17/10/2023 11:46:30'),
+            img: Wood,
+            message: 8
+        },
+        {
+            id: 7,
+            woodName: "ไม้ประดู่",
+            similar: "99%",
+            updateAt: formatDateToThai('17/10/2023 11:46:30'),
+            img: Wood,
+            message: 3
+        },
+        {
+            id: 8,
+            woodName: "ไม้ประดู่",
+            similar: "99%",
+            updateAt: formatDateToThai('17/10/2023 11:46:30'),
+            img: Wood,
+            message: 3
+        },
+    ])
+    const [selectFilter, setSelectFilter] = useState()
+
+    function filterWood(value) {
+        setSelectFilter(value)
+        let filterData
+        switch (value) {
+            case "readMessage":
+                filterData = backupHistory.filter((wood) => {
+                    if (wood.message == 0) {
+                        return wood
+                    }
+                })
+                break;
+            case "notReadMessage":
+                filterData = backupHistory.filter((wood) => {
+                    if (wood.message >= 1) {
+                        return wood
+                    }
+                })
+                break;
+            case "allMessage":
+                filterData = backupHistory
+                break;
+        }
+        setHistorys(filterData);
+    }
 
     function RenderClassify() {
         return (
             <div>
                 <div className="mx-6 flex justify-between items-center">
-                    <Select
-                        mode="multiple"
+                <Select
                         style={{ width: '48%' }}
-                        placeholder="เลือกพันธุ์ไม้ที่ต้องการค้นหา"
-                        optionLabelProp="label"
+                        defaultValue="all"
+                        // value={selectFilter}
+                        // onChange={filterWood}
                     >
-                        <Option value="padauk" label="ไม้ประดู่">
-                            <Space>
-                                ไม้ประดู่ (Pterocarpus macrocarpus Kurz.)
+                        <Option value="all" label="สถานะทั้งหมด">
+                            <Space className="flex items-center">
+                                {/* <img src={AllMessage} alt="" /> */}
+                                <p className="text-xs">สถานะทั้งหมด</p>
                             </Space>
                         </Option>
-                        <Option value="deang" label="ไม้แดง">
-                            <Space>
-                                ไม้แดง (Xylia xylocarpa)
+                        <Option value="wait" label="รอตรวจสอบ">
+                            <Space className="flex items-center">
+                                {/* <img src={Read} alt="" /> */}
+                                <p className="text-xs">รอตรวจสอบ</p>
                             </Space>
                         </Option>
-                        <Option value="teak" label="ไม้สัก">
-                            <Space>
-                                ไม้สัก (Tectona grandis L.f.)
+                        <Option value="approve" label="ผ่านการรับรอง">
+                            <Space className="flex items-center">
+                                {/* <img src={Unread} alt="" /> */}
+                                <p className="text-xs">ผ่านการรับรอง</p>
                             </Space>
                         </Option>
-                        <Option value="teng" label="ไม้เต็ง">
-                            <Space>
-                                ไม้เต็ง (Shorea obtusa Wall. ex Blume.)
+                        <Option value="notapprove" label="ไม่ผ่านการรับรอง">
+                            <Space className="flex items-center">
+                                {/* <img src={Unread} alt="" /> */}
+                                <p className="text-xs">ไม่ผ่านการรับรอง</p>
                             </Space>
                         </Option>
                     </Select>
                     <Select
                         style={{ width: '48%' }}
                         defaultValue="allMessage"
+                        value={selectFilter}
+                        onChange={filterWood}
                     >
                         <Option value="allMessage" label="ข้อความทั้งหมด">
                             <Space className="flex items-center">
@@ -181,7 +280,15 @@ const Notification: React.FC = () => {
                                                         <img src={Read} alt="" />
                                                     </div>)}
                                             </div>
-                                            <p className="text-sm font-bold">{history.woodName}</p>
+                                            <div className="flex justify-between items-center">
+                                                <p className="text-sm font-bold">{history.woodName}</p>
+                                                <div className="flex items-center">
+                                                    <div className="flex justify-center items-center">
+                                                        <img className="pr-1 w-5 h-5" src={StatusWait} alt="" />
+                                                    </div>
+                                                    <p className="text-sm">รอตรวจสอบ</p>
+                                                </div>
+                                            </div>
                                             <div className="flex items-center justify-between">
                                                 <p className="text-xs">ความคล้ายคลึง {history.similar}</p>
                                                 <p className="text-right text-[#AA9F9F] text-xs">{history.updateAt}</p>

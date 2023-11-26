@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useParams } from "react-router-dom";
 import Dot from '../../assets/classify_dot.svg'
+import ArrowBack from '../../assets/arrow_back.svg'
 import { Select } from "antd";
 
 const WoodDetail: React.FC = () => {
@@ -335,6 +336,11 @@ const WoodDetail: React.FC = () => {
             {openAllImage && wood && (
                 <div className="p-6">
                     <div className="flex justify-between items-center">
+                        <div>
+                            <button onClick={() =>{
+                                setOpenAllImage(false)
+                            }}><img src={ArrowBack} alt="" /></button>
+                        </div>
                         <div className="flex items-center space-x-2">
                             <p className="text-xl font-bold">แสดง</p>
                             <Select

@@ -252,49 +252,107 @@ const HistoryClassify: React.FC = () => {
         },
         {
             id: 2,
-            woodName: "ไม้ประดู่",
-            similar: "99%",
+            woodName: "ไม้สัก",
+            similar: "96%",
             updateAt: formatDateToThai('17/10/2023 11:46:30'),
             img: Wood
         },
         {
             id: 3,
-            woodName: "ไม้ประดู่",
+            woodName: "ไม้รัง",
             similar: "99%",
             updateAt: formatDateToThai('17/10/2023 11:46:30'),
             img: Wood
         },
         {
             id: 4,
-            woodName: "ไม้ประดู่",
+            woodName: "ไม้มะค่าโมง",
             similar: "99%",
             updateAt: formatDateToThai('17/10/2023 11:46:30'),
             img: Wood
         },
         {
             id: 5,
-            woodName: "ไม้ประดู่",
+            woodName: "ไม้ตะเคียนราก",
             similar: "99%",
             updateAt: formatDateToThai('17/10/2023 11:46:30'),
             img: Wood
         },
         {
             id: 6,
-            woodName: "ไม้ประดู่",
+            woodName: "ไม้ยางพารา",
             similar: "99%",
             updateAt: formatDateToThai('17/10/2023 11:46:30'),
             img: Wood
         },
         {
             id: 7,
-            woodName: "ไม้ประดู่",
+            woodName: "ไม้ตะเคียนทอง",
             similar: "99%",
             updateAt: formatDateToThai('17/10/2023 11:46:30'),
             img: Wood
         },
         {
             id: 8,
+            woodName: "ไม้แดง",
+            similar: "99%",
+            updateAt: formatDateToThai('17/10/2023 11:46:30'),
+            img: Wood
+        },
+    ])
+    const [backupHistory, setBackUpHistory] = useState<HistoryItem[]>([
+        {
+            id: 1,
             woodName: "ไม้ประดู่",
+            similar: "99%",
+            updateAt: formatDateToThai('17/10/2023 11:46:30'),
+            img: Wood
+        },
+        {
+            id: 2,
+            woodName: "ไม้สัก",
+            similar: "96%",
+            updateAt: formatDateToThai('17/10/2023 11:46:30'),
+            img: Wood
+        },
+        {
+            id: 3,
+            woodName: "ไม้รัง",
+            similar: "99%",
+            updateAt: formatDateToThai('17/10/2023 11:46:30'),
+            img: Wood
+        },
+        {
+            id: 4,
+            woodName: "ไม้มะค่าโมง",
+            similar: "99%",
+            updateAt: formatDateToThai('17/10/2023 11:46:30'),
+            img: Wood
+        },
+        {
+            id: 5,
+            woodName: "ไม้ตะเคียนราก",
+            similar: "99%",
+            updateAt: formatDateToThai('17/10/2023 11:46:30'),
+            img: Wood
+        },
+        {
+            id: 6,
+            woodName: "ไม้ยางพารา",
+            similar: "99%",
+            updateAt: formatDateToThai('17/10/2023 11:46:30'),
+            img: Wood
+        },
+        {
+            id: 7,
+            woodName: "ไม้ตะเคียนทอง",
+            similar: "99%",
+            updateAt: formatDateToThai('17/10/2023 11:46:30'),
+            img: Wood
+        },
+        {
+            id: 8,
+            woodName: "ไม้แดง",
             similar: "99%",
             updateAt: formatDateToThai('17/10/2023 11:46:30'),
             img: Wood
@@ -303,6 +361,22 @@ const HistoryClassify: React.FC = () => {
     const [isDelete, setIsDelete] = useState(false);
     const [focusHistoryDelete, setFocusHistoryDelete] = useState<HistoryItem>();
     const [focusIndexDelete, setFocusIndexDelete] = useState<number>(0)
+    const [selectFilter, setSelectFilter] = useState([])
+
+    function filterWood(value){
+        setSelectFilter(value)
+        let filterData
+        filterData = backupHistory.filter((wood) => {
+            if(value.indexOf(wood.woodName) != -1){
+                return wood
+            }
+        })
+        if(value.length == 0){
+            filterData = backupHistory
+        }
+        
+        setHistorys(filterData);
+    }
 
     function RenderClassify() {
         return (
@@ -311,27 +385,74 @@ const HistoryClassify: React.FC = () => {
                     <Select
                         mode="multiple"
                         style={{ width: '100%' }}
+                        value={selectFilter}
+                        onChange={filterWood}
                         placeholder="เลือกพันธุ์ไม้ที่ต้องการค้นหา"
                         optionLabelProp="label"
                     >
-                        <Option value="padauk" label="ไม้ประดู่">
+                        <Option value="ไม้ประดู่" label="ไม้ประดู่">
                             <Space>
                                 ไม้ประดู่ (Pterocarpus macrocarpus Kurz.)
                             </Space>
                         </Option>
-                        <Option value="deang" label="ไม้แดง">
+                        <Option value="ไม้แดง" label="ไม้แดง">
                             <Space>
                                 ไม้แดง (Xylia xylocarpa)
                             </Space>
                         </Option>
-                        <Option value="teak" label="ไม้สัก">
+                        <Option value="ไม้สัก" label="ไม้สัก">
                             <Space>
                                 ไม้สัก (Tectona grandis L.f.)
                             </Space>
                         </Option>
-                        <Option value="teng" label="ไม้เต็ง">
+                        <Option value="ไม้เต็ง" label="ไม้เต็ง">
                             <Space>
                                 ไม้เต็ง (Shorea obtusa Wall. ex Blume.)
+                            </Space>
+                        </Option>
+                        <Option value="ไม้ตะเคียนทอง" label="ไม้ตะเคียนทอง">
+                            <Space>
+                                ไม้ตะเคียนทอง (Hopea odorata Roxb.)
+                            </Space>
+                        </Option>
+                        <Option value="ไม้ตะเคียนราก" label="ไม้ตะเคียนราก">
+                            <Space>
+                                ไม้ตะเคียนราก (Hopea pierrei Hance)
+                            </Space>
+                        </Option>
+                        <Option value="ไม้พะยอม" label="ไม้พะยอม">
+                            <Space>
+                                ไม้พะยอม (Shorea roxburghii G. Don)
+                            </Space>
+                        </Option>
+                        <Option value="ไม้มะค่าโมง" label="ไม้มะค่าโมง">
+                            <Space>
+                                ไม้มะค่าโมง (Afzelia xylocarpa (Kurz) Craib)
+                            </Space>
+                        </Option>
+                        <Option value="ไม้พะยูง" label="ไม้พะยูง">
+                            <Space>
+                                ไม้พะยูง (Dalbergia cochinchinensis Pierre)
+                            </Space>
+                        </Option>
+                        <Option value="ไม้ยางพารา" label="ไม้ยางพารา">
+                            <Space>
+                                ไม้ยางพารา (Hevea brasiliensis (Kunth) Mull. Arg.)
+                            </Space>
+                        </Option>
+                        <Option value="ไม้รัง" label="ไม้รัง">
+                            <Space>
+                                ไม้รัง (Shorea siamensis Miq.)
+                            </Space>
+                        </Option>
+                        <Option value="ไม้แอ๊ก" label="ไม้แอ๊ก">
+                            <Space>
+                                ไม้แอ๊ก (Shorea glauca King)
+                            </Space>
+                        </Option>
+                        <Option value="ไม้ชุมแพรก" label="ไม้ชุมแพรก">
+                            <Space>
+                                ไม้ชุมแพรก (Heritiera javanica (Blume) Kosterm.)
                             </Space>
                         </Option>
                     </Select>

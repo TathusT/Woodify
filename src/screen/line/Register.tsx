@@ -71,7 +71,7 @@ const RegisterLine: React.FC = () => {
             />
           </div>
           <div className="bg-[#3C6255] rounded-xl py-2 px-3">
-            <p className="text-white text-center text-xl">เข้าสู่ระบบ</p>
+            <p className="text-center text-xl"><Link to='/line/login' className="text-white">สมัครสมาชิก</Link></p>
           </div>
           <div className="text-sm pb-6">
             <p className="text-[#5C5C5C] text-center">มีบัญชีอยู่แล้วใช่หรือไม่? <Link to='/line/login' className="text-[#051937]">เข้าสู่ระบบที่นี่</Link></p>

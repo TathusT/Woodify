@@ -42,3 +42,18 @@
 .ant-input{
   font-family: 'Kanit', sans-serif !important;
 }
+.ant-picker-panel {
+  font-family: 'Kanit', sans-serif !important;
+}
+
+.ant-picker-cell-inner {
+  font-family: 'Kanit', sans-serif !important;
+}
+
+.ant-picker-cell-selected .ant-picker-cell-inner {
+  font-family: 'Kanit', sans-serif !important;
+}
+
+.ant-picker-input input::placeholder {
+  font-family: 'Kanit', sans-serif !important;
+}
