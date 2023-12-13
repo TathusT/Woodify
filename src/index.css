@@ -57,3 +57,7 @@
 .ant-picker-input input::placeholder {
   font-family: 'Kanit', sans-serif !important;
 }
+
+.ant-select-selection-item{
+  font-weight: 600 !important;
+}

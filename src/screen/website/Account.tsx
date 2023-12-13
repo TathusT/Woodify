@@ -1,8 +1,224 @@
-import React from "react";
-
+import React, { useEffect, useState } from "react";
+import { Select, Input, Dropdown, MenuProps, Modal } from "antd";
+import add from "../../assets/add.svg";
+import search from "../../assets/search.svg";
+import axios from "axios";
+import path from "../../../path";
+import { convertIsoToThaiDateTime } from "../../tools/tools";
+import Loading from "../component/Loading";
+import sortIcon from "../../assets/sort-icon.svg"
+import selectIcon from "../../assets/select-icon.svg"
+import dotIcon from "../../assets/dropdowndot-icon.svg"
+import clockIcon from "../../assets/last-status-icon.svg"
+import blockIcon from "../../assets/block-icon.svg"
+import changeRoleIcon from "../../assets/change-role-icon.svg"
+import garbageIcon from "../../assets/garbage-red-icon.svg"
 const Account: React.FC = () => {
+  const [infoWood, setInfoWood] = useState<any>()
+  const [isLoading, setIsLoading] = useState(true);
+  const [modalAddUser, setmodalAddUser] = useState(false);
+  const [titleModal, setTitleModal] = useState("")
+  const [confirmButton, setConfirmButton] = useState("")
+  const handleChange = (value: string) => {
+    console.log(`selected ${value}`);
+  };
+  const items: MenuProps['items'] = [
+    {
+      key: '1',
+      label: (
+        <a onClick={() => clickModal("บล็อกบัญชี")} className="flex items-center Kanit font-semibold space-x-2" rel="noopener noreferrer">
+          <img width={20} src={blockIcon} alt="" />
+          <p>
+            บล็อกบัญชี
+          </p>
+        </a>
+      ),
+    },
+    {
+      key: '2',
+      label: (
+        <a onClick={() => clickModal("เปลี่ยนบทบาท")} className="flex items-center Kanit font-semibold space-x-2" rel="noopener noreferrer">
+          <img width={20} src={changeRoleIcon} alt="" />
+          <p>
+            เปลี่ยนบทบาท
+          </p>
+        </a>
+      ),
+    },
+    {
+      key: '3',
+      label: (
+        <a onClick={() => clickModal("ลบบัญชี")} className="flex items-center Kanit font-semibold space-x-2" rel="noopener noreferrer">
+          <img width={20} src={garbageIcon} alt="" />
+          <p>
+            ลบบัญชี
+          </p>
+        </a>
+      ),
+    },
+  ];
+  function clickModal(title){
+    setmodalAddUser(true)
+    setTitleModal(title)
+    if(title == 'สร้างบัญชี'){
+      setConfirmButton("ยืนยันการส่ง")
+    }else if(title == 'บล็อกบัญชี'){
+      setConfirmButton("ยืนยันการบล็อก")
+    }else if(title == 'เปลี่ยนบทบาท'){
+      setConfirmButton("ยืนยันการเปลี่ยน")
+    }else{
+      setConfirmButton("ยืนยันการลบ")
+    }
+  }
   return (
-    <p>Account</p>
+    <div className="w-full Kanit flex flex-col min-h-screen">
+      <div className="flex mt-10 justify-between">
+        <p className="text-[24px] font-semibold">บัญชี</p>
+        <div className="flex items-center space-x-3">
+          <p className="font-semibold">แสดง</p>
+          <Select
+            defaultValue="10 แถว"
+            suffixIcon={<img src={selectIcon}></img>}
+            className="h-full"
+            style={{ width: 130 }}
+            onChange={handleChange}
+            options={[
+              { value: "10 แถว", label: "10 แถว" },
+              { value: "20 แถว", label: "20 แถว" },
+              { value: "30 แถว", label: "30 แถว" },
+            ]}
+          />
+          <Select
+            defaultValue="ใช้งานล่าสุด"
+            suffixIcon={<img src={sortIcon}></img>}
+            className="h-full"
+            style={{ width: 130 }}
+            onChange={handleChange}
+            options={[
+              { value: "ถูกบล็อก", label: "ถูกบล็อก" },
+              { value: "ไม่ได้ใช้งาน", label: "ไม่ได้ใช้งาน" },
+              { value: "ใช้งานล่าสุด", label: "ใช้งานล่าสุด" },
+            ]}
+          />
+          <Select
+            defaultValue="ผู้ใช้ทั้งหมด"
+            suffixIcon={<img src={selectIcon}></img>}
+            className="h-full"
+            style={{ width: 130 }}
+            onChange={handleChange}
+            options={[
+              { value: "ผู้เชี่ยวชาญ", label: "ผู้เชี่ยวชาญ" },
+              { value: "ผู้ใช้ทั่วไป", label: "ผู้ใช้ทั่วไป" },
+              { value: "ผู้ใช้ทั้งหมด", label: "ผู้ใช้ทั้งหมด" },
+            ]}
+          />
+          <div className="h-full">
+            <Input className="h-full w-[280px] font-semibold" suffix={<img src={search} />} />
+          </div>
+          <div onClick={() => clickModal("สร้างบัญชี")} className="bg-[#3C6255] h-full flex justify-center space-x-2 items-center px-3 rounded-[8px] text-white cursor-pointer">
+            <p>สร้างบัญชี</p>
+            <img src={add} alt="" />
+          </div>
+        </div>
+      </div>
+      <table className="table-auto w-full mt-8">
+        <thead>
+          <tr className="w-full font-bold">
+            <th className="pb-5 w-6"></th>
+            <th className="pb-5">ไอดีไลน์</th>
+            <th className="pb-5">ไอดีผู้ใช้งาน</th>
+            <th className="pb-5">ชื่อ-นามสกุล</th>
+            <th className="pb-5">บทบาท</th>
+            <th className="pb-5">อีเมล</th>
+            <th className="pb-5">สถานะ</th>
+            <th className="pb-5">จัดการ</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr className="bg-white shadow-[0px_0px_4px_0px_rgba(0,0,0,0.25)] rounded-[10px] font-semibold">
+            <td className="rounded-l-[10px] text-center pl-4">
+              <div className="w-12 h-12 rounded-full bg-gray-300"></div>
+            </td>
+            <td className="py-6 text-center">Mind</td>
+            <td className="py-5 text-center">usd4fsw...</td>
+            <td className="py-5 text-center">ธนวิชญ์ ลักษณะ</td>
+            <td className="py-5 text-center">ผู้เชี่ยวชาญ</td>
+            <td className="py-5 text-center">63070077@gmail.com</td>
+            <td className="py-5 text-[#3C6255]">
+              <div className="flex justify-center items-center">
+                <img className="mr-3" src={clockIcon} alt="" />
+                <p>
+                  ใช้งาน 10 นาทีที่แล้ว
+                </p>
+              </div>
+            </td>
+            <td className="py-5 rounded-r-[10px] text-center">
+              <Dropdown menu={{ items }} placement="bottomRight" trigger={['click']} arrow>
+                <img onClick={(e) => e.preventDefault()} className="mx-auto" src={dotIcon} alt="" />
+              </Dropdown>
+            </td>
+          </tr>
+          <tr>
+            <td className="py-2"></td>
+          </tr>
+        </tbody>
+      </table>
+      {/* modal */}
+      <Modal
+          title={[
+            <div className="text-center text-xl">
+              <p>{titleModal}</p>
+            </div>
+          ]}
+          className="Kanit"
+          centered
+          open={modalAddUser}
+          width={350}
+          onCancel={() => setmodalAddUser(false)}
+          footer={[
+            <div className="flex items-center space-x-2 font-semibold pt-3">
+              <div onClick={() => setmodalAddUser(false)} className="bg-[#3C6255] py-2 w-1/2 text-white cursor-pointer rounded-[10px] text-center">
+                <p>{confirmButton}</p>
+              </div>
+              <div onClick={() => setmodalAddUser(false)} className="bg-[#C1C1C1] py-2 w-1/2 cursor-pointer rounded-[10px] text-center">
+                <p>ยกเลิก</p>
+              </div>
+            </div>
+          ]}
+        >
+          { confirmButton == 'ยืนยันการบล็อก' || confirmButton == 'ยืนยันการเปลี่ยน' || confirmButton == 'ยืนยันการลบ' ? 
+          (
+            <div className="flex flex-col items-center space-y-3 font-semibold">
+              <img className="rounded-full w-32 h-32" src="https://plus.unsplash.com/premium_photo-1668319915384-3cccf7689bef?q=80&w=2564&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="" />
+              <p>ธนวิชญ์ ลักษณะ</p>
+              {confirmButton == 'ยืนยันการบล็อก'?(<p>คุณต้องการบล็อกบัญชีผู้ใช้นี้ใช่หรือไม่?</p>):('')}
+              {confirmButton == 'ยืนยันการเปลี่ยน'?(<p>คุณต้องการเปลี่ยนบทบาทผู้ใช้นี้เป็น</p>):('')}
+              {confirmButton == 'ยืนยันการลบ'?(<p>คุณต้องการลบบัญชีผู้ใช้นี้ใช่หรือไม่?</p>):('')}
+              {confirmButton == 'ยืนยันการเปลี่ยน'?
+              (
+                <Select
+                  defaultValue="ผู้เชี่ยวชาญ"
+                  suffixIcon={<img src={selectIcon}></img>}
+                  className="h-full w-full"
+                  onChange={handleChange}
+                  options={[
+                    { value: "ผู้เชี่ยวชาญ", label: "ผู้เชี่ยวชาญ" },
+                    { value: "ผู้ใช้ทั่วไป", label: "ผู้ใช้ทั่วไป" }
+                  ]}
+                />
+              ):('')}
+            </div>
+          )
+          :
+          (
+            <div className="pt-3">
+              <p className="mb-1 font-semibold text-base">อีเมลผู้เชี่ยวชาญ</p>
+              <input className="rounded-[5px] font-semibold border-[1px] w-full text-base border-[#61876E] p-1 focus-visible:border-[#445f4e]"></input>
+            </div>
+          )
+          }
+        </Modal>
+    </div>
   );
 };
 
