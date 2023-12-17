@@ -7,7 +7,7 @@ import eye from "../../assets/open_eye_green.svg"
 import closeEye from "../../assets/close_eye_red.svg"
 import axios from "axios";
 import path from "../../../path";
-import { convertIsoToThaiDateTime } from "../../tools/tools";
+import { convertIsoToThaiDateTime, getImage } from "../../tools/tools";
 import Loading from "../component/Loading";
 const InformationWood: React.FC = () => {
   const [infoWood, setInfoWood] = useState<any>()
@@ -17,6 +17,8 @@ const InformationWood: React.FC = () => {
   };
 
   useEffect(() => {
+    console.log(`${path}/wood`);
+    
     axios.get(`${path}/wood`)
       .then((res) => {
         setInfoWood(res.data)
@@ -62,7 +64,7 @@ const InformationWood: React.FC = () => {
           infoWood && infoWood.map((info, index) => {
             return (
               <div key={info.w_id} className="flex flex-col items-center col-span-2 space-y-3 box-shadow p-3 rounded-[10px] bg-white">
-                <img src={info.image} className="w-full aspect-[1.73/1] rounded-[10px]" alt="" />
+                <img src={getImage(info.wood_image[0].path)} className="w-full aspect-[1.73/1] rounded-[10px]" alt="" />
                 <p className="text-[20px] font-semibold">{info.common_name}</p>
                 <p className="text-left text-ellipsis line-clamp-3 text-[16px] font-medium">{info.place_of_origin}</p>
                 <div className="flex space-x-2 text-[#3C6255] font-medium">

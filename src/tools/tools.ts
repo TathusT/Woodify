@@ -1,3 +1,8 @@
+import axios from "axios";
+import path from "../../path";
+import { useNavigate } from "react-router-dom";
+
+
 export function convertIsoToThaiDateTime(isoDateString: string): string {
   const isoDate = new Date(isoDateString);
 
@@ -11,3 +16,52 @@ export function convertIsoToThaiDateTime(isoDateString: string): string {
     thaiYear % 100
   } ${thaiHours}.${thaiMinutes} น.`;
 }
+
+export function useAuthenticationUserWebsite() {
+  const navigate = useNavigate();
+
+  async function authenticationUser() {
+    const authen = await axios.post(`${path}/authentication_user`, {}, {
+      headers: {
+        "Authorization": `Bearer ${localStorage.getItem('access_token')}`
+      }
+    });
+
+    if (authen.data === false) {
+      alert("session หมดอายุ")
+      navigate("/admin/login");
+      localStorage.removeItem('access_token')
+    }
+  }
+
+  return { authenticationUser };
+}
+
+export function useAuthenticationUserLine() {
+  const navigate = useNavigate();
+
+  async function authenticationUser() {
+    const authen = await axios.post(`${path}/authentication_user`, {}, {
+      headers: {
+        "Authorization": `Bearer ${localStorage.getItem('access_token')}`
+      }
+    });
+    if (authen.data === false) {
+      alert("session หมดอายุ")
+      navigate("/line/login");
+      localStorage.removeItem('access_token')
+      return false;
+    }
+    else{
+      return true;
+    }
+  }
+
+  return { authenticationUser };
+}
+
+export function getImage(url: string): string {
+  const backendUrl = 'http://localhost:4000'; 
+  return `${backendUrl}${url}`;
+}
+

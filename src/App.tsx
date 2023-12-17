@@ -13,6 +13,7 @@ import Profile from "./screen/line/Profile";
 import WoodDetail from "./screen/line/WoodDetail";
 import Notification from "./screen/line/Notification";
 import LoginWeb from "./screen/website/Login";
+import { RequireAuthLine } from "./screen/auth/requireAccessToken";
 
 
 function App() {
@@ -32,11 +33,11 @@ function LineRoutes() {
     <Routes>
       <Route path="login" element={<LoginLine />} />
       <Route path="signup" element={<RegisterLine />} />
-      <Route path="history_classify" element={<HistoryClassify />} />
-      <Route path="classify_detail" element={<ClassidyDetail />} />
-      <Route path="profile" element={<Profile />} />
-      <Route path="wood_detail/:woodId" element={<WoodDetail />} />
-      <Route path="notification" element={<Notification />} />
+      <Route path="history_classify" element={<RequireAuthLine><HistoryClassify /></RequireAuthLine>} />
+      <Route path="classify_detail" element={<RequireAuthLine><ClassidyDetail /></RequireAuthLine>} />
+      <Route path="profile" element={<RequireAuthLine><Profile /></RequireAuthLine>} />
+      <Route path="wood_detail/:woodId" element={<RequireAuthLine><WoodDetail /></RequireAuthLine>} />
+      <Route path="notification" element={<RequireAuthLine><Notification /></RequireAuthLine>} />
     </Routes>
   );
 }

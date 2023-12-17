@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Link, useLocation, Outlet } from 'react-router-dom';
 import LogoWoodify from "../../assets/logo_woodify.svg";
+import { useAuthenticationUserWebsite } from '../../tools/tools';
 import Arrow from "../../assets/setting_arrow.svg"
 
 const HomeIcon = ({ color = "#A1A1A1" }) => {
@@ -58,6 +59,7 @@ const NavigationBar: React.FC = () => {
   const [title, setTitle] = useState('');
   const [submenuFocus, setSubmenuFocus] = useState(false)
   const contentRef = useRef<HTMLUListElement | null>(null);
+  const { authenticationUser } = useAuthenticationUserWebsite();
   const menus = [
     {
       name: "หน้าหลัก",
@@ -95,6 +97,7 @@ const NavigationBar: React.FC = () => {
   const location = useLocation();
 
   useEffect(() => {
+    authenticationUser();
     if (contentRef.current) {
       contentRef.current.style.maxHeight = isOpen
         ? `${contentRef.current.scrollHeight}px`
