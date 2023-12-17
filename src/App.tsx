@@ -13,6 +13,7 @@ import Profile from "./screen/line/Profile";
 import WoodDetail from "./screen/line/WoodDetail";
 import Notification from "./screen/line/Notification";
 import LoginWeb from "./screen/website/Login";
+import UserProfile from "./screen/website/UserProfile"
 
 
 function App() {
@@ -50,6 +51,7 @@ function AdminRoutes() {
         <Route path="information_wood" element={<InformationWood />} />
         <Route path="manual" element={<Manual />} />
         <Route path="classify_wood" element={<ClassifyWood />} />
+        <Route path="user_profile" element={<UserProfile/>}></Route>
       </Route>
       <Route path="login" element={<LoginWeb />} />
     </Routes>
