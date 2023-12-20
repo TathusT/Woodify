@@ -96,3 +96,9 @@
   background-color: hsl(250 15% 27%);
   border-radius: 10px;
 }
+.antd-charts-pie{
+  min-height: 300px
+}
+.g2-html-annotation{
+  overflow: visible !important;
+}

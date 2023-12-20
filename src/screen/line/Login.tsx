@@ -8,11 +8,16 @@ import { Link } from "react-router-dom";
 import liff from "@line/liff";
 import axios from "axios";
 import path from '../../../path.tsx'
+import { useNavigate } from "react-router-dom";
+import { useGoogleLogin } from "@react-oauth/google";
+import { getOAuthInstance } from "../auth/GoogleAuth.ts";
+
+
 
 const LoginLine: React.FC = () => {
   const [username, setUsername] = useState<string>('')
   const [password, setPassword] = useState<string>('')
-
+  const navigate = useNavigate();
   useEffect(() => {
     liff.init({
       liffId: '2001173297-AoDv0582'
@@ -24,7 +29,103 @@ const LoginLine: React.FC = () => {
       .catch(err => {
         console.error("Error initializing LIFF:", err);
       });
-  })
+  }, [])
+
+  const loginGoogle = useGoogleLogin({
+    onSuccess: (tokenResponse) => {
+      console.log(tokenResponse);
+      getOAuthInstance().get('/oauth2/v1/userinfo', {
+        params: {
+          access_token: tokenResponse.access_token
+        }
+      }).then((res) => {
+        localStorage.setItem("google_data", JSON.stringify(res.data))
+        liff.login();
+      })
+    },
+  });
+
+  async function signIn() {
+    await axios.post(`${path}/line/login`, {
+      username: username,
+      password: password
+    }).then((res) => {
+      if (res.data.status == 0) {
+        alert("ไม่พบผู้ใช้งาน โปรดตรวจสอบชื่อผู้ใช้และรหัสผ่าน")
+      }
+      else if (res.data.status == 1) {
+        localStorage.setItem('access_token', res.data.access_token)
+        liff.closeWindow();
+      }
+    }).catch(() => {
+
+    })
+  }
+
+  async function loginLiff() {
+    try {
+      liff.login();
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  function getProfileAndChangeRichmenu() {
+    const data = localStorage.getItem('data')
+    const google_data = localStorage.getItem('google_data')
+    if (data == undefined && google_data == undefined) {
+      liff.getProfile()
+        .then(profile => {
+          axios.post(`${path}/liff/login`, {
+            lineProfile: profile
+          }).then((res) => {
+            localStorage.clear();
+            localStorage.setItem('access_token', res.data.line_access_token)
+            liff.closeWindow();
+          }).catch(() => {
+          })
+        })
+        .catch(err => {
+          console.error('Error getting profile:', err);
+        });
+    }
+    else if (google_data != undefined && data == undefined) {
+      liff.getProfile()
+        .then(profile => {
+          axios.post(`${path}/line/google_login`, {
+            lineProfile: profile,
+            googleData: localStorage.getItem('google_data')
+          }, {
+            headers: { "Access-Control-Allow-Origin": "*" }
+          }).then((res) => {
+            localStorage.clear();
+            localStorage.setItem('access_token', res.data.line_access_token)
+            liff.closeWindow();
+          }).catch(() => {
+          })
+        })
+        .catch(err => {
+          console.error('Error getting profile:', err);
+        });
+    }
+    else {
+      liff.getProfile()
+        .then(profile => {
+          axios.post(`${path}/line/register`, {
+            lineProfile: profile,
+            data: localStorage.getItem('data')
+          }, {
+            headers: { "Access-Control-Allow-Origin": "*" }
+          }).then((res) => {
+            localStorage.clear();
+          }).catch(() => {
+          })
+        })
+        .catch(err => {
+          console.error('Error getting profile:', err);
+        });
+    }
+  }
+
   return (
     <div className="Kanit bg-[#CEDEBD] min-h-screen flex flex-col">
       <div className="flex justify-center py-8">
@@ -36,6 +137,10 @@ const LoginLine: React.FC = () => {
           <div>
             <p className="text-[#5C5C5C] text-xl">ชื่อผู้ใช้</p>
             <input
+              defaultValue={username}
+              onChange={(text) => {
+                setUsername(text.target.value)
+              }}
               className="shadow appearance-none border rounded-xl w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
               id="line_username"
               type="text"
@@ -44,6 +149,10 @@ const LoginLine: React.FC = () => {
           <div>
             <p className="text-[#5C5C5C] text-xl">รหัสผ่าน</p>
             <input
+              defaultValue={password}
+              onChange={(text) => {
+                setPassword(text.target.value)
+              }}
               className="shadow appearance-none border rounded-xl w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
               id="line_password"
               type="password"
@@ -71,7 +180,7 @@ const LoginLine: React.FC = () => {
             <img className="w-7" src={LogoLine} alt="" />
             <p className="text-white text-lg">เข้าสู่ระบบผ่าน Line</p>
           </div>
-          <div className="border border-[#61876E] rounded-xl py-2 px-3 flex justify-center space-x-4">
+          <div onClick={() => loginGoogle()} className="border border-[#61876E] rounded-xl py-2 px-3 flex justify-center space-x-4">
             <img className="w-7" src={LogoGoogle} alt="" />
             <p className="text-[#5C5C5C] text-center text-lg">
               เข้าสู่ระบบผ่าน Google
@@ -84,37 +193,7 @@ const LoginLine: React.FC = () => {
       </div>
     </div>
   );
-
-  function signIn() {
-    users.forEach(user => {
-      if (user.username == username && user.password == password) {
-
-      }
-    });
-  }
-
-  async function loginLiff() {
-    try {
-      liff.login();
-    } catch (error) {
-      console.log(error);
-    }
-  }
-  function getProfileAndChangeRichmenu() {
-    liff.getProfile()
-      .then(profile => {
-        axios.post(`${path}/login`, {
-          lineProfile: profile
-        }).then((res) => {
-          console.log(res.data);
-          liff.closeWindow();
-        }).catch(() => {
-        })
-      })
-      .catch(err => {
-        console.error('Error getting profile:', err);
-      });
-  }
 };
+
 export default LoginLine;
 

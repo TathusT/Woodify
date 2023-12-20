@@ -301,10 +301,11 @@ const UserProfile: React.FC = () => {
         const config = {
             legend:false,
           appendPadding: 10,
+          height: widthBox-30,
           data,
           angleField: 'value',
           colorField: 'typeStatus',
-          radius: 0.6,
+          radius: 0.65,
           color: (d) => {
             const colorMapping = {
                 ผ่าน: "#3C6255",
@@ -313,7 +314,7 @@ const UserProfile: React.FC = () => {
             };
             return colorMapping[d.typeStatus] || "#000000";
         },
-          innerRadius: 0.7,
+          innerRadius: 0.8,
           meta: {
             value: {
               formatter: (v) => v,
@@ -339,6 +340,10 @@ const UserProfile: React.FC = () => {
                   fontSize: 28,
                 });
               },
+              style: {
+                fontSize: 20,
+                textAlign: "center",
+            },
             },
             statistic: {
                 title: false,
@@ -436,13 +441,13 @@ const UserProfile: React.FC = () => {
         <div id="count" ref={divRef} className="bg-white box-shadow rounded-[10px] col-span-4 px-6 pt-5 relative" style={{height: widthBox}}>
             <p className="font-semibold text-xl absolute">การตรวจสอบในวันนี้</p>
             <div className='w-full h-full flex justify-center items-center'>
-                <p className='text-3xl font-bold'>20 การตรวจ</p>
+                <p className='text-4xl font-bold'>20 การตรวจ</p>
             </div>
         </div>
         <div className="bg-white box-shadow rounded-[10px] col-span-4 px-6 pt-5 relative" style={{height: widthBox}}>
             <p className="font-semibold text-xl absolute">บันทึกใหม่ที่รอการตรวจสอบ</p>
             <div className='w-full h-full flex justify-center items-center'>
-                <p className='text-3xl font-bold'>20 บันทึก</p>
+                <p className='text-4xl font-bold'>20 บันทึก</p>
             </div>
         </div>
         <div className="bg-white box-shadow rounded-[10px] col-span-8 px-6 pt-5 relative">
