@@ -13,6 +13,7 @@ import Profile from "./screen/line/Profile";
 import WoodDetail from "./screen/line/WoodDetail";
 import Notification from "./screen/line/Notification";
 import LoginWeb from "./screen/website/Login";
+import ManageManual from "./screen/website/ManageManual";
 import { RequireAuthLine } from "./screen/auth/requireAccessToken";
 
 
@@ -51,6 +52,7 @@ function AdminRoutes() {
         <Route path="information_wood" element={<InformationWood />} />
         <Route path="manual" element={<Manual />} />
         <Route path="classify_wood" element={<ClassifyWood />} />
+        <Route path="manage_manual" element={<ManageManual />} />
       </Route>
       <Route path="login" element={<LoginWeb />} />
     </Routes>

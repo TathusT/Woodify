@@ -61,3 +61,6 @@
 .ant-select-selection-item{
   font-weight: 600 !important;
 }
+.react-quill {
+  padding-bottom: 0 !important
+}

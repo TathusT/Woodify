@@ -3,6 +3,9 @@ import { DatePicker, Select, Space } from 'antd';
 import LineDate from '../../assets/line.svg'
 import { Line, Column } from "@ant-design/plots";
 
+const LineChart : any = Line
+const ColumnChart : any = Column
+
 const RenderLine = () => {
   const data = [
     {
@@ -362,7 +365,7 @@ const RenderLine = () => {
   };
   return (
     <div>
-      <Line {...config} />
+      <LineChart {...config} />
     </div>
   );
 }
@@ -474,7 +477,7 @@ const RenderColumn = () => {
 
   return (
     <div>
-      <Column {...config} />
+      <ColumnChart {...config} />
     </div>
   );
 }
