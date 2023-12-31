@@ -8,7 +8,7 @@ import Manual from "./screen/website/Manual";
 import ClassifyWood from "./screen/website/ClassifyWood";
 import Account from "./screen/website/Account";
 import HistoryClassify from "./screen/line/HistoryClassify";
-import ClassidyDetail from "./screen/line/ClassifyDetail";
+import ClassifyDetail from "./screen/line/ClassifyDetail";
 import Profile from "./screen/line/Profile";
 import WoodDetail from "./screen/line/WoodDetail";
 import Notification from "./screen/line/Notification";
@@ -16,6 +16,8 @@ import LoginWeb from "./screen/website/Login";
 import UserProfile from "./screen/website/UserProfile"
 import ManageManual from "./screen/website/ManageManual";
 import { RequireAuthLine } from "./screen/auth/requireAccessToken";
+import ManualLine from "./screen/line/Manual";
+import ClassifyWoodDetail from "./screen/website/ClassifyWoodDetail";
 
 
 function App() {
@@ -36,10 +38,11 @@ function LineRoutes() {
       <Route path="login" element={<LoginLine />} />
       <Route path="signup" element={<RegisterLine />} />
       <Route path="history_classify" element={<RequireAuthLine><HistoryClassify /></RequireAuthLine>} />
-      <Route path="classify_detail" element={<RequireAuthLine><ClassidyDetail /></RequireAuthLine>} />
+      <Route path="classify_detail" element={<RequireAuthLine><ClassifyDetail /></RequireAuthLine>} />
       <Route path="profile" element={<RequireAuthLine><Profile /></RequireAuthLine>} />
       <Route path="wood_detail/:woodId" element={<RequireAuthLine><WoodDetail /></RequireAuthLine>} />
       <Route path="notification" element={<RequireAuthLine><Notification /></RequireAuthLine>} />
+      <Route path="manual/:id" element={<RequireAuthLine><ManualLine /></RequireAuthLine>} />
     </Routes>
   );
 }
@@ -54,7 +57,9 @@ function AdminRoutes() {
         <Route path="manual" element={<Manual />} />
         <Route path="classify_wood" element={<ClassifyWood />} />
         <Route path="user_profile" element={<UserProfile/>}></Route>
+        <Route path="classify_wood_detail" element={<ClassifyWoodDetail/>}></Route>
         <Route path="manage_manual" element={<ManageManual />} />
+        <Route path="manage_manual/:id" element={<ManageManual />} />
       </Route>
       <Route path="login" element={<LoginWeb />} />
     </Routes>
