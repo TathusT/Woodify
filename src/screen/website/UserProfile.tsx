@@ -6,13 +6,17 @@ import selectIcon from "../../assets/select-icon.svg"
 import search from "../../assets/search.svg";
 import clockIcon from "../../assets/last-status-icon.svg"
 import doorIcon from "../../assets/Logout-icon.svg"
-import { Select, Input, Dropdown, MenuProps, Modal } from "antd";
+import { Select, Input, DatePicker } from "antd";
+import type { DatePickerProps } from 'antd';
 
 const UserProfile: React.FC = () => {
     const [widthBox, setWidthBox] = useState(0)
     const divRef = useRef<HTMLDivElement>(null);
     const handleChange = (value: string) => {
       console.log(`selected ${value}`);
+    };
+    const onChange: DatePickerProps['onChange'] = (date, dateString) => {
+      console.log(date, dateString);
     };
     useEffect(() => {
         const handleResize = () => {
@@ -485,17 +489,19 @@ const UserProfile: React.FC = () => {
             ]}
           />
           <Select
-            defaultValue="ได้รับการรับรอง"
+            defaultValue="การตรวจทั้งหมด"
             suffixIcon={<img src={sortIcon}></img>}
             className="h-full"
             style={{ width: 130 }}
             onChange={handleChange}
             options={[
-              { value: "ถูกบล็อก", label: "ถูกบล็อก" },
-              { value: "ไม่ได้ใช้งาน", label: "ไม่ได้ใช้งาน" },
-              { value: "ได้รับหารรับ", label: "ได้รับหารรับ" },
+              { value: "ผ่านการรับรอง", label: "ผ่านการรับรอง" },
+              { value: "ไม่ผ่านการรับรอง", label: "ไม่ผ่านการรับรอง" },
+              { value: "การตรวจทั้งหมด", label: "การตรวจทั้งหมด" },
             ]}
           />
+          <DatePicker suffixIcon={<img src={selectIcon}></img>} onChange={onChange} />
+          <DatePicker suffixIcon={<img src={selectIcon}></img>} onChange={onChange} />
           <Select
             defaultValue="ไม้ทั้งหมด"
             suffixIcon={<img src={selectIcon}></img>}
@@ -538,8 +544,8 @@ const UserProfile: React.FC = () => {
         </thead>
         <tbody>
           <tr className="bg-white shadow-[0px_0px_4px_0px_rgba(0,0,0,0.25)] rounded-[10px] font-semibold">
-            <td className="rounded-l-[10px] text-center pl-4">31545</td>
-            <td className="py-1 flex justify-center items-center">
+            <td className="rounded-l-[10px] text-center">31545</td>
+            <td className="py-3 flex justify-center items-center">
               <div className="w-14 h-14 bg-gray-300"></div>
             </td>
             <td className="py-5 text-center">ไม้ประดู่</td>
