@@ -6,6 +6,8 @@ import selectIcon from "../../assets/select-icon.svg"
 import search from "../../assets/search.svg";
 import clockIcon from "../../assets/last-status-icon.svg"
 import doorIcon from "../../assets/Logout-icon.svg"
+import calendarIcon from "../../assets/calendar-icon.svg"
+import arrowRightIcon from "../../assets/arrow-right.svg"
 import { Select, Input, DatePicker } from "antd";
 import type { DatePickerProps } from 'antd';
 
@@ -327,7 +329,7 @@ const UserProfile: React.FC = () => {
             };
             return colorMapping[d.typeStatus] || "#000000";
         },
-          innerRadius: 0.8,
+          innerRadius: 0.75,
           meta: {
             value: {
               formatter: (v) => v,
@@ -500,8 +502,15 @@ const UserProfile: React.FC = () => {
               { value: "การตรวจทั้งหมด", label: "การตรวจทั้งหมด" },
             ]}
           />
-          <DatePicker suffixIcon={<img src={selectIcon}></img>} onChange={onChange} />
-          <DatePicker suffixIcon={<img src={selectIcon}></img>} onChange={onChange} />
+          <div className='relative flex items-center'>
+            <img className='absolute z-50 left-2' src={calendarIcon}></img>
+            <DatePicker style={{ width: 150 }} suffixIcon={<img src={selectIcon}></img>} onChange={onChange} />
+          </div>
+          <img src={arrowRightIcon}></img>
+          <div className='relative flex items-center'>
+            <img className='absolute z-50 left-2' src={calendarIcon}></img>
+            <DatePicker style={{ width: 150 }} suffixIcon={<img src={selectIcon}></img>} onChange={onChange} />
+          </div>
           <Select
             defaultValue="ไม้ทั้งหมด"
             suffixIcon={<img src={selectIcon}></img>}
@@ -530,7 +539,7 @@ const UserProfile: React.FC = () => {
           </div>
         </div>
       </div>
-      <table className="table-auto w-full mt-8">
+      <table className="table-auto w-full mt-8 border-spacing-y-4 border-separate">
         <thead>
           <tr className="w-full font-bold">
             <th className="pb-5">ลำดับ</th>
@@ -563,8 +572,25 @@ const UserProfile: React.FC = () => {
               <img src={doorIcon} alt="" />
             </td>
           </tr>
-          <tr>
-            <td className="py-2"></td>
+          <tr className="bg-white shadow-[0px_0px_4px_0px_rgba(0,0,0,0.25)] rounded-[10px] font-semibold">
+            <td className="rounded-l-[10px] text-center">31545</td>
+            <td className="py-3 flex justify-center items-center">
+              <div className="w-14 h-14 bg-gray-300"></div>
+            </td>
+            <td className="py-5 text-center">ไม้ประดู่</td>
+            <td className="py-5 text-center">98.8%</td>
+            <td className="py-5 text-[#3C6255]">
+              <div className="flex justify-center items-center">
+                <img className="mr-3" src={clockIcon} alt="" />
+                <p>
+                ผ่าน
+                </p>
+              </div>
+            </td>
+            <td className="py-5 text-center">4/9/2566 12:08 น.</td>
+            <td className="py-5 rounded-r-[10px]">
+              <img src={doorIcon} alt="" />
+            </td>
           </tr>
         </tbody>
       </table>

@@ -3,6 +3,7 @@ import { Link, useLocation, Outlet } from 'react-router-dom';
 import LogoWoodify from "../../assets/logo_woodify.svg";
 import { useAuthenticationUserWebsite } from '../../tools/tools';
 import Arrow from "../../assets/setting_arrow.svg"
+import doorIcon from "../../assets/Logout-icon.svg"
 
 const HomeIcon = ({ color = "#A1A1A1" }) => {
   return (
@@ -129,62 +130,81 @@ const NavigationBar: React.FC = () => {
 
   return (
     <div className="flex Kanit h-screen">
-      <nav className='w-96 h-screen pt-4 border-r-2'>
-        <div className='flex justify-center pb-6'>
-          <img className='max-w-[84px]' src={LogoWoodify} alt="" />
-        </div>
-        <ul className='text-[#A1A1A1]'>
-          {
-            menus.map(menu => {
-              const active = menu.name == title;
-              const IconFucntion = menu.icon;
-              if (menu.submenu == undefined) {
-                return (
-                  <div key={menu.name} className='flex relative'>
-                    {active && <div className='bg-[#61876E] w-1.5 h-full rounded-full absolute top-0 left-0 z-50'></div>}
-                    <li className={`py-4 pl-7 ${active ? 'bg-gradient-to-r from-[#F1EFEF]' : ''} w-full`}>
-                      <Link to={menu.path} className={`flex items-center gap-5 ${active ? 'text-[#3C6255]' : ''}`}>
-                        <IconFucntion color={`${active ? '#3C6255' : '#A1A1A1'}`} />
-                        <p className='text-lg'>
-                          {menu.name}
-                        </p>
-                      </Link>
-                    </li>
-                  </div>
-                )
-              }
-              else {
-                return (
-                  <li key={menu.name}>
-                    <div className='flex relative'>
-                      {submenuFocus && <div className='bg-[#61876E] w-1.5 h-full rounded-full absolute top-0 left-0 z-50'></div>}
-                      <button onClick={() => setIsOpen(!isOpen)} className={`flex items-center gap-5 w-full relative pl-7 py-4 ${submenuFocus ? 'bg-gradient-to-r from-[#F1EFEF]' : ''}`}>
-                        <IconFucntion color={`${submenuFocus ? '#3C6255' : '#A1A1A1'}`} />
-                        <p className='text-lg'>
-                          {menu.name}
-                        </p>
-                        <img className={`absolute right-6 duration-500 ${isOpen ? 'rotate-90' : ''}`} src={Arrow} alt="" />
-                      </button>
+      <nav className='w-96 h-screen pt-4 border-r-2 flex flex-col justify-between'>
+        <div>
+          <div className='flex justify-center pb-6'>
+            <img className='max-w-[84px]' src={LogoWoodify} alt="" />
+          </div>
+          <ul className='text-[#A1A1A1]'>
+            {
+              menus.map(menu => {
+                const active = menu.name == title;
+                const IconFucntion = menu.icon;
+                if (menu.submenu == undefined) {
+                  return (
+                    <div key={menu.name} className='flex relative'>
+                      {active && <div className='bg-[#61876E] w-1.5 h-full rounded-full absolute top-0 left-0 z-50'></div>}
+                      <li className={`py-4 pl-7 ${active ? 'bg-gradient-to-r from-[#F1EFEF]' : ''} w-full`}>
+                        <Link to={menu.path} className={`flex items-center gap-5 ${active ? 'text-[#3C6255]' : ''}`}>
+                          <IconFucntion color={`${active ? '#3C6255' : '#A1A1A1'}`} />
+                          <p className='text-lg'>
+                            {menu.name}
+                          </p>
+                        </Link>
+                      </li>
                     </div>
-                    <ul
-                      ref={contentRef}
-                      className="transition-max-height duration-500 overflow-hidden"
-                      style={{ maxHeight: 0 }}
-                    >
-                      {menu.submenu.map(submenu => {
-                        const submenuActive = submenu.name == title;
-                        const SubmenuIconFunction = submenu.icon;
-                        return (
-                          <li key={submenu.name} className='py-4 pl-9 text-lg'><Link to={submenu.path} className={`flex items-center gap-7 ${submenuActive ? 'text-[#3C6255]' : ''}`}><SubmenuIconFunction color={`${submenuActive ? '#3C6255' : '#D9D9D9'}`} /> {submenu.name}</Link></li>
-                        )
-                      })}
-                    </ul>
-                  </li>
-                )
-              }
-            })
-          }
-        </ul>
+                  )
+                }
+                else {
+                  return (
+                    <li key={menu.name}>
+                      <div className='flex relative'>
+                        {submenuFocus && <div className='bg-[#61876E] w-1.5 h-full rounded-full absolute top-0 left-0 z-50'></div>}
+                        <button onClick={() => setIsOpen(!isOpen)} className={`flex items-center gap-5 w-full relative pl-7 py-4 ${submenuFocus ? 'bg-gradient-to-r from-[#F1EFEF]' : ''}`}>
+                          <IconFucntion color={`${submenuFocus ? '#3C6255' : '#A1A1A1'}`} />
+                          <p className='text-lg'>
+                            {menu.name}
+                          </p>
+                          <img className={`absolute right-6 duration-500 ${isOpen ? 'rotate-90' : ''}`} src={Arrow} alt="" />
+                        </button>
+                      </div>
+                      <ul
+                        ref={contentRef}
+                        className="transition-max-height duration-500 overflow-hidden"
+                        style={{ maxHeight: 0 }}
+                      >
+                        {menu.submenu.map(submenu => {
+                          const submenuActive = submenu.name == title;
+                          const SubmenuIconFunction = submenu.icon;
+                          return (
+                            <li key={submenu.name} className='py-4 pl-9 text-lg'><Link to={submenu.path} className={`flex items-center gap-7 ${submenuActive ? 'text-[#3C6255]' : ''}`}><SubmenuIconFunction color={`${submenuActive ? '#3C6255' : '#D9D9D9'}`} /> {submenu.name}</Link></li>
+                          )
+                        })}
+                      </ul>
+                    </li>
+                  )
+                }
+              })
+            }
+          </ul>
+        </div>
+        <div className="border py-9 shadow-[0px_-1px_4px_0px_rgba(0,0,0,0.25)]">
+          <div className="flex items-center mb-6 pl-7 ">
+            <div className="w-50">
+              <div className="w-20 h-20 rounded-full bg-[#D9D9D9]"></div>
+            </div>
+            <div className="py-2 pl-7">
+                <p className="pb-2 font-semibold text-xl">ภูฟ้า รุจิภาสวัฒน์</p>
+                <p className="text-lg font-semibold text-[#3C6255]">admin</p>
+            </div>
+          </div>
+          <div className="flex justify-center items-center">
+              <div className="flex justify-center items-center">
+                <img className='h-8' src={doorIcon} alt="" />
+                <p className="pl-2 font-semibold text-xl">ออกจากระบบ</p>
+              </div>
+          </div>
+        </div>
       </nav>
       <div className='px-7 w-full bg-[#F5F6FA] overflow-y-auto'>
         <div id="content">

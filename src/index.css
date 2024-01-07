@@ -45,6 +45,8 @@
   font-family: 'Kanit', sans-serif !important;
   background-color: white !important;
   height: 100%;
+  padding-left: 2.2rem !important;
+  padding-right: 0.2rem !important;
 }
 .ant-input{
   font-family: 'Kanit', sans-serif !important;
@@ -67,6 +69,7 @@
 
 .ant-select-selection-item{
   font-weight: 600 !important;
+  font-size: 18px;
 }
 .grid-cols-15{
   grid-template-columns: repeat(17, minmax(0, 1fr));

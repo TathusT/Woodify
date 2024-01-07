@@ -121,7 +121,7 @@ const Account: React.FC = () => {
           </div>
         </div>
       </div>
-      <table className="table-auto w-full mt-8">
+      <table className="table-auto w-full mt-8 border-spacing-y-4 border-separate">
         <thead>
           <tr className="w-full font-bold">
             <th className="pb-5 w-6"></th>
