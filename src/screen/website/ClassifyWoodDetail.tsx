@@ -117,9 +117,9 @@ const ClassifyWoodDetail: React.FC = () => {
                 </div>
             </div>
             <p  className="text-xl text-[#5C5C5C] font-semibold mt-4">บันทึกของการตรวจสอบ</p>
-            <div className='w-full border border-1 border-[#61876E] rounded-[10px] h-[600px] bg-white mt-3'>
+            <div className='w-full border border-1 border-[#61876E] rounded-[10px] h-[500px] bg-white mt-3'>
             </div>
-            <div className='flex mt-4 space-x-4'>
+            <div className='flex mt-4 space-x-4 mb-6'>
                 <input className='p-3 border border-1 border-[#61876E] rounded-[10px] w-full' type="text" />
                 <div className='bg-[#61876E] flex justify-center items-center py-2 px-6 rounded-[10px]'>
                     <p className='text-lg font-semibold text-white'>โพสต์</p>

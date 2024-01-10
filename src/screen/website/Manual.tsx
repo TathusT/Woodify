@@ -61,7 +61,7 @@ const Manual: React.FC = () => {
           <div className="h-full">
             <Input className="h-full w-[280px] font-semibold" suffix={<img src={search} />} />
           </div>
-          <div onClick={() => clickModal("สร้างบัญชี")} className="bg-[#3C6255] h-full flex justify-center space-x-2 items-center px-3 rounded-[8px] text-white cursor-pointer">
+          <div className="bg-[#3C6255] h-full flex justify-center space-x-2 items-center px-3 rounded-[8px] text-white cursor-pointer">
             <p>เพื่มคู่มือ</p>
             <img src={add} alt="" />
           </div>

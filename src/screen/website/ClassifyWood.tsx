@@ -229,7 +229,7 @@ const ClassifyWood: React.FC = () => {
             defaultValue="10 แถว"
             suffixIcon={<img src={selectIcon}></img>}
             className="h-full"
-            style={{ width: 130 }}
+            style={{ width: 150 }}
             onChange={handleChange}
             options={[
               { value: "10 แถว", label: "10 แถว" },
@@ -241,7 +241,7 @@ const ClassifyWood: React.FC = () => {
             defaultValue="การตรวจทั้งหมด"
             suffixIcon={<img src={sortIcon}></img>}
             className="h-full"
-            style={{ width: 130 }}
+            style={{ width: 170 }}
             onChange={handleChange}
             options={[
               { value: "ผ่านการรับรอง", label: "ผ่านการรับรอง" },
@@ -262,7 +262,7 @@ const ClassifyWood: React.FC = () => {
             defaultValue="ไม้ทั้งหมด"
             suffixIcon={<img src={selectIcon}></img>}
             className="h-full"
-            style={{ width: 130 }}
+            style={{ width: 170 }}
             onChange={handleChange}
             options={[
               { value: "ไม้สัก", label: "ไม้สัก" },
