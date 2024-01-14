@@ -40,7 +40,7 @@ function LineRoutes() {
       <Route path="login" element={<LoginLine />} />
       <Route path="signup" element={<RegisterLine />} />
       <Route path="history_classify" element={<RequireAuthLine><HistoryClassify /></RequireAuthLine>} />
-      <Route path="classify_detail" element={<RequireAuthLine><ClassifyDetail /></RequireAuthLine>} />
+      <Route path="classify_detail/:classifyId" element={<RequireAuthLine><ClassifyDetail /></RequireAuthLine>} />
       <Route path="profile" element={<RequireAuthLine><Profile /></RequireAuthLine>} />
       <Route path="wood_detail/:woodId" element={<RequireAuthLine><WoodDetail /></RequireAuthLine>} />
       <Route path="notification" element={<RequireAuthLine><Notification /></RequireAuthLine>} />
@@ -62,8 +62,8 @@ function AdminRoutes() {
         <Route path="classify_wood_detail" element={<ClassifyWoodDetail/>}></Route>
         <Route path="manage_manual" element={<ManageManual />} />
         <Route path="manage_manual/:id" element={<ManageManual />} />
-        <Route path="information_wood_detail" element={<InformationWoodDetail />} />
         <Route path="manage_information_wood" element={<ManageInformationWood />} />
+        <Route path="information_wood_detail/:w_id" element={<InformationWoodDetail />} />
       </Route>
       <Route path="login" element={<LoginWeb />} />
     </Routes>

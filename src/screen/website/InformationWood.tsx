@@ -17,9 +17,11 @@ const InformationWood: React.FC = () => {
   };
 
   useEffect(() => {
-    console.log(`${path}/wood`);
-    
-    axios.get(`${path}/wood`)
+    axios.get(`${path}/wood`, {
+      headers: {
+        "Authorization": `Bearer ${localStorage.getItem('access_token')}`
+      }
+    })
       .then((res) => {
         setInfoWood(res.data)
         setIsLoading(false)

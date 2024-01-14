@@ -54,7 +54,9 @@ const LoginLine: React.FC = () => {
         alert("ไม่พบผู้ใช้งาน โปรดตรวจสอบชื่อผู้ใช้และรหัสผ่าน")
       }
       else if (res.data.status == 1) {
-        localStorage.setItem('access_token', res.data.access_token)
+        console.log(res.data);
+        
+        localStorage.setItem('access_token', res.data.line_access_token)
         liff.closeWindow();
       }
     }).catch(() => {

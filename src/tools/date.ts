@@ -10,3 +10,5 @@ export const GetToDay = () => {
     "0" + splitDate[0]
   ).slice(-2)}`;
 };
+
+
