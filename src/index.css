@@ -122,3 +122,9 @@
   width: 30px !important;
   height: 30px !important;
 }
+.min-h-60{
+  min-height: 15rem !important;
+}
+.min-w-96{
+  min-width: 24rem !important;
+}
