@@ -38,7 +38,7 @@ function LineRoutes() {
       <Route path="login" element={<LoginLine />} />
       <Route path="signup" element={<RegisterLine />} />
       <Route path="history_classify" element={<RequireAuthLine><HistoryClassify /></RequireAuthLine>} />
-      <Route path="classify_detail" element={<RequireAuthLine><ClassifyDetail /></RequireAuthLine>} />
+      <Route path="classify_detail/:classifyId" element={<RequireAuthLine><ClassifyDetail /></RequireAuthLine>} />
       <Route path="profile" element={<RequireAuthLine><Profile /></RequireAuthLine>} />
       <Route path="wood_detail/:woodId" element={<RequireAuthLine><WoodDetail /></RequireAuthLine>} />
       <Route path="notification" element={<RequireAuthLine><Notification /></RequireAuthLine>} />
