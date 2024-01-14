@@ -1,10 +1,25 @@
 import React, { useRef, useEffect, useState } from 'react';
 import arrowIcon from "../../assets/arrow-left-icon.svg"
 import { Pie, measureTextWidth } from '@ant-design/plots';
+import sortIcon from "../../assets/sort-icon.svg"
+import selectIcon from "../../assets/select-icon.svg"
+import search from "../../assets/search.svg";
+import clockIcon from "../../assets/last-status-icon.svg"
+import doorIcon from "../../assets/Logout-icon.svg"
+import calendarIcon from "../../assets/calendar-icon.svg"
+import arrowRightIcon from "../../assets/arrow-right.svg"
+import { Select, Input, DatePicker } from "antd";
+import type { DatePickerProps } from 'antd';
 
 const UserProfile: React.FC = () => {
     const [widthBox, setWidthBox] = useState(0)
     const divRef = useRef<HTMLDivElement>(null);
+    const handleChange = (value: string) => {
+      console.log(`selected ${value}`);
+    };
+    const onChange: DatePickerProps['onChange'] = (date, dateString) => {
+      console.log(date, dateString);
+    };
     useEffect(() => {
         const handleResize = () => {
         if (divRef.current) {
@@ -32,32 +47,32 @@ const UserProfile: React.FC = () => {
         {
             typeWood: "ไม้สัก",
             value: 8300,
-            color: '#D32F2F'
+            color: '#F7E987'
         },
         {
             typeWood: "ไม้ยาง",
             value: 7000,
-            color: '#7B1FA2'
+            color: '#5B9A8B'
         },
         {
             typeWood: "ไม้ประดู่",
             value: 2000,
-            color: '#1976D2'
+            color: '#445069'
         },
         {
             typeWood: "ไม้ชิงชัน",
             value: 12000,
-            color: '#388E3C'
+            color: '#7B61FF'
         },
         {
             typeWood: "ไม้เก็ดแดง",
             value: 9465,
-            color: '#FBC02D'
+            color: '#DF8633'
         },
         {
             typeWood: "ไม้อีเม่ง",
             value: 3452,
-            color: '#8D6E63'
+            color: '#0B56F1'
         },
         {
             typeWood: "ไม้กระพี้",
@@ -114,32 +129,32 @@ const UserProfile: React.FC = () => {
             {
                 typeWood: "ไม้สัก",
                 value: 8300,
-                color: '#D32F2F'
+                color: '#F7E987'
             },
             {
                 typeWood: "ไม้ยาง",
                 value: 7000,
-                color: '#7B1FA2'
+                color: '#5B9A8B'
             },
             {
                 typeWood: "ไม้ประดู่",
                 value: 2000,
-                color: '#1976D2'
+                color: '#445069'
             },
             {
                 typeWood: "ไม้ชิงชัน",
                 value: 12000,
-                color: '#388E3C'
+                color: '#7B61FF'
             },
             {
                 typeWood: "ไม้เก็ดแดง",
                 value: 9465,
-                color: '#FBC02D'
+                color: '#DF8633'
             },
             {
                 typeWood: "ไม้อีเม่ง",
                 value: 3452,
-                color: '#8D6E63'
+                color: '#0B56F1'
             },
             {
                 typeWood: "ไม้กระพี้",
@@ -186,12 +201,12 @@ const UserProfile: React.FC = () => {
           radius: 0.7,
           color: (d) => {
             const colorMapping = {
-                ไม้สัก: "#D32F2F",
-                ไม้ยาง: "#7B1FA2",
-                ไม้ประดู่: "#1976D2",
-                ไม้ชิงชัน: "#388E3C",
-                ไม้เก็ดแดง: "#FBC02D",
-                ไม้อีเม่ง: "#8D6E63",
+                ไม้สัก: "#F7E987",
+                ไม้ยาง: "#5B9A8B",
+                ไม้ประดู่: "#445069",
+                ไม้ชิงชัน: "#7B61FF",
+                ไม้เก็ดแดง: "#DF8633",
+                ไม้อีเม่ง: "#0B56F1",
                 ไม้กระพี้: "#7E57C2",
                 ไม้แดงจีน: "#26A69A",
                 ไม้เก็ดเขาควาย: "#FF7043",
@@ -314,7 +329,7 @@ const UserProfile: React.FC = () => {
             };
             return colorMapping[d.typeStatus] || "#000000";
         },
-          innerRadius: 0.8,
+          innerRadius: 0.75,
           meta: {
             value: {
               formatter: (v) => v,
@@ -460,6 +475,125 @@ const UserProfile: React.FC = () => {
             </div>
         </div>
       </div>
+      <div className="flex mt-3 justify-end">
+        <div className="flex items-center space-x-3">
+          <p className="font-semibold">แสดง</p>
+          <Select
+            defaultValue="10 แถว"
+            suffixIcon={<img src={selectIcon}></img>}
+            className="h-full"
+            style={{ width: 130 }}
+            onChange={handleChange}
+            options={[
+              { value: "10 แถว", label: "10 แถว" },
+              { value: "20 แถว", label: "20 แถว" },
+              { value: "30 แถว", label: "30 แถว" },
+            ]}
+          />
+          <Select
+            defaultValue="การตรวจทั้งหมด"
+            suffixIcon={<img src={sortIcon}></img>}
+            className="h-full"
+            style={{ width: 130 }}
+            onChange={handleChange}
+            options={[
+              { value: "ผ่านการรับรอง", label: "ผ่านการรับรอง" },
+              { value: "ไม่ผ่านการรับรอง", label: "ไม่ผ่านการรับรอง" },
+              { value: "การตรวจทั้งหมด", label: "การตรวจทั้งหมด" },
+            ]}
+          />
+          <div className='relative flex items-center'>
+            <img className='absolute z-50 left-2' src={calendarIcon}></img>
+            <DatePicker style={{ width: 150 }} suffixIcon={<img src={selectIcon}></img>} onChange={onChange} />
+          </div>
+          <img src={arrowRightIcon}></img>
+          <div className='relative flex items-center'>
+            <img className='absolute z-50 left-2' src={calendarIcon}></img>
+            <DatePicker style={{ width: 150 }} suffixIcon={<img src={selectIcon}></img>} onChange={onChange} />
+          </div>
+          <Select
+            defaultValue="ไม้ทั้งหมด"
+            suffixIcon={<img src={selectIcon}></img>}
+            className="h-full"
+            style={{ width: 130 }}
+            onChange={handleChange}
+            options={[
+              { value: "ไม้สัก", label: "ไม้สัก" },
+              { value: "ไม้ยาง", label: "ไม้ยาง" },
+              { value: "ไม้ประดู่", label: "ไม้ประดู่" },
+              { value: "ไม้ชิงชัน", label: "ไม้ชิงชัน" },
+              { value: "ไม้เก็ดแดง", label: "ไม้เก็ดแดง" },
+              { value: "ไม้อีเม่ง", label: "ไม้อีเม่ง" },
+              { value: "ไม้กระพี้", label: "ไม้กระพี้" },
+              { value: "ไม้จีนแดง", label: "ไม้จีนแดง" },
+              { value: "ไม้เก็ดเขาควาย", label: "ไม้เก็ดเขาควาย" },
+              { value: "ไม้อีเฒ่า", label: "ไม้อีเฒ่า" },
+              { value: "ไม้เก็ดดำ", label: "ไม้เก็ดดำ" },
+              { value: "ไม้หมากพลูตั๊กแตน", label: "ไม้หมากพลูตั๊กแตน" },
+              { value: "ไม้พะยูง", label: "ไม้พะยูง" },
+              { value: "ไม้ทั้งหมด", label: "ไม้ทั้งหมด" },
+            ]}
+          />
+          <div className="h-full">
+            <Input className="h-full w-[280px] font-semibold" suffix={<img src={search} />} />
+          </div>
+        </div>
+      </div>
+      <table className="table-auto w-full mt-8 border-spacing-y-4 border-separate">
+        <thead>
+          <tr className="w-full font-bold">
+            <th className="pb-5">ลำดับ</th>
+            <th className="pb-5">รูปที่ตรวจ</th>
+            <th className="pb-5">ผลการตรวจที่ได้</th>
+            <th className="pb-5">ความคล้ายคลึง</th>
+            <th className="pb-5">การรับรอง</th>
+            <th className="pb-5">วัน-เวลาที่ตรวจ</th>
+            <th className="pb-5 w-16"></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr className="bg-white shadow-[0px_0px_4px_0px_rgba(0,0,0,0.25)] rounded-[10px] font-semibold">
+            <td className="rounded-l-[10px] text-center">31545</td>
+            <td className="py-3 flex justify-center items-center">
+              <div className="w-14 h-14 bg-gray-300"></div>
+            </td>
+            <td className="py-5 text-center">ไม้ประดู่</td>
+            <td className="py-5 text-center">98.8%</td>
+            <td className="py-5 text-[#3C6255]">
+              <div className="flex justify-center items-center">
+                <img className="mr-3" src={clockIcon} alt="" />
+                <p>
+                ผ่าน
+                </p>
+              </div>
+            </td>
+            <td className="py-5 text-center">4/9/2566 12:08 น.</td>
+            <td className="py-5 rounded-r-[10px]">
+              <img src={doorIcon} alt="" />
+            </td>
+          </tr>
+          <tr className="bg-white shadow-[0px_0px_4px_0px_rgba(0,0,0,0.25)] rounded-[10px] font-semibold">
+            <td className="rounded-l-[10px] text-center">31545</td>
+            <td className="py-3 flex justify-center items-center">
+              <div className="w-14 h-14 bg-gray-300"></div>
+            </td>
+            <td className="py-5 text-center">ไม้ประดู่</td>
+            <td className="py-5 text-center">98.8%</td>
+            <td className="py-5 text-[#3C6255]">
+              <div className="flex justify-center items-center">
+                <img className="mr-3" src={clockIcon} alt="" />
+                <p>
+                ผ่าน
+                </p>
+              </div>
+            </td>
+            <td className="py-5 text-center">4/9/2566 12:08 น.</td>
+            <td className="py-5 rounded-r-[10px]">
+              <img src={doorIcon} alt="" />
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   );
 };
