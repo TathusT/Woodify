@@ -65,6 +65,7 @@ export function getImage(url: string): string {
   return `${backendUrl}${url}`;
 }
 
+
 export const modules = {
   toolbar: [
       [{ header: "1" }, { header: "2" }, { header: [3, 4, 5, 6] }, { font: [] }],

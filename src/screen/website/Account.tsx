@@ -19,9 +19,20 @@ const Account: React.FC = () => {
   const [modalAddUser, setmodalAddUser] = useState(false);
   const [titleModal, setTitleModal] = useState("")
   const [confirmButton, setConfirmButton] = useState("")
+  const [users, setUsers] = useState<any>();
   const handleChange = (value: string) => {
     console.log(`selected ${value}`);
   };
+
+  const getUser = async () => {
+    await axios.get(`${path}/user`).then((res) => { setUsers(res.data) }).catch((err) => console.log(err))
+  }
+
+  useEffect(() => {
+    getUser();
+  }, [])
+  console.log(users);
+
   const items: MenuProps['items'] = [
     {
       key: '1',
@@ -57,16 +68,16 @@ const Account: React.FC = () => {
       ),
     },
   ];
-  function clickModal(title){
+  function clickModal(title) {
     setmodalAddUser(true)
     setTitleModal(title)
-    if(title == 'สร้างบัญชี'){
+    if (title == 'สร้างบัญชี') {
       setConfirmButton("ยืนยันการส่ง")
-    }else if(title == 'บล็อกบัญชี'){
+    } else if (title == 'บล็อกบัญชี') {
       setConfirmButton("ยืนยันการบล็อก")
-    }else if(title == 'เปลี่ยนบทบาท'){
+    } else if (title == 'เปลี่ยนบทบาท') {
       setConfirmButton("ยืนยันการเปลี่ยน")
-    }else{
+    } else {
       setConfirmButton("ยืนยันการลบ")
     }
   }
@@ -135,29 +146,39 @@ const Account: React.FC = () => {
           </tr>
         </thead>
         <tbody>
-          <tr className="bg-white shadow-[0px_0px_4px_0px_rgba(0,0,0,0.25)] rounded-[10px] font-semibold">
-            <td className="rounded-l-[10px] text-center pl-4">
-              <div className="w-12 h-12 rounded-full bg-gray-300"></div>
-            </td>
-            <td className="py-6 text-center">Mind</td>
-            <td className="py-5 text-center">usd4fsw...</td>
-            <td className="py-5 text-center">ธนวิชญ์ ลักษณะ</td>
-            <td className="py-5 text-center">ผู้เชี่ยวชาญ</td>
-            <td className="py-5 text-center">63070077@gmail.com</td>
-            <td className="py-5 text-[#3C6255]">
-              <div className="flex justify-center items-center">
-                <img className="mr-3" src={clockIcon} alt="" />
-                <p>
-                  ใช้งาน 10 นาทีที่แล้ว
-                </p>
-              </div>
-            </td>
-            <td className="py-5 rounded-r-[10px] text-center">
-              <Dropdown menu={{ items }} placement="bottomRight" trigger={['click']} arrow>
-                <img onClick={(e) => e.preventDefault()} className="mx-auto" src={dotIcon} alt="" />
-              </Dropdown>
-            </td>
-          </tr>
+          {users && users.map((user, index) => {
+            console.log(user);
+            
+            return (
+              <tr key={index} className="bg-white shadow-[0px_0px_4px_0px_rgba(0,0,0,0.25)] rounded-[10px] font-semibold">
+                <td className="rounded-l-[10px] text-center pl-4">
+                  <div className="w-12 h-12 rounded-full bg-gray-300 overflow-hidden">
+                    {user.image && (
+                      <img src={user.image} alt="" />
+                    )}
+                  </div>
+                </td>
+                <td className="py-6 text-center">{user.line_id}</td>
+                <td className="py-5 text-center">{user.u_id}</td>
+                <td className="py-5 text-center">{user.firstname} {user.lastname}</td>
+                <td className="py-5 text-center">{user.role}</td>
+                <td className="py-5 text-center">{user.email ? user.email : "-"}</td>
+                <td className="py-5 text-[#3C6255]">
+                  <div className="flex justify-center items-center">
+                    <img className="mr-3" src={clockIcon} alt="" />
+                    <p>
+                      ใช้งาน 10 นาทีที่แล้ว
+                    </p>
+                  </div>
+                </td>
+                <td className="py-5 rounded-r-[10px] text-center">
+                  <Dropdown menu={{ items }} placement="bottomRight" trigger={['click']} arrow>
+                    <img onClick={(e) => e.preventDefault()} className="mx-auto" src={dotIcon} alt="" />
+                  </Dropdown>
+                </td>
+              </tr>
+            )
+          })}
           <tr>
             <td className="py-2"></td>
           </tr>
@@ -165,48 +186,48 @@ const Account: React.FC = () => {
       </table>
       {/* modal */}
       <Modal
-          title={[
-            <div className="text-center text-xl">
-              <p>{titleModal}</p>
+        title={[
+          <div className="text-center text-xl">
+            <p>{titleModal}</p>
+          </div>
+        ]}
+        className="Kanit"
+        centered
+        open={modalAddUser}
+        width={350}
+        onCancel={() => setmodalAddUser(false)}
+        footer={[
+          <div className="flex items-center space-x-2 font-semibold pt-3">
+            <div onClick={() => setmodalAddUser(false)} className="bg-[#3C6255] py-2 w-1/2 text-white cursor-pointer rounded-[10px] text-center">
+              <p>{confirmButton}</p>
             </div>
-          ]}
-          className="Kanit"
-          centered
-          open={modalAddUser}
-          width={350}
-          onCancel={() => setmodalAddUser(false)}
-          footer={[
-            <div className="flex items-center space-x-2 font-semibold pt-3">
-              <div onClick={() => setmodalAddUser(false)} className="bg-[#3C6255] py-2 w-1/2 text-white cursor-pointer rounded-[10px] text-center">
-                <p>{confirmButton}</p>
-              </div>
-              <div onClick={() => setmodalAddUser(false)} className="bg-[#C1C1C1] py-2 w-1/2 cursor-pointer rounded-[10px] text-center">
-                <p>ยกเลิก</p>
-              </div>
+            <div onClick={() => setmodalAddUser(false)} className="bg-[#C1C1C1] py-2 w-1/2 cursor-pointer rounded-[10px] text-center">
+              <p>ยกเลิก</p>
             </div>
-          ]}
-        >
-          { confirmButton == 'ยืนยันการบล็อก' || confirmButton == 'ยืนยันการเปลี่ยน' || confirmButton == 'ยืนยันการลบ' ? 
+          </div>
+        ]}
+      >
+        {confirmButton == 'ยืนยันการบล็อก' || confirmButton == 'ยืนยันการเปลี่ยน' || confirmButton == 'ยืนยันการลบ' ?
           (
             <div className="flex flex-col items-center space-y-3 font-semibold">
               <img className="rounded-full w-32 h-32" src="https://plus.unsplash.com/premium_photo-1668319915384-3cccf7689bef?q=80&w=2564&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="" />
               <p>ธนวิชญ์ ลักษณะ</p>
-              {confirmButton == 'ยืนยันการบล็อก'?(<p>คุณต้องการบล็อกบัญชีผู้ใช้นี้ใช่หรือไม่?</p>):('')}
-              {confirmButton == 'ยืนยันการเปลี่ยน'?(<p>คุณต้องการเปลี่ยนบทบาทผู้ใช้นี้เป็น</p>):('')}
-              {confirmButton == 'ยืนยันการลบ'?(<p>คุณต้องการลบบัญชีผู้ใช้นี้ใช่หรือไม่?</p>):('')}
-              {confirmButton == 'ยืนยันการเปลี่ยน'?
-              (
-                <Select
-                  defaultValue="ผู้เชี่ยวชาญ"
-                  suffixIcon={<img src={selectIcon}></img>}
-                  className="h-full w-full"
-                  onChange={handleChange}
-                  options={[
-                    { value: "ผู้เชี่ยวชาญ", label: "ผู้เชี่ยวชาญ" },
-                    { value: "ผู้ใช้ทั่วไป", label: "ผู้ใช้ทั่วไป" }
-                  ]}
-                />
-              ):('')}
+              {confirmButton == 'ยืนยันการบล็อก' ? (<p>คุณต้องการบล็อกบัญชีผู้ใช้นี้ใช่หรือไม่?</p>) : ('')}
+              {confirmButton == 'ยืนยันการเปลี่ยน' ? (<p>คุณต้องการเปลี่ยนบทบาทผู้ใช้นี้เป็น</p>) : ('')}
+              {confirmButton == 'ยืนยันการลบ' ? (<p>คุณต้องการลบบัญชีผู้ใช้นี้ใช่หรือไม่?</p>) : ('')}
+              {confirmButton == 'ยืนยันการเปลี่ยน' ?
+                (
+                  <Select
+                    defaultValue="ผู้เชี่ยวชาญ"
+                    suffixIcon={<img src={selectIcon}></img>}
+                    className="h-full w-full"
+                    onChange={handleChange}
+                    options={[
+                      { value: "ผู้เชี่ยวชาญ", label: "ผู้เชี่ยวชาญ" },
+                      { value: "ผู้ใช้ทั่วไป", label: "ผู้ใช้ทั่วไป" }
+                    ]}
+                  />
+                ) : ('')}
             </div>
           )
           :
@@ -216,8 +237,8 @@ const Account: React.FC = () => {
               <input className="rounded-[5px] font-semibold border-[1px] w-full text-base border-[#61876E] p-1 focus-visible:border-[#445f4e]"></input>
             </div>
           )
-          }
-        </Modal>
+        }
+      </Modal>
     </div>
   );
 };

@@ -7,9 +7,9 @@ import { Button, Modal, Select, Space, Input, message } from 'antd';
 import foreignCountry from '../../json/foreignCountry.json'
 import thailandCountry from '../../json/thailandCountry.json'
 import { useLocation, useParams } from "react-router-dom";
-import { getImage } from "../../tools/tools";
-import { convertIsoToThaiDateTime } from "../../tools/tools";
+import { getImage, convertIsoToThaiDateTime } from "../../tools/tools";
 import path from "../../../path";
+import { io } from "socket.io-client";
 import axios from "axios";
 
 const { Option } = Select;
@@ -36,16 +36,12 @@ const ClassidyDetail: React.FC = () => {
     const [woodImage, setWoodImage] = useState();
     const [classify, setClassify] = useState<any>();
     const [user, setUser] = useState<any>();
+    const [note, setNote] = useState<any>();
+    const [userId, setUserId] = useState('');
     const { classifyId } = useParams();
+    const [changeResult, setChangeResult] = useState<any>();
     const [position, setPosition] = useState<string | null>(null);
-    const [messageNote, setMessageNote] = useState([
-        {
-            id: 1,
-            message: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Aenean et tortor at risus viverra adipiscing. Euismod in pellentesque massa placerat. Massa sed elementum tempus egestas sed sed risus pretium. Sed arcu non odio euismod lacinia. Etiam erat velit scelerisque in. Consequat mauris nunc congue nisi vitae suscipit tellus mauris a. At elementum eu facilisis sed odio morbi quis. Venenatis a condimentum vitae sapien pellentesque habitant morbi tristique. Odio tempor orci dapibus ultrices in. Pharetra massa massa",
-            create_at: "17 ตุลาคม 2566 11:46:30",
-            update_by: "Bot"
-        }
-    ]);
+    console.log(note);
 
     const getClassify = async () => {
         await axios.get(`${path}/classify/${classifyId}`)
@@ -59,21 +55,70 @@ const ClassidyDetail: React.FC = () => {
             })
     }
 
+    const fetchUsername = async (userId: string) => {
+        try {
+            const response = await axios.get(`${path}/user/${userId}`);
+            return response.data[0].firstname; // สมมติว่ามี property ชื่อ username ในข้อมูลผู้ใช้
+        } catch (error) {
+            console.error(`Error fetching username for user ID ${userId}:`, error);
+            return 'Unknown User'; // หากไม่สามารถดึงข้อมูลได้
+        }
+    };
+
+    const getNoteFromId = async () => {
+        await axios.get(`${path}/note/${classifyId}`)
+            .then((res) => {
+                setNote(res.data)
+            })
+            .catch((err) => {
+                console.log(err);
+            })
+    }
+
     useEffect(() => {
         axios.post(`${path}/authentication_user`, {}, {
             headers: {
                 "Authorization": `Bearer ${localStorage.getItem('access_token')}`
             }
         }).then((res) => {
+            setUserId(res.data.id)
             axios.get(`${path}/user/${res.data.id}`)
                 .then((response) => {
                     setUser(response.data)
-                    console.log(response.data);
 
                 })
         });
         getClassify();
+        getNoteFromId();
     }, [])
+
+    useEffect(() => {
+        if (classify) {
+            const socket = io(path, {
+                reconnectionAttempts: 3,
+                timeout: 10000,
+                transports: ["websocket"],
+                query: {
+                    sessionId: classify.session_id_note_room
+                }
+            });
+            socket.connect()
+            socket.on('connect', () => {
+                console.log('connect it');
+            });
+
+            socket.on('received_message', (data) => {
+                console.log('Receive Message OK', data);
+                if (data) {
+                    setNote(prevNote => [...prevNote, data]);
+                }
+            });
+
+            return () => {
+                socket.disconnect();
+            };
+        }
+    }, [classify])
 
 
     function RenderClassifyInformation({ state }) {
@@ -94,8 +139,8 @@ const ClassidyDetail: React.FC = () => {
 
         const updateClassify = async (positionRaw) => {
             await axios.put(`${path}/classify`, {
-                c_id : classifyId,
-                location : positionRaw
+                c_id: classifyId,
+                location: positionRaw
             }).then((res) => {
                 console.log(res.data);
             }).catch((err) => {
@@ -131,7 +176,7 @@ const ClassidyDetail: React.FC = () => {
                         {(() => {
                             switch (classify.status_verify) {
                                 case "WAITING_FOR_VERIFICATION":
-                                    return <p>รอการตรวจสอบ</p>;
+                                    return <p>รอการรับรอง</p>;
                                 case "PASSED_CERTIFICATION":
                                     return <p>ผ่านการรับรอง</p>;
                                 case "FAILED_CERTIFICATION":
@@ -163,11 +208,11 @@ const ClassidyDetail: React.FC = () => {
                                     </Button>
                                     <Button className="w-[45%] h-10 bg-[#3C6255] text-white" key="submit"
                                         onClick={() => {
-                                            if(placeFound == "incounty"){
+                                            if (placeFound == "incounty") {
                                                 setPosition(`จังหวัด${thailand}`)
                                                 updateClassify(`จังหวัด${thailand}`)
                                             }
-                                            else{
+                                            else {
                                                 setPosition(`ประเทศ${foreign}`)
                                                 updateClassify(`จังหวัด${thailand}`)
                                             }
@@ -407,36 +452,47 @@ const ClassidyDetail: React.FC = () => {
                 // ทำ Auto-scroll ไปที่ล่างสุด
                 containerRef.current.scrollTop = containerRef.current.scrollHeight;
             }
-        }, [messageNote]);
+        }, [note]);
         return (
             <div className="flex flex-col mx-6 pb-4">
                 <div ref={containerRef} className="overflow-y-auto space-y-2 h-[19.5rem]">
-                    {messageNote.map((note) => (
-                        <div key={note.id} className={`${note.update_by == "User" ? 'bg-[#2B57CA] text-white' : 'bg-[#EAEAEA]'} rounded p-2`}>
-                            <p className="text-sm">{note.message}</p>
-                            <p className={`text-right text-xs ${note.update_by == "User" ? 'text-[#DCDCDC]' : "text-[#AA9F9F]"}`}>บันทึกเมื่อ {note.create_at}</p>
-                            <p className={`text-right text-xs ${note.update_by == "User" ? 'text-[#DCDCDC]' : "text-[#AA9F9F]"}`}>เขียนโดย {note.update_by}</p>
-                        </div>
-                    ))}
+                    {note && note.map((data) => {
+                        return (
+                            <div key={data.n_id} className={`${data.creator.u_id == userId ? 'bg-[#2B57CA] text-white ' : 'bg-[#EAEAEA]'} rounded p-2`}>
+                                <p className={`text-sm ${data.creator.u_id == userId ? '' : 'text-right'}`}>{data.description}</p>
+                                <p className={`text-xs ${data.creator.u_id == userId ? 'text-[#DCDCDC] text-right' : "text-[#AA9F9F]"}`}>บันทึกเมื่อ {convertIsoToThaiDateTime(data.create_at)}</p>
+                                <p className={`text-xs ${data.creator.u_id == userId ? 'text-[#DCDCDC] text-right' : "text-[#AA9F9F]"}`}>เขียนโดย {data.creator.firstname}</p>
+                            </div>
+                        )
+                    })}
                 </div>
             </div>
         )
     }
 
     function RenderInputSend() {
-        const [inputMessage, setInputMessage] = useState('')
+        const [message, setMessage] = useState<string>('');
+
+        const addNote = async () => {
+            const token = localStorage.getItem('access_token');
+            await axios.post(`${path}/note`, {
+                token: token,
+                description: message,
+                c_id: classifyId,
+                sessionId: classify.session_id_note_room
+            }).then((res) => {
+                // getNoteFromId();
+                setMessage('');
+            })
+                .catch((err) => {
+                    console.log(err);
+                })
+        }
+
         return (
             <div className="mx-6 bg-[#EAEAEA] p-1 rounded-lg mb-4 relative mt-auto">
-                <input value={inputMessage} onChange={(text) => setInputMessage(text.target.value)} className="py-1 px-2 rounded-lg w-full" type="text" placeholder="พิมพ์ข้อความ..." />
-                <button onClick={() => {
-                    setMessageNote([...messageNote, {
-                        id: messageNote.length + 1,
-                        message: inputMessage,
-                        create_at: new Intl.DateTimeFormat('th-TH', optionsDate).format(new Date()).replace(' นาฬิกา ', ":").replace(" เวลา", "").replace(" วินาที GMT+7", "").replace(" นาที ", ":"),
-                        update_by: "User"
-                    }])
-                    setInputMessage('')
-                }} className="absolute z-50 right-2"><img className="w-8 h-8" src={Send} alt="" /></button>
+                <input value={message} onChange={(text) => setMessage(text.target.value)} className="py-1 px-2 rounded-lg w-full" type="text" placeholder="พิมพ์ข้อความ..." />
+                <button onClick={() => addNote()} className="absolute z-50 right-2"><img className="w-8 h-8" src={Send} alt="" /></button>
             </div>
         )
     }

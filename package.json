@@ -17,6 +17,7 @@
     "@react-oauth/google": "^0.12.1",
     "antd": "^5.10.0",
     "axios": "^1.5.1",
+    "cuid": "^3.0.0",
     "dayjs": "^1.11.10",
     "dotenv": "^16.3.1",
     "moment": "^2.30.1",
@@ -27,6 +28,7 @@
     "react-slick": "^0.29.0",
     "react-tailwindcss-datepicker": "^1.6.6",
     "slick-carousel": "^1.8.1",
+    "socket.io-client": "^4.7.4",
     "tsc-silent": "^1.2.2",
     "yarn": "^1.22.19"
   },

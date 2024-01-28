@@ -59,10 +59,11 @@ function AdminRoutes() {
         <Route path="manual" element={<Manual />} />
         <Route path="classify_wood" element={<ClassifyWood />} />
         <Route path="user_profile" element={<UserProfile/>}></Route>
-        <Route path="classify_wood_detail" element={<ClassifyWoodDetail/>}></Route>
+        <Route path="classify_wood_detail/:c_id" element={<ClassifyWoodDetail/>}></Route>
         <Route path="manage_manual" element={<ManageManual />} />
         <Route path="manage_manual/:id" element={<ManageManual />} />
         <Route path="manage_information_wood" element={<ManageInformationWood />} />
+        <Route path="manage_information_wood/:w_id" element={<ManageInformationWood />} />
         <Route path="information_wood_detail/:w_id" element={<InformationWoodDetail />} />
       </Route>
       <Route path="login" element={<LoginWeb />} />

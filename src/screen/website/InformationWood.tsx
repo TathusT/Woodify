@@ -31,6 +31,9 @@ const InformationWood: React.FC = () => {
       })
   }, [])
 
+  console.log(infoWood);
+  
+
   return (
     <div className="w-full Kanit flex flex-col min-h-screen">
       <div className="flex mt-10 justify-between">
@@ -66,7 +69,7 @@ const InformationWood: React.FC = () => {
           infoWood && infoWood.map((info, index) => {
             return (
               <div key={info.w_id} className="flex flex-col items-center col-span-2 space-y-3 box-shadow p-3 rounded-[10px] bg-white">
-                <img src={getImage(info.wood_image[0].path)} className="w-full aspect-[1.73/1] rounded-[10px]" alt="" />
+                <img src={getImage(info.wood_image[0]?.path)} className="w-full aspect-[1.73/1] rounded-[10px]" alt="" />
                 <p className="text-[20px] font-semibold">{info.common_name}</p>
                 <p className="text-left text-ellipsis line-clamp-3 text-[16px] font-medium">{info.place_of_origin}</p>
                 <div className="flex space-x-2 text-[#3C6255] font-medium">

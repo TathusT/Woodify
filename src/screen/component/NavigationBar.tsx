@@ -188,7 +188,7 @@ const NavigationBar: React.FC = () => {
             }
           </ul>
         </div>
-        <div className="border py-9 shadow-[0px_-1px_4px_0px_rgba(0,0,0,0.25)]">
+        <div className="border py-4 shadow-[0px_-1px_4px_0px_rgba(0,0,0,0.25)]">
           <div className="flex items-center mb-6 pl-7 ">
             <div className="w-50">
               <div className="w-20 h-20 rounded-full bg-[#D9D9D9]"></div>
