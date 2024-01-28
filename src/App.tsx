@@ -20,6 +20,7 @@ import ManualLine from "./screen/line/Manual";
 import ClassifyWoodDetail from "./screen/website/ClassifyWoodDetail";
 import InformationWoodDetail from "./screen/website/InformationWoodDetail";
 import ManageInformationWood from "./screen/website/ManageInformationWood";
+import HomePage from "./screen/website/HomePage";
 
 
 function App() {
@@ -67,6 +68,7 @@ function AdminRoutes() {
         <Route path="information_wood_detail/:w_id" element={<InformationWoodDetail />} />
       </Route>
       <Route path="login" element={<LoginWeb />} />
+      <Route path="woodify" element={<HomePage />} />
     </Routes>
   );
 }
