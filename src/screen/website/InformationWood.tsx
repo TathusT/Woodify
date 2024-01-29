@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Select, Input } from "antd";
+import { Select, Input, Modal } from "antd";
 import garbage from "../../assets/garbage.svg";
 import add from "../../assets/add.svg";
 import search from "../../assets/search.svg";
@@ -12,6 +12,9 @@ import Loading from "../component/Loading";
 const InformationWood: React.FC = () => {
   const [infoWood, setInfoWood] = useState<any>()
   const [isLoading, setIsLoading] = useState(true);
+  const [checkDelete, setCheckDelete] = useState(false)
+  const [modalDeleteManual, setmodalDeleteManual] = useState(false);
+  const [checkTreeDelete, setCheckTreeDelete] = useState('');
   const handleChange = (value: string) => {
     console.log(`selected ${value}`);
   };
@@ -58,10 +61,18 @@ const InformationWood: React.FC = () => {
             <p>เพิ่มพันธุ์ไม้</p>
             <img src={add} alt="" />
           </div>
-          <div className="bg-[#C95555] h-full flex justify-center space-x-1 items-center px-2 rounded-[8px] text-white cursor-pointer">
-            <p>เลือกลบพันธุ์ไม้</p>
-            <img src={garbage} alt="" />
-          </div>
+          {
+            (checkDelete?
+            <div onClick={() => setCheckDelete(!checkDelete)} className="bg-[#B0B0B0] h-full flex justify-center space-x-1 items-center px-12 rounded-[8px] text-white cursor-pointer">
+              <p>ยกเลิก</p>
+            </div>
+            :
+            <div onClick={() => setCheckDelete(!checkDelete)} className="bg-[#C95555] h-full flex justify-center space-x-1 items-center px-2 rounded-[8px] text-white cursor-pointer">
+              <p>เลือกลบพันธุ์ไม้</p>
+              <img src={garbage} alt="" />
+            </div>
+            )
+          }
         </div>
       </div>
       {isLoading ? <div className="flex items-center justify-center flex-1 "><Loading /></div> : <div className="grid grid-cols-8 gap-9 my-10 ">
@@ -71,7 +82,7 @@ const InformationWood: React.FC = () => {
               <div key={info.w_id} className="flex flex-col items-center col-span-2 space-y-3 box-shadow p-3 rounded-[10px] bg-white">
                 <img src={getImage(info.wood_image[0]?.path)} className="w-full aspect-[1.73/1] rounded-[10px]" alt="" />
                 <p className="text-[20px] font-semibold">{info.common_name}</p>
-                <p className="text-left text-ellipsis line-clamp-3 text-[16px] font-medium">{info.place_of_origin}</p>
+                <p className="text-left text-ellipsis line-clamp-2 text-[16px] font-medium">{info.place_of_origin}</p>
                 <div className="flex space-x-2 text-[#3C6255] font-medium">
                   <p>อัพเดทล่าสุด</p>
                   <p>{convertIsoToThaiDateTime(info.update_at)}</p>
@@ -79,14 +90,54 @@ const InformationWood: React.FC = () => {
                     info.status ? (<img src={eye} alt="" />) : (<img src={closeEye} alt="" />)
                   }
                 </div>
-                <button className="w-full flex justify-center py-2 bg-[#3C6255] roundedd-[8px] rounded-[5px] box-shadow">
-                  <p className="text-white">ดูข้อมูล</p>
-                </button>
+                {
+                  (checkDelete?    
+                  <button onClick={() => {
+                    setmodalDeleteManual(true)
+                    setCheckTreeDelete(info.common_name)
+                  }
+                  } className="w-full flex justify-center py-2 bg-[#C95555] roundedd-[8px] rounded-[5px] box-shadow">
+                    <p className="text-white">ลบข้อมูล</p>
+                  </button>
+                  :
+                  <button className="w-full flex justify-center py-2 bg-[#3C6255] roundedd-[8px] rounded-[5px] box-shadow">
+                    <p className="text-white">ดูข้อมูล</p>
+                  </button>
+                  )
+                }
               </div>
             )
           })
         }
       </div>}
+      <Modal
+        title={[
+          <div className="text-center text-[24px] mt-4">
+            <p>ลบข้อมูลต้น{checkTreeDelete}</p>
+          </div>
+        ]}
+        className="Kanit"
+        centered
+        open={modalDeleteManual}
+        width={550}
+        onCancel={() => setmodalDeleteManual(false)}
+        footer={[
+          <div className="flex items-center justify-center space-x-2 font-semibold pt-3 mb-4">
+            <div onClick={() => setmodalDeleteManual(false)} className="bg-[#3C6255] py-2 w-1/4 text-white cursor-pointer rounded-[10px] text-center">
+              <p>ยืนยันการลบ</p>
+            </div>
+            <div onClick={() => setmodalDeleteManual(false)} className="bg-[#C1C1C1] py-2 w-1/4 cursor-pointer rounded-[10px] text-center">
+              <p>ยกเลิก</p>
+            </div>
+          </div>
+        ]}
+      >
+        <div className="flex justify-center my-10 space-x-3">
+          <p className="text-lg font-semibold">คุณต้องการลบข้อมูล</p>
+          <p className="text-lg font-semibold">ต้น{checkTreeDelete}</p>
+          <p className="text-lg font-semibold">ใช่หรือไม่?</p>
+        </div>
+      </Modal>
     </div>
   );
 };
