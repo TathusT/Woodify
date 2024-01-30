@@ -3,19 +3,24 @@ import LogoWoodify from "../../assets/logo_woodify.svg";
 import { Link } from "react-router-dom";
 import background from "../../assets/background-homepage.svg";
 import grass from "../../assets/background-grass.svg";
+import facebook from "../../assets/icon-facebook.svg"
+import instagram from "../../assets/icon-instagram.svg"
+import youtube from "../../assets/icon-youtube.svg"
+import twitter from "../../assets/icon-twitter.svg"
+import rfd from "../../assets/icon-rfd.svg"
 const HomePage: React.FC = () => {
   return (
     <div className="min-h-screen overflow-x-hidden bg-[#E6F2FD] Kanit">
       <div className="flex justify-between px-24 pt-7 items-center absolute w-full z-50">
         <img src={LogoWoodify} className="w-[96px]" alt="" />
         <div className="flex space-x-20">
-        <a href="#home">
+            <a className="text-[20px]" href="#home">
               หน้าหลัก
             </a>
-            <a href="#about">
+            <a className="text-[20px]" href="#about">
               เกี่ยวกับ
             </a>
-            <a href="#contact">
+            <a className="text-[20px]" href="#contact">
               ติดต่อ
             </a>
         </div>
@@ -31,14 +36,14 @@ const HomePage: React.FC = () => {
       <div className="w-full min-h-screen">
         <div className="w-full flex justify-center items-center relative">
           <div className="w-[85%] absolute">
-            <div className="mb-[35rem]">
-              <p className="leading-[5rem] mb-[5rem] text-6xl font-lexend select-none">
-                มาเริ่มการจัดการระบบการจำแนกไม้กัน<br />
+            <div className="mb-[40rem]">
+              <p className="leading-[5rem] mb-[3rem] text-[48px] font-lexend select-none">
+                มาเริ่มการจัดการระบบจำแนกชนิดไม้เศรษฐกิจกัน<br />
                 กดเพื่อเริ่มได้เลย!
               </p>
               <Link
                 to={"/dashboard"}
-                className="bg-[#3C6255] font-jura font-semibold text-lg text-white px-6 py-3.5 rounded-xl"
+                className="bg-[#3C6255] font-semibold text-lg text-white px-8 py-3 rounded-xl"
               >
                 เริ่มเลย
               </Link>
@@ -52,54 +57,37 @@ const HomePage: React.FC = () => {
               <div className="text-4xl w-32 border-b-4 pb-1 border-[#07636B]">
                 เกี่ยวกับ
               </div>
-              <div className="font-jura text-2xl tracking-wider mt-10">
+              <div className="text-2xl tracking-wider mt-10">
                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
                 <br /> incididunt ut labore et dolore magna aliqua. Aliquet enim tortor at auctor urna nunc.
                 innovative solutions that
                 <br />Convallis aenean et tortor at risus. At elementum eu facilisis sed odio morbi quis 
               </div>
-              {/* <div className="font-jura text-2xl tracking-wider mt-10">
-              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;At our core, we believe that everyone should have access to
-                high-quality<br /> financial management tools, regardless of their
-                income or background. That's why<br /> we've designed our products to
-                be easy to use and affordable for everyone.
-              </div> */}
             </div>
           </div>
         </div>
         <div className="w-full relative">
           <img src={grass} className="w-full" alt="" />
-          <div className="w-full absolute bottom-[5rem] flex justify-center">
-            <div className="w-[85%] flex justify-between">
-              <div id="contact" className="flex font-jura flex-col">
-                <p className="font-semibold text-4xl">CONTACT US</p>
-                {/* <div className="collaborate py-4 text-xl">
-                  <p>Phufa Rujipatsawat</p>
-                  <p>Wongsapat Asavawongsanon</p>
-                  <p>Tanavich Leksana</p>
-                </div> */}
-                <div className="flex space-x-3">
-                  {/* <img src={icon_fb} alt="" />
-                  <img src={icon_ig} alt="" />
-                  <img src={icon_tw} alt="" />
-                  <img src={icon_yt} alt="" /> */}
+        </div>
+        <div id="contact" className="w-full flex justify-between font-semibold px-12 py-10">
+              <div className="space-y-3">
+                <p className="text-[36px]">ติดต่อเรา</p>
+                <p className="text-[20px]">โทรศัพท์: 025614292-3</p>
+                <p className="text-[20px]">Email: saraban@forest.go.th</p>
+                <div className="flex space-x-5">
+                  <img src={facebook} alt="" />
+                  <img src={instagram} alt="" />
+                  <img src={youtube} alt="" />
+                  <img src={twitter} alt="" />
                 </div>
               </div>
-              <div className="h-full flex items-end">
-                {/* <div className="font-jura space-y-4 text-right">
-                  <div className="flex justify-end items-center font-jura">
-                    <p className="text-3xl">Pocketmon</p>
-                  </div>
-                  <p className="text-xl">
-                    FAQ | Terms of Use | Privacy Statement
-                  </p>
-                  <p className="text-xl">
-                    © 2023 POCKETMON. ALL RIGHTS RESERVED.
-                  </p>
-                </div> */}
+              <div className="flex space-y-5 flex-col justify-end">
+                <div className="flex space-x-2 justify-end">
+                  <img src={rfd} alt="" />
+                  <img src={LogoWoodify} width={96} alt="" />
+                </div>
+                <p>© 2023 COPYRIGHT WOODIFY. ALL RIGHTS RESERVED.</p>
               </div>
-            </div>
-          </div>
         </div>
       </div>
     </div>
