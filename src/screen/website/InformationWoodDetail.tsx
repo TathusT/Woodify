@@ -4,7 +4,7 @@ import arrowIcon from "../../assets/arrow-left-icon.svg"
 import arrowLeft from "../../assets/arrow-left-carousel.svg"
 import arrowRight from "../../assets/arrow-right-carousel.svg"
 import Slider from "react-slick";
-import { useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { getImage } from "../../tools/tools";
 import Loading from "../component/Loading";
 import axios from "axios";
@@ -66,6 +66,7 @@ const InformationWoodDetail: React.FC = () => {
   const { w_id } = useParams();
   const [wood, setWood] = useState<any>();
   const [slides, setSlides] = useState<any>();
+  const router = useNavigate();
 
   useEffect(() => {
     axios.get(`${path}/wood/${w_id}`)
@@ -79,7 +80,7 @@ const InformationWoodDetail: React.FC = () => {
   return (
     <div className="w-full Kanit flex flex-col min-h-screen">
       <div className="flex mt-10">
-        <img src={arrowIcon} alt="" />
+        <img className="cursor-pointer" onClick={() => {router('/admin/information_wood')}} src={arrowIcon} alt="" />
         <p className="text-[24px] font-semibold ml-6">ข้อมูลต้นแดง</p>
       </div>
       {slides && (
@@ -133,9 +134,9 @@ const InformationWoodDetail: React.FC = () => {
         </div>
       )}
       <div className="flex justify-end mt-6">
-        <div className="py-2 px-8 rounded-[10px] bg-[#61876E]">
+        <Link to={`/admin/manage_information_wood/${w_id}`} className="py-2 px-8 rounded-[10px] bg-[#61876E]">
           <p className="text-[20px] font-semibold text-white">แก้ไขข้อมูล</p>
-        </div>
+        </Link>
       </div>
     </div>
   );

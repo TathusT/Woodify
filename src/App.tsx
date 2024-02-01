@@ -40,12 +40,12 @@ function LineRoutes() {
     <Routes>
       <Route path="login" element={<LoginLine />} />
       <Route path="signup" element={<RegisterLine />} />
-      <Route path="history_classify" element={<RequireAuthLine><HistoryClassify /></RequireAuthLine>} />
-      <Route path="classify_detail/:classifyId" element={<RequireAuthLine><ClassifyDetail /></RequireAuthLine>} />
-      <Route path="profile" element={<RequireAuthLine><Profile /></RequireAuthLine>} />
-      <Route path="wood_detail/:woodId" element={<RequireAuthLine><WoodDetail /></RequireAuthLine>} />
-      <Route path="notification" element={<RequireAuthLine><Notification /></RequireAuthLine>} />
-      <Route path="manual/:id" element={<RequireAuthLine><ManualLine /></RequireAuthLine>} />
+      <Route path="history_classify" element={<HistoryClassify />} />
+      <Route path="classify_detail/:classifyId" element={<ClassifyDetail />} />
+      <Route path="profile" element={<Profile />} />
+      <Route path="wood_detail/:woodId" element={<WoodDetail />} />
+      <Route path="notification" element={<Notification />} />
+      <Route path="manual/:id" element={<ManualLine />} />
     </Routes>
   );
 }

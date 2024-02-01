@@ -9,15 +9,71 @@ import axios from "axios";
 import path from "../../../path";
 import { convertIsoToThaiDateTime, getImage } from "../../tools/tools";
 import Loading from "../component/Loading";
+import { Link } from "react-router-dom";
 const InformationWood: React.FC = () => {
   const [infoWood, setInfoWood] = useState<any>()
+  const [backUp, setBackUp] = useState<any>()
   const [isLoading, setIsLoading] = useState(true);
   const [checkDelete, setCheckDelete] = useState(false)
   const [modalDeleteManual, setmodalDeleteManual] = useState(false);
   const [checkTreeDelete, setCheckTreeDelete] = useState('');
+  const [checkTreeId, setCheckTreeId] = useState('');
   const handleChange = (value: string) => {
-    console.log(`selected ${value}`);
+    let filterValue
+    if(value == 'สถานะแสดง'){
+      filterValue = backUp.filter((wood) => wood.status == true)
+    }
+    else if(value == 'สถานะไม่แสดง'){
+      filterValue = backUp.filter((wood) => wood.status == false)
+    }
+    else if(value == 'อัพเดทล่าสุด'){
+      filterValue = backUp.sort((a, b) => {
+        const timeA = new Date(a.update_at).getTime();
+        const timeB = new Date(b.update_at).getTime();
+        return timeB - timeA;
+      });
+    }
+    else if(value == 'ทั้งหมด'){
+      filterValue = backUp
+    }
+    setInfoWood(filterValue);
   };
+
+  const SearchWood = async (msg) => {
+    if(msg.target.value == ""){
+      setInfoWood(backUp);
+    }
+    else{
+      const filterValue = backUp.filter((wood) => {
+        if(wood.common_name.toString().indexOf(msg.target.value) != -1){
+          return wood
+        }
+      })
+      setInfoWood(filterValue);
+    }
+  }
+
+  const deleteWoodInfo = async () => {
+    const token = localStorage.getItem('access_token');
+    await axios.delete(`${path}/wood_delete`, {
+      data: {
+        w_id: checkTreeId,
+        token: token,
+      }
+    })
+    .then((res) => {
+      if(res.data.message == "delete success"){
+        const removeWood = infoWood.filter((wood) => wood.w_id != checkTreeId)
+        setInfoWood(removeWood);
+        setBackUp(removeWood)
+        setIsLoading(false)
+      }
+    })
+    .catch((err) => {
+      console.log(err);
+      
+    })
+  }
 
   useEffect(() => {
     axios.get(`${path}/wood`, {
@@ -27,6 +83,7 @@ const InformationWood: React.FC = () => {
     })
       .then((res) => {
         setInfoWood(res.data)
+        setBackUp(res.data)
         setIsLoading(false)
       })
       .catch((err) => {
@@ -35,7 +92,7 @@ const InformationWood: React.FC = () => {
   }, [])
 
   console.log(infoWood);
-  
+
 
   return (
     <div className="w-full Kanit flex flex-col min-h-screen">
@@ -55,22 +112,22 @@ const InformationWood: React.FC = () => {
             ]}
           />
           <div className="h-full">
-            <Input className="h-full w-[280px]" suffix={<img src={search} />} />
+            <Input onChange={(msg) => SearchWood(msg)} className="h-full w-[280px]" suffix={<img src={search} />} />
           </div>
           <div className="bg-[#3C6255] h-full flex justify-center space-x-1 items-center px-2 rounded-[8px] text-white cursor-pointer">
             <p>เพิ่มพันธุ์ไม้</p>
             <img src={add} alt="" />
           </div>
           {
-            (checkDelete?
-            <div onClick={() => setCheckDelete(!checkDelete)} className="bg-[#B0B0B0] h-full flex justify-center space-x-1 items-center px-12 rounded-[8px] text-white cursor-pointer">
-              <p>ยกเลิก</p>
-            </div>
-            :
-            <div onClick={() => setCheckDelete(!checkDelete)} className="bg-[#C95555] h-full flex justify-center space-x-1 items-center px-2 rounded-[8px] text-white cursor-pointer">
-              <p>เลือกลบพันธุ์ไม้</p>
-              <img src={garbage} alt="" />
-            </div>
+            (checkDelete ?
+              <div onClick={() => setCheckDelete(!checkDelete)} className="bg-[#B0B0B0] h-full flex justify-center space-x-1 items-center px-12 rounded-[8px] text-white cursor-pointer">
+                <p>ยกเลิก</p>
+              </div>
+              :
+              <div onClick={() => setCheckDelete(!checkDelete)} className="bg-[#C95555] h-full flex justify-center space-x-1 items-center px-2 rounded-[8px] text-white cursor-pointer">
+                <p>เลือกลบพันธุ์ไม้</p>
+                <img src={garbage} alt="" />
+              </div>
             )
           }
         </div>
@@ -91,18 +148,19 @@ const InformationWood: React.FC = () => {
                   }
                 </div>
                 {
-                  (checkDelete?    
-                  <button onClick={() => {
-                    setmodalDeleteManual(true)
-                    setCheckTreeDelete(info.common_name)
-                  }
-                  } className="w-full flex justify-center py-2 bg-[#C95555] roundedd-[8px] rounded-[5px] box-shadow">
-                    <p className="text-white">ลบข้อมูล</p>
-                  </button>
-                  :
-                  <button className="w-full flex justify-center py-2 bg-[#3C6255] roundedd-[8px] rounded-[5px] box-shadow">
-                    <p className="text-white">ดูข้อมูล</p>
-                  </button>
+                  (checkDelete ?
+                    <button onClick={() => {
+                      setmodalDeleteManual(true)
+                      setCheckTreeDelete(info.common_name)
+                      setCheckTreeId(info.w_id)
+                    }
+                    } className="w-full flex justify-center py-2 bg-[#C95555] roundedd-[8px] rounded-[5px] box-shadow">
+                      <p className="text-white">ลบข้อมูล</p>
+                    </button>
+                    :
+                    <Link to={`/admin/information_wood_detail/${info.w_id}`} className="w-full flex justify-center py-2 bg-[#3C6255] roundedd-[8px] rounded-[5px] box-shadow">
+                      <p className="text-white">ดูข้อมูล</p>
+                    </Link>
                   )
                 }
               </div>
@@ -123,7 +181,11 @@ const InformationWood: React.FC = () => {
         onCancel={() => setmodalDeleteManual(false)}
         footer={[
           <div className="flex items-center justify-center space-x-2 font-semibold pt-3 mb-4">
-            <div onClick={() => setmodalDeleteManual(false)} className="bg-[#3C6255] py-2 w-1/4 text-white cursor-pointer rounded-[10px] text-center">
+            <div onClick={() => {
+              deleteWoodInfo();
+              setIsLoading(true)
+              setmodalDeleteManual(false)
+            }} className="bg-[#3C6255] py-2 w-1/4 text-white cursor-pointer rounded-[10px] text-center">
               <p>ยืนยันการลบ</p>
             </div>
             <div onClick={() => setmodalDeleteManual(false)} className="bg-[#C1C1C1] py-2 w-1/4 cursor-pointer rounded-[10px] text-center">

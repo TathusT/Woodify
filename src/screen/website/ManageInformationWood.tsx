@@ -4,7 +4,7 @@ import picNoUpload from "../../assets/pic-no-upload.svg"
 import addPicWhite from "../../assets/add-pic-white.svg"
 import axios from "axios";
 import path from "../../../path";
-import { useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { getImage } from "../../tools/tools";
 import Loading from "../component/Loading";
 
@@ -21,6 +21,7 @@ const ManageInformationWood: React.FC = () => {
     const [anatomicalCharacteristics, setAnatomicalCharacteristics] = useState('');
     const [deleteImage, setDeleteImage] = useState<any>([]);
     const { w_id }: any = useParams();
+    const router = useNavigate();
     const [isLoading, setIsLoading] = useState(w_id ? true : false)
     const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -39,6 +40,7 @@ const ManageInformationWood: React.FC = () => {
                     setWoodCharacteristics(data.wood_characteristics)
                     setAnatomicalCharacteristics(data.anatomical_characteristics)
                     setImages(data.wood_image)
+                    setStatus(data.status)
                     setIsLoading(false)
                 })
                 .catch((err) => {
@@ -98,8 +100,6 @@ const ManageInformationWood: React.FC = () => {
                     const formData = new FormData();
                     for (let i = 0; i < files.length; i++) {
                         const file = files[i];
-                        console.log(file);
-                        
                         formData.append('files', file);
                     }
                     
@@ -113,6 +113,7 @@ const ManageInformationWood: React.FC = () => {
                             console.log(err);
                         })
                 }
+                router(`/admin/information_wood_detail/${w_id}`);
                 
             }
         })
@@ -151,19 +152,18 @@ const ManageInformationWood: React.FC = () => {
             token: token
         }).then(async (res) => {
             if (res.data.message == "create success") {
-                console.log(res.data);
-
                 const files = fileInputRef.current?.files;
+                const w_id_create = res.data.data.w_id;
                 if (files) {
                     const formData = new FormData();
                     for (let i = 0; i < files.length; i++) {
                         const file = files[i];
                         formData.append('files', file);
                     }
-                    formData.append('id', res.data.data.w_id)
+                    formData.append('id', w_id_create)
                     await axios.put(`${path}/wood_image`, formData)
                         .then((res) => {
-
+                            router(`/admin/information_wood_detail/${w_id_create}`);
                         })
                         .catch((err) => {
                             console.log(err);
@@ -318,17 +318,17 @@ const ManageInformationWood: React.FC = () => {
                             <div className="flex space-x-4">
                                 <p className="text-xl text-center">สถานะการแสดงผล : </p>
                                 <div className="flex items-center space-x-3 text-xl">
-                                    <input onClick={() => setStatus(true)} defaultChecked type="radio" name="display" />
+                                    <input onClick={() => setStatus(true)} checked={status} type="radio" name="display" />
                                     <p>แสดง</p>
                                 </div>
                                 <div className="flex items-center space-x-3 text-xl">
-                                    <input onClick={() => setStatus(false)} type="radio" name="display" />
+                                    <input onClick={() => setStatus(false)} checked={!status} type="radio" name="display" />
                                     <p>ไม่แสดง</p>
                                 </div>
                             </div>
                             <div className="flex items-center justify-center space-x-8">
                                 <button onClick={() => w_id ? updateWood() : createWood()} className="bg-[#61876E] w-40 py-3 text-xl rounded-xl text-white font-bold">บันทึก</button>
-                                <button className="bg-[#C1C1C1] w-40 py-3 text-xl rounded-xl font-bold">ยกเลิก</button>
+                                <button className="bg-[#C1C1C1] w-40 py-3 text-xl rounded-xl font-bold"><Link to={`/admin/information_wood_detail/${w_id}`}>ยกเลิก</Link></button>
                             </div>
                         </div>
                     </div>

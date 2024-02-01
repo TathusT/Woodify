@@ -20,12 +20,28 @@ const Account: React.FC = () => {
   const [titleModal, setTitleModal] = useState("")
   const [confirmButton, setConfirmButton] = useState("")
   const [users, setUsers] = useState<any>();
+  const [selectUser, setSelectUser] = useState<any>();
+  const [selectRole, setSelectRole] = useState('')
   const handleChange = (value: string) => {
-    console.log(`selected ${value}`);
+    setSelectRole(value);
   };
 
   const getUser = async () => {
     await axios.get(`${path}/user`).then((res) => { setUsers(res.data) }).catch((err) => console.log(err))
+  }
+
+  const updateRole = async () => {
+    await axios.put(`${path}/update_role`, {
+      u_id: selectUser.u_id,
+      role: selectRole
+    }).then((res) => {
+      if (res.data.message == "update role success") {
+        getUser();
+      }
+    })
+      .catch((err) => {
+        console.log(err);
+      })
   }
 
   useEffect(() => {
@@ -136,7 +152,6 @@ const Account: React.FC = () => {
         <thead>
           <tr className="w-full font-bold">
             <th className="pb-5 w-6"></th>
-            <th className="pb-5">ไอดีไลน์</th>
             <th className="pb-5">ไอดีผู้ใช้งาน</th>
             <th className="pb-5">ชื่อ-นามสกุล</th>
             <th className="pb-5">บทบาท</th>
@@ -147,8 +162,6 @@ const Account: React.FC = () => {
         </thead>
         <tbody>
           {users && users.map((user, index) => {
-            console.log(user);
-            
             return (
               <tr key={index} className="bg-white shadow-[0px_0px_4px_0px_rgba(0,0,0,0.25)] rounded-[10px] font-semibold">
                 <td className="rounded-l-[10px] text-center pl-4">
@@ -158,7 +171,6 @@ const Account: React.FC = () => {
                     )}
                   </div>
                 </td>
-                <td className="py-6 text-center">{user.line_id}</td>
                 <td className="py-5 text-center">{user.u_id}</td>
                 <td className="py-5 text-center">{user.firstname} {user.lastname}</td>
                 <td className="py-5 text-center">{user.role}</td>
@@ -173,7 +185,11 @@ const Account: React.FC = () => {
                 </td>
                 <td className="py-5 rounded-r-[10px] text-center">
                   <Dropdown menu={{ items }} placement="bottomRight" trigger={['click']} arrow>
-                    <img onClick={(e) => e.preventDefault()} className="mx-auto" src={dotIcon} alt="" />
+                    <img onClick={(e) => {
+                      e.preventDefault()
+                      setSelectUser(user);
+                      setSelectRole(user.role)
+                    }} className="mx-auto" src={dotIcon} alt="" />
                   </Dropdown>
                 </td>
               </tr>
@@ -198,7 +214,12 @@ const Account: React.FC = () => {
         onCancel={() => setmodalAddUser(false)}
         footer={[
           <div className="flex items-center space-x-2 font-semibold pt-3">
-            <div onClick={() => setmodalAddUser(false)} className="bg-[#3C6255] py-2 w-1/2 text-white cursor-pointer rounded-[10px] text-center">
+            <div onClick={() => {
+              setmodalAddUser(false)
+              if (confirmButton == "ยืนยันการเปลี่ยน") {
+                updateRole();
+              }
+            }} className="bg-[#3C6255] py-2 w-1/2 text-white cursor-pointer rounded-[10px] text-center">
               <p>{confirmButton}</p>
             </div>
             <div onClick={() => setmodalAddUser(false)} className="bg-[#C1C1C1] py-2 w-1/2 cursor-pointer rounded-[10px] text-center">
@@ -210,21 +231,21 @@ const Account: React.FC = () => {
         {confirmButton == 'ยืนยันการบล็อก' || confirmButton == 'ยืนยันการเปลี่ยน' || confirmButton == 'ยืนยันการลบ' ?
           (
             <div className="flex flex-col items-center space-y-3 font-semibold">
-              <img className="rounded-full w-32 h-32" src="https://plus.unsplash.com/premium_photo-1668319915384-3cccf7689bef?q=80&w=2564&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="" />
-              <p>ธนวิชญ์ ลักษณะ</p>
+              <img className="rounded-full w-32 h-32" src={`${selectUser.image}`} alt="" />
+              <p>{selectUser.firstname} {selectUser.lastname}</p>
               {confirmButton == 'ยืนยันการบล็อก' ? (<p>คุณต้องการบล็อกบัญชีผู้ใช้นี้ใช่หรือไม่?</p>) : ('')}
               {confirmButton == 'ยืนยันการเปลี่ยน' ? (<p>คุณต้องการเปลี่ยนบทบาทผู้ใช้นี้เป็น</p>) : ('')}
               {confirmButton == 'ยืนยันการลบ' ? (<p>คุณต้องการลบบัญชีผู้ใช้นี้ใช่หรือไม่?</p>) : ('')}
               {confirmButton == 'ยืนยันการเปลี่ยน' ?
                 (
                   <Select
-                    defaultValue="ผู้เชี่ยวชาญ"
+                    value={selectRole}
                     suffixIcon={<img src={selectIcon}></img>}
                     className="h-full w-full"
                     onChange={handleChange}
                     options={[
-                      { value: "ผู้เชี่ยวชาญ", label: "ผู้เชี่ยวชาญ" },
-                      { value: "ผู้ใช้ทั่วไป", label: "ผู้ใช้ทั่วไป" }
+                      { value: "EXPERT", label: "ผู้เชี่ยวชาญ" },
+                      { value: "USER", label: "ผู้ใช้ทั่วไป" }
                     ]}
                   />
                 ) : ('')}
