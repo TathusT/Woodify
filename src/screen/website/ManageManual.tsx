@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import ReactQuill from "react-quill";
 import { Radio } from "@material-tailwind/react";
 import { modules, formats, getImage } from "../../tools/tools";
@@ -7,81 +7,6 @@ import axios from "axios";
 import path from "../../../path";
 
 const RadioButton: any = Radio
-
-const CreateManual = async (title: string, body: string, status: boolean, image: any) => {
-    try {
-        const formData = new FormData();
-        const token = localStorage.getItem('access_token');
-        if (token) {
-            formData.append('title', title);
-            formData.append('body', body);
-            formData.append('status', status.toString());
-            formData.append('token', token)
-            if (image) {
-                formData.append('image', image);
-            }
-            const response = await axios.post(`${path}/create_manual`, formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data',
-                },
-            });
-            console.log(response.data);
-        } else {
-            console.log('Token is missing or invalid');
-        }
-    } catch (error) {
-        console.error(error);
-    }
-}
-
-const editManual = async (title: string, body: string, status: boolean, image: any | null, id: string) => {
-    try {
-        const formData = new FormData();
-        const token = localStorage.getItem('access_token');
-        if (image != undefined) {
-            if (token) {
-                formData.append('title', title);
-                formData.append('body', body);
-                formData.append('status', status.toString());
-                formData.append('token', token)
-                formData.append('image', image);
-                formData.append('id', id);
-                const response = await axios.post(`${path}/edit_manual_updateImage`, formData, {
-                    headers: {
-                        'Content-Type': 'multipart/form-data',
-                    },
-                });
-                console.log(response.data);
-            } else {
-                console.log('Token is missing or invalid');
-            }
-        } else {
-            if (token) {
-                formData.append('title', title);
-                formData.append('body', body);
-                formData.append('status', status.toString());
-                formData.append('token', token)
-                if (image) {
-                    formData.append('image', image);
-                }
-                const response = await axios.post(`${path}/edit_manual_noupdateImage`, {
-                    title: title,
-                    body: body,
-                    status: status,
-                    token: token,
-                    id: id
-                });
-                console.log(response.data);
-            } else {
-                console.log('Token is missing or invalid');
-            }
-        }
-
-    } catch (error) {
-        console.error(error);
-    }
-}
-
 
 
 const ManageManual: React.FC = () => {
@@ -93,6 +18,82 @@ const ManageManual: React.FC = () => {
     const fileInputRef = useRef<HTMLInputElement>(null);
     const { id } = useParams();
     const isCreateMode = id === undefined;
+    const router = useNavigate();
+
+    const CreateManual = async (title: string, body: string, status: boolean, image: any) => {
+        try {
+            const formData = new FormData();
+            const token = localStorage.getItem('access_token');
+            if (token) {
+                formData.append('title', title);
+                formData.append('body', body);
+                formData.append('status', status.toString());
+                formData.append('token', token)
+                if (image) {
+                    formData.append('image', image);
+                }
+                const response = await axios.post(`${path}/create_manual`, formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data',
+                    },
+                });
+                console.log(response.data);
+            } else {
+                console.log('Token is missing or invalid');
+            }
+            router('/admin/manual')
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    const editManual = async (title: string, body: string, status: boolean, image: any | null, id: string) => {
+        try {
+            const formData = new FormData();
+            const token = localStorage.getItem('access_token');
+            if (image != undefined) {
+                if (token) {
+                    formData.append('title', title);
+                    formData.append('body', body);
+                    formData.append('status', status.toString());
+                    formData.append('token', token)
+                    formData.append('image', image);
+                    formData.append('id', id);
+                    const response = await axios.post(`${path}/edit_manual_updateImage`, formData, {
+                        headers: {
+                            'Content-Type': 'multipart/form-data',
+                        },
+                    });
+                    console.log(response.data);
+                } else {
+                    console.log('Token is missing or invalid');
+                }
+            } else {
+                if (token) {
+                    formData.append('title', title);
+                    formData.append('body', body);
+                    formData.append('status', status.toString());
+                    formData.append('token', token)
+                    if (image) {
+                        formData.append('image', image);
+                    }
+                    const response = await axios.post(`${path}/edit_manual_noupdateImage`, {
+                        title: title,
+                        body: body,
+                        status: status,
+                        token: token,
+                        id: id
+                    });
+                    console.log(response.data);
+                } else {
+                    console.log('Token is missing or invalid');
+                }
+            }
+            router('/admin/manual')
+        } catch (error) {
+            console.error(error);
+        }
+    }
 
     useEffect(() => {
         axios.get(`${path}/manual/${id}`)
@@ -207,7 +208,7 @@ const ManageManual: React.FC = () => {
                     </div>
                     <div className="flex items-center justify-center space-x-8">
                         <button onClick={() => isCreateMode ? CreateManual(manualTitle, body, status, fileInputRef.current?.files?.[0]) : editManual(manualTitle, body, status, fileInputRef.current?.files?.[0], id)} className="bg-[#61876E] w-40 py-3 text-xl rounded-xl text-white font-bold">บันทึก</button>
-                        <button className="bg-[#C1C1C1] w-40 py-3 text-xl rounded-xl font-bold">ยกเลิก</button>
+                        <button onClick={() => router('/admin/manual')} className="bg-[#C1C1C1] w-40 py-3 text-xl rounded-xl font-bold">ยกเลิก</button>
                     </div>
                 </div>
             </div>

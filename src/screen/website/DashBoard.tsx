@@ -134,7 +134,6 @@ const RenderColumn = ({ data }) => {
   );
 }
 
-
 const DashBoard: React.FC = () => {
   const [dataColumn, setDataColumn] = useState();
   const [dataLine, setDataLine] = useState();
@@ -142,9 +141,14 @@ const DashBoard: React.FC = () => {
   const [dateTo, setDateTo] = useState(today);
   const [pickerFrom, setPickerFrom] = useState();
   const [pickerTo, setPickerTo] = useState();
+  const [classifyToday, setClassifyToday] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
+  const [classifyAll, setClassifyAll] = useState(0);
+  const [classifyStatusWaitVerify, setClassifyStatusWaitVerify] = useState(0)
+  const [userToday, setUserToday] = useState(0)
 
-  const getData = async (dateFromDB: string, dateToDB: string) => {
+
+  const getColumn = async (dateFromDB: string, dateToDB: string) => {
     await axios.get(`${path}/dashboard_classify_column/${dateFromDB}/${dateToDB}`)
       .then((res) => {
         setDataColumn(res.data)
@@ -152,14 +156,66 @@ const DashBoard: React.FC = () => {
       .catch((err) => {
         console.log(err);
       })
-    await axios.get(`${path}/dashboard_classify_line/${dateFromDB}/${dateToDB}`)
+  }
+  const getLine = async (dateFromDB: string, dateToDB: string) => {
+    await axios.get(`${path}/dashboard_classify_Line/${dateFromDB}/${dateToDB}`)
       .then((res) => {
         setDataLine(res.data)
       })
       .catch((err) => {
         console.log(err);
       })
+  }
+
+  const getData = async (dateFromDB: string, dateToDB: string) => {
+    await getColumn(dateFromDB, dateToDB)
+    await getLine(dateFromDB, dateToDB)
+    await getClassifyToday()
+    await getClassifyAll();
+    await getClassifyWaitVerify();
+    await getUserToday();
     setIsLoading(false);
+  }
+
+  const getClassifyToday = async () => {
+    await axios.get(`${path}/get_classiy_today`)
+      .then((res) => {
+        setClassifyToday(res.data)
+
+      })
+      .catch((err) => {
+        console.log(err);
+      })
+  }
+
+  const getUserToday = async () => {
+    await axios.get(`${path}/user_today`)
+      .then((res) => {
+        setUserToday(res.data)
+      })
+      .catch((err) => {
+        console.log(err);
+      })
+  }
+
+  const getClassifyAll = async () => {
+    await axios.get(`${path}/classify_all`)
+      .then((res) => {
+        setClassifyAll(res.data)
+      })
+      .catch((err) => {
+        console.log(err);
+      })
+  }
+
+  const getClassifyWaitVerify = async () => {
+    await axios.get(`${path}/classify_wait_for_verify`)
+      .then((res) => {
+        setClassifyStatusWaitVerify(res.data)
+      })
+      .catch((err) => {
+        console.log(err);
+      })
   }
 
   useEffect(() => {
@@ -217,25 +273,25 @@ const DashBoard: React.FC = () => {
               <div>
                 <p>จำนวนการตรวจสอบในวันนี้</p>
                 <div className={`rounded-lg border-2 border-gray-200 w-full h-20 bg-white flex items-center justify-center`}>
-                  <p className="text-2xl font-bold">452 การตรวจ</p>
+                  <p className="text-2xl font-bold">{classifyToday} การตรวจ</p>
                 </div>
               </div>
               <div>
                 <p>จำนวนการลงทะเบียนในวันนี้</p>
                 <div className={`rounded-lg border-2 border-gray-200 w-full h-20 bg-white flex items-center justify-center`}>
-                  <p className="text-2xl font-bold">20 ครั้ง</p>
+                  <p className="text-2xl font-bold">{userToday} ครั้ง</p>
                 </div>
               </div>
               <div>
                 <p>จำนวนการตรวจทั้งหมด</p>
                 <div className={`rounded-lg border-2 border-gray-200 w-full h-20 bg-white flex items-center justify-center`}>
-                  <p className="text-2xl font-bold">3440 การตรวจ</p>
+                  <p className="text-2xl font-bold">{classifyAll} การตรวจ</p>
                 </div>
               </div>
               <div>
                 <p>จำนวนการตรวจที่รอการรับรอง</p>
                 <div className={`rounded-lg border-2 border-gray-200 w-full h-20 bg-white flex items-center justify-center`}>
-                  <p className="text-2xl font-bold">20 การตรวจ</p>
+                  <p className="text-2xl font-bold">{classifyStatusWaitVerify} การตรวจ</p>
                 </div>
               </div>
             </div>

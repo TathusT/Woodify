@@ -11,10 +11,12 @@ import closeEye from "../../assets/close_eye_red.svg"
 import axios from "axios";
 import path from "../../../path";
 import { convertIsoToThaiDateTime } from "../../tools/tools";
+import { Link, useNavigate } from "react-router-dom";
 
 const Manual: React.FC = () => {
   const [modalDeleteManual, setmodalDeleteManual] = useState(false);
   const [dataManual, setDataManual] = useState<any>()
+  const router = useNavigate();
   const handleChange = (value: string) => {
     console.log(`selected ${value}`);
   };
@@ -74,10 +76,10 @@ const Manual: React.FC = () => {
           <div className="h-full">
             <Input className="h-full w-[280px] font-semibold" suffix={<img src={search} />} />
           </div>
-          <div className="bg-[#3C6255] h-full flex justify-center space-x-2 items-center px-3 rounded-[8px] text-white cursor-pointer">
+          <Link to='/admin/manage_manual' className="bg-[#3C6255] h-full flex justify-center space-x-2 items-center px-3 rounded-[8px] text-white cursor-pointer">
             <p>เพื่มคู่มือ</p>
             <img src={add} alt="" />
-          </div>
+          </Link>
         </div>
       </div>
       <table className="table-auto w-full mt-8 border-spacing-y-4 border-separate">
@@ -94,7 +96,7 @@ const Manual: React.FC = () => {
         <tbody>
           {dataManual && dataManual.map((manual, index) => {
             return (
-              <tr key={index} className="bg-white shadow-[0px_0px_4px_0px_rgba(0,0,0,0.25)] rounded-[10px] font-semibold">
+              <tr onClick={() => router(`/admin/manage_manual/${manual.m_id}`)} key={index} className="bg-white shadow-[0px_0px_4px_0px_rgba(0,0,0,0.25)] rounded-[10px] font-semibold">
                 <td className="py-6 rounded-l-[10px] text-center">{index + 1}</td>
                 <td className="py-5 text-center">{manual.topic}</td>
                 <td></td>
