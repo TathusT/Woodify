@@ -22,12 +22,28 @@ const Account: React.FC = () => {
   const [users, setUsers] = useState<any>();
   const [selectUser, setSelectUser] = useState<any>();
   const [selectRole, setSelectRole] = useState('')
+  const [email, setEmail] = useState('');
   const handleChange = (value: string) => {
     setSelectRole(value);
   };
 
   const getUser = async () => {
     await axios.get(`${path}/user`).then((res) => { setUsers(res.data) }).catch((err) => console.log(err))
+  }
+
+  const sendMailToExpert = async () => {
+    await axios.post(`${path}/send_email`, {
+      email : email
+    })
+    .then((res) => {
+      if(res.data.message == 'email is taken'){
+        alert('email is taken')
+      }
+      setEmail('')
+    })
+    .catch((err) => {
+      console.log(err);
+    })
   }
 
   const updateRole = async () => {
@@ -219,10 +235,16 @@ const Account: React.FC = () => {
               if (confirmButton == "ยืนยันการเปลี่ยน") {
                 updateRole();
               }
+              if (confirmButton == "ยืนยันการส่ง") {
+                sendMailToExpert();
+              }
             }} className="bg-[#3C6255] py-2 w-1/2 text-white cursor-pointer rounded-[10px] text-center">
               <p>{confirmButton}</p>
             </div>
-            <div onClick={() => setmodalAddUser(false)} className="bg-[#C1C1C1] py-2 w-1/2 cursor-pointer rounded-[10px] text-center">
+            <div onClick={() => {
+              setmodalAddUser(false)
+              setEmail('')
+            }} className="bg-[#C1C1C1] py-2 w-1/2 cursor-pointer rounded-[10px] text-center">
               <p>ยกเลิก</p>
             </div>
           </div>
@@ -255,7 +277,7 @@ const Account: React.FC = () => {
           (
             <div className="pt-3">
               <p className="mb-1 font-semibold text-base">อีเมลผู้เชี่ยวชาญ</p>
-              <input className="rounded-[5px] font-semibold border-[1px] w-full text-base border-[#61876E] p-1 focus-visible:border-[#445f4e]"></input>
+              <input value={email} onChange={(text) => { setEmail(text.target.value) }} className="rounded-[5px] font-semibold border-[1px] w-full text-base border-[#61876E] p-1 focus-visible:border-[#445f4e]"></input>
             </div>
           )
         }
