@@ -21,6 +21,8 @@ import ClassifyWoodDetail from "./screen/website/ClassifyWoodDetail";
 import InformationWoodDetail from "./screen/website/InformationWoodDetail";
 import ManageInformationWood from "./screen/website/ManageInformationWood";
 import HomePage from "./screen/website/HomePage";
+import ManualDetail from "./screen/website/ManualDetail"
+import SignUpWeb from "./screen/website/Signup";
 
 
 function App() {
@@ -63,11 +65,13 @@ function AdminRoutes() {
         <Route path="classify_wood_detail/:c_id" element={<ClassifyWoodDetail/>}></Route>
         <Route path="manage_manual" element={<ManageManual />} />
         <Route path="manage_manual/:id" element={<ManageManual />} />
+        <Route path="manual_detail" element={<ManualDetail />} />
         <Route path="manage_information_wood" element={<ManageInformationWood />} />
         <Route path="manage_information_wood/:w_id" element={<ManageInformationWood />} />
         <Route path="information_wood_detail/:w_id" element={<InformationWoodDetail />} />
       </Route>
       <Route path="login" element={<LoginWeb />} />
+      <Route path="signup" element={<SignUpWeb />} />
       <Route path="woodify" element={<HomePage />} />
     </Routes>
   );

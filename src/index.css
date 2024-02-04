@@ -128,3 +128,6 @@
 .min-w-96{
   min-width: 24rem !important;
 }
+:where(.css-dev-only-do-not-override-amq5gd) a:hover {
+  color: #ffffff !important;
+}

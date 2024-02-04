@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect, ChangeEvent } from "react";
+import { Modal } from "antd";
 import garbage from "../../assets/garbage.svg";
 import picNoUpload from "../../assets/pic-no-upload.svg"
 import addPicWhite from "../../assets/add-pic-white.svg"
@@ -10,6 +11,8 @@ import Loading from "../component/Loading";
 
 
 const ManageInformationWood: React.FC = () => {
+    const [modalConfirmSave, setModalConfirmSave] = useState(false);
+    const [modalCancel, setModalCancel] = useState(false);
     const [status, setStatus] = useState(true)
     const [images, setImages] = useState<string[]>([]);
     const [commonName, setCommonName] = useState('');
@@ -327,12 +330,70 @@ const ManageInformationWood: React.FC = () => {
                                 </div>
                             </div>
                             <div className="flex items-center justify-center space-x-8">
-                                <button onClick={() => w_id ? updateWood() : createWood()} className="bg-[#61876E] w-40 py-3 text-xl rounded-xl text-white font-bold">บันทึก</button>
-                                <button className="bg-[#C1C1C1] w-40 py-3 text-xl rounded-xl font-bold"><Link to={`/admin/information_wood_detail/${w_id}`}>ยกเลิก</Link></button>
+                                <button onClick={() => setModalConfirmSave(true)} className="bg-[#61876E] w-40 py-3 text-xl rounded-xl text-white font-bold">บันทึก</button>
+                                <button onClick={() => setModalCancel(true)} className="bg-[#C1C1C1] w-40 py-3 text-xl rounded-xl font-bold">ยกเลิก</button>
                             </div>
                         </div>
                     </div>
                     <p className='text-center text-xl font-semibold pb-3'>© 2023 COPYRIGHT 2023 WOODIFY. ALL RIGHTS RESERVED.</p>
+                    {/* modal */}
+                    <Modal
+                        title={[
+                        <div className="text-center text-[24px] mt-4">
+                            <p>ยืนยันการบันทึกข้อมูล</p>
+                        </div>
+                        ]}
+                        className="Kanit"
+                        centered
+                        open={modalConfirmSave}
+                        width={550}
+                        onCancel={() => setModalConfirmSave(false)}
+                        footer={[
+                        <div className="flex items-center justify-center space-x-2 font-semibold pt-3 mb-4">
+                            <div onClick={() => 
+                                {
+                                    setModalConfirmSave(false)
+                                    w_id ? updateWood() : createWood()
+                                }} className="bg-[#3C6255] py-2 w-1/4 text-white cursor-pointer rounded-[10px] text-center">
+                            <p>ยืนยันการบันทึก</p>
+                            </div>
+                            <div onClick={() => setModalConfirmSave(false)} className="bg-[#C1C1C1] py-2 w-1/4 cursor-pointer rounded-[10px] text-center">
+                            <p>ยกเลิก</p>
+                            </div>
+                        </div>
+                        ]}
+                    >
+                        <div className="flex justify-center my-10">
+                        <p className="text-lg font-semibold">คุณต้องการบันทึกข้อมูลนี้ ใช่หรือไม่?</p>
+                        </div>
+                    </Modal>
+                    {/* modal */}
+                    <Modal
+                        title={[
+                        <div className="text-center text-[24px] mt-4">
+                            <p>ยืนยันการยกเลิกการบันทึกข้อมูล</p>
+                        </div>
+                        ]}
+                        className="Kanit"
+                        centered
+                        open={modalCancel}
+                        width={550}
+                        onCancel={() => setModalCancel(false)}
+                        footer={[
+                        <div className="flex items-center justify-center space-x-2 font-semibold pt-3 mb-4">
+                            <Link to={w_id?`/admin/information_wood_detail/${w_id}`:`/admin/information_wood`} className="bg-[#3C6255] py-2 w-1/4 text-white cursor-pointer rounded-[10px] text-center">
+                                <p>ยกเลิกการบันทึก</p>
+                            </Link>
+                            <div onClick={() => setModalCancel(false)} className="bg-[#C1C1C1] py-2 w-1/4 cursor-pointer rounded-[10px] text-center">
+                                <p>ยกเลิก</p>
+                            </div>
+                        </div>
+                        ]}
+                    >
+                        <div className="flex justify-center my-10">
+                        <p className="text-lg font-semibold">คุณต้องการยกเลิกการบันทึกข้อมูลนี้ ใช่หรือไม่?</p>
+                        </div>
+                    </Modal>
                 </div>
             )}
         </div>
