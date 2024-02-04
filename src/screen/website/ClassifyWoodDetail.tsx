@@ -6,6 +6,7 @@ import axios from 'axios';
 import path from '../../../path';
 import { useParams } from 'react-router-dom';
 import { convertIsoToThaiDateTime, getImage } from '../../tools/tools';
+import Loading from '../component/Loading';
 import { io } from 'socket.io-client';
 
 const ClassifyWoodDetail: React.FC = () => {
@@ -14,11 +15,12 @@ const ClassifyWoodDetail: React.FC = () => {
     const [checkModalCertification, setCheckModalCertification] = useState(false);
     const [valueBefore, setValueBefore] = useState<any>();
     const [valueAfter, setValueAfter] = useState('');
+    const [isLoading, setIsLoading] = useState(true);
     function clickModal(check) {
         setModalCertification(true)
-        if(check == 'ผ่าน'){
+        if (check == 'ผ่าน') {
             setCheckModalCertification(true)
-        }else{
+        } else {
             setCheckModalCertification(false)
         }
     }
@@ -26,7 +28,7 @@ const ClassifyWoodDetail: React.FC = () => {
         setModalChange(true)
         setValueAfter(value)
         console.log(value);
-        
+
     };
     const [heightBox, setHeightBox] = useState(0)
     const divRef = useRef<HTMLDivElement>(null);
@@ -71,6 +73,8 @@ const ClassifyWoodDetail: React.FC = () => {
         await axios.get(`${path}/classify/${c_id}`)
             .then((res) => {
                 let makeData: any = [];
+                console.log(res.data);
+                
                 setClassify(res.data)
                 res.data.result.map((data: any, index: number) => {
                     makeData.push({ value: data.wood, label: `${index + 1}. ${data.wood} ${data.percentage}%` });
@@ -95,17 +99,22 @@ const ClassifyWoodDetail: React.FC = () => {
         return () => {
             window.removeEventListener('resize', handleResize);
         };
-    }, []);
+    }, [isLoading]);
+
+    const getData = async () => {
+        await getClassifyWithId();
+        await getNoteFromId();
+        await setIsLoading(false)
+    }
 
     useEffect(() => {
-        getClassifyWithId();
-        getNoteFromId();
+        getData();
     }, [])
 
     useEffect(() => {
         if (classify) {
             console.log(1);
-            
+
             const socket = io(path, {
                 reconnectionAttempts: 3,
                 timeout: 10000,
@@ -132,10 +141,10 @@ const ClassifyWoodDetail: React.FC = () => {
         }
     }, [classify])
     return (
-        <div>
-            {classify && changeResult && (note || note == null) && (
-                <div className="w-full Kanit flex flex-col min-h-screen">
-                    <p className="text-[32px] font-bold mt-10">การตรวจสอบไม้ ไอดี 3145</p>
+        <div className='w-full Kanit flex flex-col min-h-screen'>
+            {isLoading ? <div className="flex items-center justify-center flex-1 h-full"><Loading /></div> : classify && changeResult && (note || note == null) && (
+                <div className="">
+                    <p className="text-[32px] font-bold mt-10">การตรวจสอบไม้ ไอดี {classify.c_id}</p>
                     <div className="pt-6 flex space-x-4">
                         <div className=" w-8/12">
                             <p className="text-xl text-[#5C5C5C] font-semibold">ข้อมูลการตรวจสอบ</p>
@@ -176,7 +185,7 @@ const ClassifyWoodDetail: React.FC = () => {
                                         </div>
                                     </div>
                                     <div className="col-span-4">
-                                        <p className="text-lg font-semibold">ธนวิชญ์ ลักษณะ</p>
+                                        <p className="text-lg font-semibold">{classify.creator.firstname} {classify.creator.lastname}</p>
                                     </div>
                                     <div className="col-span-5">
                                         <div className="flex items-center space-x-4">
@@ -204,7 +213,7 @@ const ClassifyWoodDetail: React.FC = () => {
                                 />
                                 <div className="flex text-lg font-semibold space-x-4 items-center">
                                     <p>สถานะ:</p>
-                                    <p>รอตรวจสอบ</p>
+                                    <p>{classify.status_verify == "WAITING_FOR_VERIFICATION" ? "รอการรับรอง" : classify.status_verify == 'PASSED_CERTIFICATION' ? "ผ่านการรับรอง" : "ไม่ผ่านการรับรอง"}</p>
                                 </div>
                                 <div className="flex items-center space-x-2 text-lg font-semibold">
                                     <div onClick={() => clickModal('ผ่าน')} className="bg-[#61876E] text-white py-2 px-5 rounded-[10px]">
@@ -239,86 +248,86 @@ const ClassifyWoodDetail: React.FC = () => {
                     </div>
                 </div>
             )}
-        {/* modal */}
-        <Modal
-            title={[
-            <div className="text-center text-[24px] mt-4">
-                <p>การรับรอง</p>
-            </div>
-            ]}
-            className="Kanit"
-            centered
-            open={modalCertification}
-            width={1050}
-            onCancel={() => setModalCertification(false)}
-            footer={[
-            <div className="flex items-center justify-center space-x-2 font-semibold pt-3 mb-4">
-                <div onClick={() => {
-                    setModalCertification(false)
-                }} className="bg-[#3C6255] py-2 w-1/6 text-white cursor-pointer rounded-[10px] text-center">
-                <p>ยืนยัน</p>
+            {/* modal */}
+            <Modal
+                title={[
+                    <div className="text-center text-[24px] mt-4">
+                        <p>การรับรอง</p>
+                    </div>
+                ]}
+                className="Kanit"
+                centered
+                open={modalCertification}
+                width={1050}
+                onCancel={() => setModalCertification(false)}
+                footer={[
+                    <div className="flex items-center justify-center space-x-2 font-semibold pt-3 mb-4">
+                        <div onClick={() => {
+                            setModalCertification(false)
+                        }} className="bg-[#3C6255] py-2 w-1/6 text-white cursor-pointer rounded-[10px] text-center">
+                            <p>ยืนยัน</p>
+                        </div>
+                        <div onClick={() => setModalCertification(false)} className="bg-[#C1C1C1] py-2 w-1/6 cursor-pointer rounded-[10px] text-center">
+                            <p>ยกเลิก</p>
+                        </div>
+                    </div>
+                ]}
+            >
+                <div className="flex items-center my-10 flex-col space-y-4">
+                    <p className="text-lg font-semibold">คุณต้องการตั้งสถานะการตรวจสอบ</p>
+                    <div className='flex space-x-3'>
+                        <p className="text-lg font-semibold">เป็น</p>
+                        {
+                            (checkModalCertification ?
+                                <p className='text-lg font-semibold text-[#61876E]'>ผ่านการรับรอง</p>
+                                :
+                                <p className='text-lg font-semibold text-[#FF0000]'>ไม่ผ่านการรับรอง</p>
+                            )
+                        }
+                        <p className="text-lg font-semibold">ใช่หรือไม่?</p>
+                    </div>
+                    <div className='w-4/5'>
+                        <p className='text-lg font-semibold'>บันทึกการรับรอง</p>
+                        <textarea className='w-full border border-1 border-[#61876E] rounded-[15px] p-3 h-72 text-lg font-semibold max-h-80' name="" id=""></textarea>
+                    </div>
                 </div>
-                <div onClick={() => setModalCertification(false)} className="bg-[#C1C1C1] py-2 w-1/6 cursor-pointer rounded-[10px] text-center">
-                <p>ยกเลิก</p>
+            </Modal>
+            <Modal
+                title={[
+                    <div className="text-center text-[24px] mt-4">
+                        <p>เปลี่ยนผลการตรวจสอบ</p>
+                    </div>
+                ]}
+                className="Kanit"
+                centered
+                open={modalChange}
+                width={550}
+                onCancel={() => setModalChange(false)}
+                footer={[
+                    <div className="flex items-center justify-center space-x-2 font-semibold pt-3 mb-4">
+                        <div onClick={() => {
+                            setModalChange(false)
+                            setValueBefore(valueAfter)
+                        }} className="bg-[#3C6255] py-2 w-1/4 text-white cursor-pointer rounded-[10px] text-center">
+                            <p>ยืนยัน</p>
+                        </div>
+                        <div onClick={() => setModalChange(false)} className="bg-[#C1C1C1] py-2 w-1/4 cursor-pointer rounded-[10px] text-center">
+                            <p>ยกเลิก</p>
+                        </div>
+                    </div>
+                ]}
+            >
+                <div className="flex items-center my-10 flex-col space-y-4">
+                    <p className="text-lg font-semibold">คุณต้องการเปลี่ยนผลการตรวจสอบ</p>
+                    <div className='flex space-x-3'>
+                        <p className="text-lg font-semibold">จาก</p>
+                        <p className="text-lg font-semibold">{valueBefore && (valueBefore.value || valueBefore)}</p>
+                        <p className="text-lg font-semibold">เป็น</p>
+                        <p className="text-lg font-semibold">{valueAfter}</p>
+                        <p className="text-lg font-semibold">ใช่หรือไม่?</p>
+                    </div>
                 </div>
-            </div>
-            ]}
-        >
-            <div className="flex items-center my-10 flex-col space-y-4">
-                <p className="text-lg font-semibold">คุณต้องการตั้งสถานะการตรวจสอบ</p>
-                <div className='flex space-x-3'>
-                    <p className="text-lg font-semibold">เป็น</p>
-                    {
-                        (checkModalCertification?
-                            <p className='text-lg font-semibold text-[#61876E]'>ผ่านการรับรอง</p>
-                            :
-                            <p className='text-lg font-semibold text-[#FF0000]'>ไม่ผ่านการรับรอง</p>
-                        )
-                    }
-                    <p className="text-lg font-semibold">ใช่หรือไม่?</p>
-                </div>
-                <div className='w-4/5'>
-                    <p className='text-lg font-semibold'>บันทึกการรับรอง</p>
-                    <textarea className='w-full border border-1 border-[#61876E] rounded-[15px] p-3 h-72 text-lg font-semibold max-h-80' name="" id=""></textarea>
-                </div>
-            </div>
-        </Modal>
-        <Modal
-            title={[
-            <div className="text-center text-[24px] mt-4">
-                <p>เปลี่ยนผลการตรวจสอบ</p>
-            </div>
-            ]}
-            className="Kanit"
-            centered
-            open={modalChange}
-            width={550}
-            onCancel={() => setModalChange(false)}
-            footer={[
-            <div className="flex items-center justify-center space-x-2 font-semibold pt-3 mb-4">
-                <div onClick={() => {
-                    setModalChange(false)
-                    setValueBefore(valueAfter)
-                }} className="bg-[#3C6255] py-2 w-1/4 text-white cursor-pointer rounded-[10px] text-center">
-                <p>ยืนยัน</p>
-                </div>
-                <div onClick={() => setModalChange(false)} className="bg-[#C1C1C1] py-2 w-1/4 cursor-pointer rounded-[10px] text-center">
-                <p>ยกเลิก</p>
-                </div>
-            </div>
-            ]}
-        >
-            <div className="flex items-center my-10 flex-col space-y-4">
-                <p className="text-lg font-semibold">คุณต้องการเปลี่ยนผลการตรวจสอบ</p>
-                <div className='flex space-x-3'>
-                    <p className="text-lg font-semibold">จาก</p>
-                    <p className="text-lg font-semibold">{valueBefore&&(valueBefore.value || valueBefore)}</p>
-                    <p className="text-lg font-semibold">เป็น</p>
-                    <p className="text-lg font-semibold">{valueAfter}</p>
-                    <p className="text-lg font-semibold">ใช่หรือไม่?</p>
-                </div>
-            </div>
-        </Modal>
+            </Modal>
         </div>
     );
 };

@@ -29,21 +29,22 @@ const Account: React.FC = () => {
 
   const getUser = async () => {
     await axios.get(`${path}/user`).then((res) => { setUsers(res.data) }).catch((err) => console.log(err))
+    await setIsLoading(false)
   }
 
   const sendMailToExpert = async () => {
     await axios.post(`${path}/send_email`, {
-      email : email
+      email: email
     })
-    .then((res) => {
-      if(res.data.message == 'email is taken'){
-        alert('email is taken')
-      }
-      setEmail('')
-    })
-    .catch((err) => {
-      console.log(err);
-    })
+      .then((res) => {
+        if (res.data.message == 'email is taken') {
+          alert('email is taken')
+        }
+        setEmail('')
+      })
+      .catch((err) => {
+        console.log(err);
+      })
   }
 
   const updateRole = async () => {
@@ -115,107 +116,109 @@ const Account: React.FC = () => {
   }
   return (
     <div className="w-full Kanit flex flex-col min-h-screen">
-      <div className="flex mt-10 justify-between">
-        <p className="text-[24px] font-semibold">บัญชี</p>
-        <div className="flex items-center space-x-3">
-          <p className="font-semibold">แสดง</p>
-          <Select
-            defaultValue="10 แถว"
-            suffixIcon={<img src={selectIcon}></img>}
-            className="h-full"
-            style={{ width: 130 }}
-            onChange={handleChange}
-            options={[
-              { value: "10 แถว", label: "10 แถว" },
-              { value: "20 แถว", label: "20 แถว" },
-              { value: "30 แถว", label: "30 แถว" },
-            ]}
-          />
-          <Select
-            defaultValue="ใช้งานล่าสุด"
-            suffixIcon={<img src={sortIcon}></img>}
-            className="h-full"
-            style={{ width: 130 }}
-            onChange={handleChange}
-            options={[
-              { value: "ถูกบล็อก", label: "ถูกบล็อก" },
-              { value: "ไม่ได้ใช้งาน", label: "ไม่ได้ใช้งาน" },
-              { value: "ใช้งานล่าสุด", label: "ใช้งานล่าสุด" },
-            ]}
-          />
-          <Select
-            defaultValue="ผู้ใช้ทั้งหมด"
-            suffixIcon={<img src={selectIcon}></img>}
-            className="h-full"
-            style={{ width: 130 }}
-            onChange={handleChange}
-            options={[
-              { value: "ผู้เชี่ยวชาญ", label: "ผู้เชี่ยวชาญ" },
-              { value: "ผู้ใช้ทั่วไป", label: "ผู้ใช้ทั่วไป" },
-              { value: "ผู้ใช้ทั้งหมด", label: "ผู้ใช้ทั้งหมด" },
-            ]}
-          />
-          <div className="h-full">
-            <Input className="h-full w-[280px] font-semibold" suffix={<img src={search} />} />
-          </div>
-          <div onClick={() => clickModal("สร้างบัญชี")} className="bg-[#3C6255] h-full flex justify-center space-x-2 items-center px-3 rounded-[8px] text-white cursor-pointer">
-            <p>สร้างบัญชี</p>
-            <img src={add} alt="" />
+      {isLoading ? <div className="flex items-center justify-center flex-1 h-full"><Loading /></div> : (<div>
+        <div className="flex mt-10 justify-between">
+          <p className="text-[24px] font-semibold">บัญชี</p>
+          <div className="flex items-center space-x-3">
+            <p className="font-semibold">แสดง</p>
+            <Select
+              defaultValue="10 แถว"
+              suffixIcon={<img src={selectIcon}></img>}
+              className="h-full"
+              style={{ width: 130 }}
+              onChange={handleChange}
+              options={[
+                { value: "10 แถว", label: "10 แถว" },
+                { value: "20 แถว", label: "20 แถว" },
+                { value: "30 แถว", label: "30 แถว" },
+              ]}
+            />
+            <Select
+              defaultValue="ใช้งานล่าสุด"
+              suffixIcon={<img src={sortIcon}></img>}
+              className="h-full"
+              style={{ width: 130 }}
+              onChange={handleChange}
+              options={[
+                { value: "ถูกบล็อก", label: "ถูกบล็อก" },
+                { value: "ไม่ได้ใช้งาน", label: "ไม่ได้ใช้งาน" },
+                { value: "ใช้งานล่าสุด", label: "ใช้งานล่าสุด" },
+              ]}
+            />
+            <Select
+              defaultValue="ผู้ใช้ทั้งหมด"
+              suffixIcon={<img src={selectIcon}></img>}
+              className="h-full"
+              style={{ width: 130 }}
+              onChange={handleChange}
+              options={[
+                { value: "ผู้เชี่ยวชาญ", label: "ผู้เชี่ยวชาญ" },
+                { value: "ผู้ใช้ทั่วไป", label: "ผู้ใช้ทั่วไป" },
+                { value: "ผู้ใช้ทั้งหมด", label: "ผู้ใช้ทั้งหมด" },
+              ]}
+            />
+            <div className="h-full">
+              <Input className="h-full w-[280px] font-semibold" suffix={<img src={search} />} />
+            </div>
+            <div onClick={() => clickModal("สร้างบัญชี")} className="bg-[#3C6255] h-full flex justify-center space-x-2 items-center px-3 rounded-[8px] text-white cursor-pointer">
+              <p>สร้างบัญชี</p>
+              <img src={add} alt="" />
+            </div>
           </div>
         </div>
-      </div>
-      <table className="table-auto w-full mt-8 border-spacing-y-4 border-separate">
-        <thead>
-          <tr className="w-full font-bold">
-            <th className="pb-5 w-6"></th>
-            <th className="pb-5">ไอดีผู้ใช้งาน</th>
-            <th className="pb-5">ชื่อ-นามสกุล</th>
-            <th className="pb-5">บทบาท</th>
-            <th className="pb-5">อีเมล</th>
-            <th className="pb-5">สถานะ</th>
-            <th className="pb-5">จัดการ</th>
-          </tr>
-        </thead>
-        <tbody>
-          {users && users.map((user, index) => {
-            return (
-              <tr key={index} className="bg-white shadow-[0px_0px_4px_0px_rgba(0,0,0,0.25)] rounded-[10px] font-semibold">
-                <td className="rounded-l-[10px] text-center pl-4">
-                  <div className="w-12 h-12 rounded-full bg-gray-300 overflow-hidden">
-                    {user.image && (
-                      <img src={user.image} alt="" />
-                    )}
-                  </div>
-                </td>
-                <td className="py-5 text-center">{user.u_id}</td>
-                <td className="py-5 text-center">{user.firstname} {user.lastname}</td>
-                <td className="py-5 text-center">{user.role}</td>
-                <td className="py-5 text-center">{user.email ? user.email : "-"}</td>
-                <td className="py-5 text-[#3C6255]">
-                  <div className="flex justify-center items-center">
-                    <img className="mr-3" src={clockIcon} alt="" />
-                    <p>
-                      ใช้งาน 10 นาทีที่แล้ว
-                    </p>
-                  </div>
-                </td>
-                <td className="py-5 rounded-r-[10px] text-center">
-                  <Dropdown menu={{ items }} placement="bottomRight" trigger={['click']} arrow>
-                    <img onClick={(e) => {
-                      e.preventDefault()
-                      setSelectUser(user);
-                      setSelectRole(user.role)
-                    }} className="mx-auto" src={dotIcon} alt="" />
-                  </Dropdown>
-                </td>
-              </tr>
-            )
-          })}
-          <tr>
-            <td className="py-2"></td>
-          </tr>
-        </tbody>
-      </table>
+        <table className="table-auto w-full mt-8 border-spacing-y-4 border-separate">
+          <thead>
+            <tr className="w-full font-bold">
+              <th className="pb-5 w-6"></th>
+              <th className="pb-5">ไอดีผู้ใช้งาน</th>
+              <th className="pb-5">ชื่อ-นามสกุล</th>
+              <th className="pb-5">บทบาท</th>
+              <th className="pb-5">อีเมล</th>
+              <th className="pb-5">สถานะ</th>
+              <th className="pb-5">จัดการ</th>
+            </tr>
+          </thead>
+          <tbody>
+            {users && users.map((user, index) => {
+              return (
+                <tr key={index} className="bg-white shadow-[0px_0px_4px_0px_rgba(0,0,0,0.25)] rounded-[10px] font-semibold">
+                  <td className="rounded-l-[10px] text-center pl-4">
+                    <div className="w-12 h-12 rounded-full bg-gray-300 overflow-hidden">
+                      {user.image && (
+                        <img src={user.image} alt="" />
+                      )}
+                    </div>
+                  </td>
+                  <td className="py-5 text-center">{user.u_id}</td>
+                  <td className="py-5 text-center">{user.firstname} {user.lastname}</td>
+                  <td className="py-5 text-center">{user.role}</td>
+                  <td className="py-5 text-center">{user.email ? user.email : "-"}</td>
+                  <td className="py-5 text-[#3C6255]">
+                    <div className="flex justify-center items-center">
+                      <img className="mr-3" src={clockIcon} alt="" />
+                      <p>
+                        ใช้งาน 10 นาทีที่แล้ว
+                      </p>
+                    </div>
+                  </td>
+                  <td className="py-5 rounded-r-[10px] text-center">
+                    <Dropdown menu={{ items }} placement="bottomRight" trigger={['click']} arrow>
+                      <img onClick={(e) => {
+                        e.preventDefault()
+                        setSelectUser(user);
+                        setSelectRole(user.role)
+                      }} className="mx-auto" src={dotIcon} alt="" />
+                    </Dropdown>
+                  </td>
+                </tr>
+              )
+            })}
+            <tr>
+              <td className="py-2"></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>)}
       {/* modal */}
       <Modal
         title={[

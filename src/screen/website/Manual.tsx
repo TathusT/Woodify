@@ -16,6 +16,7 @@ import { Link, useNavigate } from "react-router-dom";
 const Manual: React.FC = () => {
   const [modalDeleteManual, setmodalDeleteManual] = useState(false);
   const [dataManual, setDataManual] = useState<any>()
+  const [isLoading, setIsLoading] = useState(true);
   const router = useNavigate();
   const handleChange = (value: string) => {
     console.log(`selected ${value}`);
@@ -26,6 +27,7 @@ const Manual: React.FC = () => {
 
   const getManual = async () => {
     await axios(`${path}/all_manual`).then((res) => { setDataManual(res.data) }).catch((err) => console.log(err))
+    setIsLoading(false)
   }
 
   useEffect(() => {
@@ -34,92 +36,94 @@ const Manual: React.FC = () => {
 
   return (
     <div className="w-full Kanit flex flex-col min-h-screen">
-      <div className="flex mt-10 justify-between">
-        <p className="text-[24px] font-semibold">คู่มือใช้งานเบื้องต้น</p>
-        <div className="flex items-center space-x-3">
-          <p className="font-semibold">แสดง</p>
-          <Select
-            defaultValue="10 แถว"
-            suffixIcon={<img src={selectIcon}></img>}
-            className="h-full"
-            style={{ width: 150 }}
-            onChange={handleChange}
-            options={[
-              { value: "10 แถว", label: "10 แถว" },
-              { value: "20 แถว", label: "20 แถว" },
-              { value: "30 แถว", label: "30 แถว" },
-            ]}
-          />
-          <Select
-            defaultValue="อัพเดทล่าสุด"
-            suffixIcon={<img src={sortIcon}></img>}
-            className="h-full"
-            style={{ width: 150 }}
-            onChange={handleChange}
-            options={[
-              { value: "ทั้งหมด", label: "ทั้งหมด" },
-              { value: "อัพเดทล่าสุด", label: "อัพเดทล่าสุด" },
-            ]}
-          />
-          <Select
-            defaultValue="สถานะทั้งหมด"
-            suffixIcon={<img src={selectIcon}></img>}
-            className="h-full"
-            style={{ width: 150 }}
-            onChange={handleChange}
-            options={[
-              { value: "สถานะแสดง", label: "สถานะแสดง" },
-              { value: "สถานะไม่แสดง", label: "สถานะไม่แสดง" },
-              { value: "สถานะทั้งหมด", label: "สถานะทั้งหมด" },
-            ]}
-          />
-          <div className="h-full">
-            <Input className="h-full w-[280px] font-semibold" suffix={<img src={search} />} />
+      {isLoading ? <div className="flex items-center justify-center flex-1 h-full"><Loading /></div> : (<div>
+        <div className="flex mt-10 justify-between">
+          <p className="text-[24px] font-semibold">คู่มือใช้งานเบื้องต้น</p>
+          <div className="flex items-center space-x-3">
+            <p className="font-semibold">แสดง</p>
+            <Select
+              defaultValue="10 แถว"
+              suffixIcon={<img src={selectIcon}></img>}
+              className="h-full"
+              style={{ width: 150 }}
+              onChange={handleChange}
+              options={[
+                { value: "10 แถว", label: "10 แถว" },
+                { value: "20 แถว", label: "20 แถว" },
+                { value: "30 แถว", label: "30 แถว" },
+              ]}
+            />
+            <Select
+              defaultValue="อัพเดทล่าสุด"
+              suffixIcon={<img src={sortIcon}></img>}
+              className="h-full"
+              style={{ width: 150 }}
+              onChange={handleChange}
+              options={[
+                { value: "ทั้งหมด", label: "ทั้งหมด" },
+                { value: "อัพเดทล่าสุด", label: "อัพเดทล่าสุด" },
+              ]}
+            />
+            <Select
+              defaultValue="สถานะทั้งหมด"
+              suffixIcon={<img src={selectIcon}></img>}
+              className="h-full"
+              style={{ width: 150 }}
+              onChange={handleChange}
+              options={[
+                { value: "สถานะแสดง", label: "สถานะแสดง" },
+                { value: "สถานะไม่แสดง", label: "สถานะไม่แสดง" },
+                { value: "สถานะทั้งหมด", label: "สถานะทั้งหมด" },
+              ]}
+            />
+            <div className="h-full">
+              <Input className="h-full w-[280px] font-semibold" suffix={<img src={search} />} />
+            </div>
+            <Link to='/admin/manage_manual' className="bg-[#3C6255] h-full flex justify-center space-x-2 items-center px-3 rounded-[8px] text-white cursor-pointer">
+              <p>เพื่มคู่มือ</p>
+              <img src={add} alt="" />
+            </Link>
           </div>
-          <Link to='/admin/manage_manual' className="bg-[#3C6255] h-full flex justify-center space-x-2 items-center px-3 rounded-[8px] text-white cursor-pointer">
-            <p>เพื่มคู่มือ</p>
-            <img src={add} alt="" />
-          </Link>
         </div>
-      </div>
-      <table className="table-auto w-full mt-8 border-spacing-y-4 border-separate">
-        <thead>
-          <tr className="w-full font-bold">
-            <th className="pb-5" style={{ width: 100 }}>ลำดับ</th>
-            <th className="pb-5" style={{ width: 300 }}>ชื่อคู่มือ</th>
-            <th style={{ width: 550 }}></th>
-            <th className="pb-5">สถานะ</th>
-            <th className="pb-5">อัปเดดล่าสุด</th>
-            <th className="pb-5">ลบคู่มือ</th>
-          </tr>
-        </thead>
-        <tbody>
-          {dataManual && dataManual.map((manual, index) => {
-            return (
-              <tr onClick={() => router(`/admin/manage_manual/${manual.m_id}`)} key={index} className="bg-white shadow-[0px_0px_4px_0px_rgba(0,0,0,0.25)] rounded-[10px] font-semibold">
-                <td className="py-6 rounded-l-[10px] text-center">{index + 1}</td>
-                <td className="py-5 text-center">{manual.topic}</td>
-                <td></td>
-                <td className="py-5 text-center">
-                  <div className="flex justify-center">
-                    <img src={manual.status ? eye : closeEye} alt="" />
-                  </div>
-                </td>
-                <td className="py-5 text-[#3C6255]">
-                  <div className="flex justify-center items-center">
-                    <p>{convertIsoToThaiDateTime(manual.update_at)}</p>
-                  </div>
-                </td>
-                <td className="py-5 rounded-r-[10px] text-center">
-                  <div onClick={() => clickModal()} className="flex justify-center">
-                    <img className="cursor-pointer" src={garbageIcon} alt="" />
-                  </div>
-                </td>
-              </tr>
-            )
-          })}
-        </tbody>
-      </table>
+        <table className="table-auto w-full mt-8 border-spacing-y-4 border-separate">
+          <thead>
+            <tr className="w-full font-bold">
+              <th className="pb-5" style={{ width: 100 }}>ลำดับ</th>
+              <th className="pb-5" style={{ width: 300 }}>ชื่อคู่มือ</th>
+              <th style={{ width: 550 }}></th>
+              <th className="pb-5">สถานะ</th>
+              <th className="pb-5">อัปเดดล่าสุด</th>
+              <th className="pb-5">ลบคู่มือ</th>
+            </tr>
+          </thead>
+          <tbody>
+            {dataManual && dataManual.map((manual, index) => {
+              return (
+                <tr onClick={() => router(`/admin/manage_manual/${manual.m_id}`)} key={index} className="bg-white shadow-[0px_0px_4px_0px_rgba(0,0,0,0.25)] rounded-[10px] font-semibold">
+                  <td className="py-6 rounded-l-[10px] text-center">{index + 1}</td>
+                  <td className="py-5 text-center">{manual.topic}</td>
+                  <td></td>
+                  <td className="py-5 text-center">
+                    <div className="flex justify-center">
+                      <img src={manual.status ? eye : closeEye} alt="" />
+                    </div>
+                  </td>
+                  <td className="py-5 text-[#3C6255]">
+                    <div className="flex justify-center items-center">
+                      <p>{convertIsoToThaiDateTime(manual.update_at)}</p>
+                    </div>
+                  </td>
+                  <td className="py-5 rounded-r-[10px] text-center">
+                    <div onClick={() => clickModal()} className="flex justify-center">
+                      <img className="cursor-pointer" src={garbageIcon} alt="" />
+                    </div>
+                  </td>
+                </tr>
+              )
+            })}
+          </tbody>
+        </table>
+      </div>)}
       {/* modal */}
       <Modal
         title={[
