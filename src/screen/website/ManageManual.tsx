@@ -5,11 +5,14 @@ import { Radio } from "@material-tailwind/react";
 import { modules, formats, getImage } from "../../tools/tools";
 import axios from "axios";
 import path from "../../../path";
+import { Modal } from "antd";
 
 const RadioButton: any = Radio
 
 
 const ManageManual: React.FC = () => {
+    const [modalConfirmSave, setModalConfirmSave] = useState(false);
+    const [modalCancel, setModalCancel] = useState(false);
     const [body, setBody] = useState("");
     const [manualTitle, setManualTitle] = useState("");
     const [status, setStatus] = useState(true)
@@ -207,12 +210,66 @@ const ManageManual: React.FC = () => {
                         </div>
                     </div>
                     <div className="flex items-center justify-center space-x-8">
-                        <button onClick={() => isCreateMode ? CreateManual(manualTitle, body, status, fileInputRef.current?.files?.[0]) : editManual(manualTitle, body, status, fileInputRef.current?.files?.[0], id)} className="bg-[#61876E] w-40 py-3 text-xl rounded-xl text-white font-bold">บันทึก</button>
-                        <button onClick={() => router('/admin/manual')} className="bg-[#C1C1C1] w-40 py-3 text-xl rounded-xl font-bold">ยกเลิก</button>
+                        <button onClick={() => setModalConfirmSave(true)} className="bg-[#61876E] w-40 py-3 text-xl rounded-xl text-white font-bold">บันทึก</button>
+                        <button onClick={() => setModalCancel(true)} className="bg-[#C1C1C1] w-40 py-3 text-xl rounded-xl font-bold">ยกเลิก</button>
                     </div>
                 </div>
             </div>
             <p className='text-center text-xl font-semibold pb-3'>© 2023 COPYRIGHT 2023 WOODIFY. ALL RIGHTS RESERVED.</p>
+            {/* modal */}
+            <Modal
+                title={[
+                <div className="text-center text-[24px] mt-4">
+                    <p>ยืนยันการบันทึกข้อมูล</p>
+                </div>
+                ]}
+                className="Kanit"
+                centered
+                open={modalConfirmSave}
+                width={550}
+                onCancel={() => setModalConfirmSave(false)}
+                footer={[
+                <div className="flex items-center justify-center space-x-2 font-semibold pt-3 mb-4">
+                    <div onClick={() => isCreateMode ? CreateManual(manualTitle, body, status, fileInputRef.current?.files?.[0]) : editManual(manualTitle, body, status, fileInputRef.current?.files?.[0], id)} className="bg-[#3C6255] py-2 w-1/4 text-white cursor-pointer rounded-[10px] text-center">
+                        <p>ยืนยันการบันทึก</p>
+                    </div>
+                    <div onClick={() => setModalConfirmSave(false)} className="bg-[#C1C1C1] py-2 w-1/4 cursor-pointer rounded-[10px] text-center">
+                        <p>ยกเลิก</p>
+                    </div>
+                </div>
+                ]}
+            >
+                <div className="flex justify-center my-10">
+                <p className="text-lg font-semibold">คุณต้องการบันทึกข้อมูลนี้ ใช่หรือไม่?</p>
+                </div>
+            </Modal>
+            {/* modal */}
+            <Modal
+                title={[
+                <div className="text-center text-[24px] mt-4">
+                    <p>ยืนยันการยกเลิกการบันทึกข้อมูล</p>
+                </div>
+                ]}
+                className="Kanit"
+                centered
+                open={modalCancel}
+                width={550}
+                onCancel={() => setModalCancel(false)}
+                footer={[
+                <div className="flex items-center justify-center space-x-2 font-semibold pt-3 mb-4">
+                    <div onClick={() => router('/admin/manual')} className="bg-[#3C6255] py-2 w-1/4 text-white cursor-pointer rounded-[10px] text-center">
+                        <p>ยกเลิกการบันทึก</p>
+                    </div>
+                    <div onClick={() => setModalCancel(false)} className="bg-[#C1C1C1] py-2 w-1/4 cursor-pointer rounded-[10px] text-center">
+                        <p>ยกเลิก</p>
+                    </div>
+                </div>
+                ]}
+            >
+                <div className="flex justify-center my-10">
+                <p className="text-lg font-semibold">คุณต้องการยกเลิกการบันทึกข้อมูลนี้ ใช่หรือไม่?</p>
+                </div>
+            </Modal>
         </div>
     );
 };

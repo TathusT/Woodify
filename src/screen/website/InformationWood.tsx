@@ -114,10 +114,10 @@ const InformationWood: React.FC = () => {
           <div className="h-full">
             <Input onChange={(msg) => SearchWood(msg)} className="h-full w-[280px]" suffix={<img src={search} />} />
           </div>
-          <div className="bg-[#3C6255] h-full flex justify-center space-x-1 items-center px-2 rounded-[8px] text-white cursor-pointer">
+          <Link to={`/admin/manage_information_wood`} className="bg-[#3C6255] h-full flex justify-center space-x-1 items-center px-2 rounded-[8px] text-white cursor-pointer">
             <p>เพิ่มพันธุ์ไม้</p>
             <img src={add} alt="" />
-          </div>
+          </Link>
           {
             (checkDelete ?
               <div onClick={() => setCheckDelete(!checkDelete)} className="bg-[#B0B0B0] h-full flex justify-center space-x-1 items-center px-12 rounded-[8px] text-white cursor-pointer">
