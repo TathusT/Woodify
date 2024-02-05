@@ -23,6 +23,7 @@ import ManageInformationWood from "./screen/website/ManageInformationWood";
 import HomePage from "./screen/website/HomePage";
 import ManualDetail from "./screen/website/ManualDetail"
 import SignUpWeb from "./screen/website/Signup";
+import InformationWoodLine from "./screen/line/InformationWood";
 
 
 function App() {
@@ -42,6 +43,7 @@ function LineRoutes() {
     <Routes>
       <Route path="login" element={<LoginLine />} />
       <Route path="signup" element={<RegisterLine />} />
+      <Route path="information_wood" element={<InformationWoodLine />} />
       <Route path="history_classify" element={<HistoryClassify />} />
       <Route path="classify_detail/:classifyId" element={<ClassifyDetail />} />
       <Route path="profile" element={<Profile />} />
