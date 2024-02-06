@@ -11,6 +11,7 @@ import { Pie } from "@ant-design/plots";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import path from "../../../path";
+import Loading from "../component/Loading";
 import { convertIsoToThaiDateTime, convertIsoToThaiDateTimeFullYear } from "../../tools/tools";
 import moment from "moment";
 const { Option } = Select;
@@ -67,7 +68,11 @@ function formatDateToThai(dateString: string) {
     return `${day} ${month} ${year} ${parts[1]}`;
 }
 
-const HistoryClassify: React.FC = () => {
+interface UserIdProps {
+    userId: string;
+}
+
+const HistoryClassify: React.FC<UserIdProps> = ({ userId }) => {
     const navigate = useNavigate();
     const [menuFocus, setMenuFocus] = useState('ประวัติการตรวจสอบ');
     const [data, setData] = useState<any>();
@@ -77,7 +82,6 @@ const HistoryClassify: React.FC = () => {
     const [focusHistoryDelete, setFocusHistoryDelete] = useState<HistoryItem>();
     const [focusIndexDelete, setFocusIndexDelete] = useState<number>(0)
     const [selectFilter, setSelectFilter] = useState<any>([])
-    const { u_id } = useParams();
     const [pageSize, setPageSize] = useState(10);
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(0);
@@ -88,6 +92,9 @@ const HistoryClassify: React.FC = () => {
     const [pickerTo, setPickerTo] = useState();
     const [dateFrom, setDateFrom] = useState('');
     const [dateTo, setDateTo] = useState('');
+    const [isLoading, setIsLoading] = useState(true);
+    const u_id = userId;
+
     const color = [
         "#F7E987",
         "#5B9A8B",
@@ -382,6 +389,7 @@ const HistoryClassify: React.FC = () => {
             .catch((err) => {
                 console.log(err);
             })
+            setIsLoading(false)
     }
 
     const dateFromPicker = async (value) => {
@@ -399,6 +407,7 @@ const HistoryClassify: React.FC = () => {
 
     useEffect(() => {
         filterData();
+        setIsLoading(true)
     }, [pageSize, currentPage, dateFrom, dateTo, selectFilter])
 
     return (
@@ -424,45 +433,49 @@ const HistoryClassify: React.FC = () => {
                     </div>
                 </div>
             )}
-            <p className="text-center py-4 text-2xl">ประวัติการใช้งาน</p>
-            <div className="grid grid-cols-2 mx-6 shadow-lg rounded-lg overflow-hidden">
-                <div onClick={() => {
-                    setMenuFocus('ประวัติการตรวจสอบ')
-                }} className={`${menuFocus == 'ประวัติการตรวจสอบ' ? 'bg-[#3C6255] text-white' : 'bg-[#ECECEC]'} py-2`}>
-                    <p className="text-center">ประวัติการตรวจสอบ</p>
+            {isLoading ? <div className="flex items-center justify-center flex-1 h-full"><Loading /></div> : (
+                <div>
+                    <p className="text-center py-4 text-2xl">ประวัติการใช้งาน</p>
+                    <div className="grid grid-cols-2 mx-6 shadow-lg rounded-lg overflow-hidden">
+                        <div onClick={() => {
+                            setMenuFocus('ประวัติการตรวจสอบ')
+                        }} className={`${menuFocus == 'ประวัติการตรวจสอบ' ? 'bg-[#3C6255] text-white' : 'bg-[#ECECEC]'} py-2`}>
+                            <p className="text-center">ประวัติการตรวจสอบ</p>
+                        </div>
+                        <div onClick={() => {
+                            setMenuFocus('แสดงแผนภูมิวงกลม');
+                        }} className={`${menuFocus == 'แสดงแผนภูมิวงกลม' ? 'bg-[#3C6255] text-white' : 'bg-[#ECECEC]'} py-2`}>
+                            <p className="text-center">แสดงแผนภูมิวงกลม</p>
+                        </div>
+                    </div>
+                    <div className="flex justify-between mx-6 py-4">
+                        <div className="bg-white rounded-lg" style={{ width: "45%" }}>
+                            <DatePicker value={pickerFrom} onChange={(value) => dateFromPicker(value)} placeholder="เลือกวันที่เริ่ม" format="DD-MM-YYYY" style={{ width: "100%" }} />
+                        </div>
+                        <img style={{ width: "6%" }} src={Line} alt="" />
+                        <div className="bg-white rounded-lg" style={{ width: "45%" }}>
+                            <DatePicker value={pickerTo} onChange={(value) => dateToPicker(value)} placeholder="เลือกวันที่สิ้นสุด" format="DD-MM-YYYY" style={{ width: "100%" }} />
+                        </div>
+                    </div>
+                    {
+                        menuFocus == 'ประวัติการตรวจสอบ' ? <RenderClassify /> : <div>
+                            <RenderGraph />
+                            <RenderValueGraph />
+                        </div>
+                    }
+                    <div className="px-4 pt-4">
+                        {menuFocus == 'ประวัติการตรวจสอบ' && (
+                            <Pagination
+                                current={currentPage}
+                                total={totalPages * pageSize}
+                                pageSize={pageSize}
+                                onChange={handlePageChangePage}
+                                className='pt-1 pb-5'
+                            />
+                        )}
+                    </div>
                 </div>
-                <div onClick={() => {
-                    setMenuFocus('แสดงแผนภูมิวงกลม');
-                }} className={`${menuFocus == 'แสดงแผนภูมิวงกลม' ? 'bg-[#3C6255] text-white' : 'bg-[#ECECEC]'} py-2`}>
-                    <p className="text-center">แสดงแผนภูมิวงกลม</p>
-                </div>
-            </div>
-            <div className="flex justify-between mx-6 py-4">
-                <div className="bg-white rounded-lg" style={{ width: "45%" }}>
-                    <DatePicker value={pickerFrom} onChange={(value) => dateFromPicker(value)} placeholder="เลือกวันที่เริ่ม" format="DD-MM-YYYY" style={{ width: "100%" }} />
-                </div>
-                <img style={{ width: "6%" }} src={Line} alt="" />
-                <div className="bg-white rounded-lg" style={{ width: "45%" }}>
-                    <DatePicker value={pickerTo} onChange={(value) => dateToPicker(value)} placeholder="เลือกวันที่สิ้นสุด" format="DD-MM-YYYY" style={{ width: "100%" }} />
-                </div>
-            </div>
-            {
-                menuFocus == 'ประวัติการตรวจสอบ' ? <RenderClassify /> : <div>
-                    <RenderGraph />
-                    <RenderValueGraph />
-                </div>
-            }
-            <div className="px-4 pt-4">
-                {menuFocus == 'ประวัติการตรวจสอบ' && (
-                    <Pagination
-                        current={currentPage}
-                        total={totalPages * pageSize}
-                        pageSize={pageSize}
-                        onChange={handlePageChangePage}
-                        className='pt-1 pb-5'
-                    />
-                )}
-            </div>
+            )}
         </div>
     );
 };

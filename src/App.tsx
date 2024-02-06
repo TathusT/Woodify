@@ -16,6 +16,7 @@ import LoginWeb from "./screen/website/Login";
 import UserProfile from "./screen/website/UserProfile"
 import ManageManual from "./screen/website/ManageManual";
 import { RequireAuthLine } from "./screen/auth/requireAccessToken";
+import { RequireUserId } from "./screen/auth/requireUserId";
 import ManualLine from "./screen/line/Manual";
 import ClassifyWoodDetail from "./screen/website/ClassifyWoodDetail";
 import InformationWoodDetail from "./screen/website/InformationWoodDetail";
@@ -44,9 +45,23 @@ function LineRoutes() {
       <Route path="login" element={<LoginLine />} />
       <Route path="signup" element={<RegisterLine />} />
       <Route path="information_wood" element={<InformationWoodLine />} />
-      <Route path="history_classify/:u_id" element={<HistoryClassify />} />
+      <Route
+        path="history_classify"
+        element={
+          <RequireUserId>
+            {(userId) => <HistoryClassify userId={userId} />}
+          </RequireUserId>
+        }
+      />
       <Route path="classify_detail/:classifyId" element={<ClassifyDetail />} />
-      <Route path="profile" element={<Profile />} />
+      <Route
+        path="profile"
+        element={
+          <RequireUserId>
+            {(userId) => <Profile userId={userId} />}
+          </RequireUserId>
+        }
+      />
       <Route path="wood_detail/:woodId" element={<WoodDetail />} />
       <Route path="notification" element={<Notification />} />
       <Route path="manual/:id" element={<ManualLine />} />
@@ -63,8 +78,8 @@ function AdminRoutes() {
         <Route path="information_wood" element={<InformationWood />} />
         <Route path="manual" element={<Manual />} />
         <Route path="classify_wood" element={<ClassifyWood />} />
-        <Route path="user_profile/:u_id" element={<UserProfile/>}></Route>
-        <Route path="classify_wood_detail/:c_id" element={<ClassifyWoodDetail/>}></Route>
+        <Route path="user_profile/:u_id" element={<UserProfile />}></Route>
+        <Route path="classify_wood_detail/:c_id" element={<ClassifyWoodDetail />}></Route>
         <Route path="manage_manual" element={<ManageManual />} />
         <Route path="manage_manual/:id" element={<ManageManual />} />
         <Route path="manual_detail" element={<ManualDetail />} />
