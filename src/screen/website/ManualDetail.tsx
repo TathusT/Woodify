@@ -28,7 +28,7 @@ const ManualDetail: React.FC = () => {
         <div className="w-full rounded-[10px] bg-white h-[530px] mt-3 box-shadow">
         </div>
       <div className="flex justify-end mt-6">
-        <Link className="py-2 px-8 rounded-[10px] bg-[#61876E]">
+        <Link to='' className="py-2 px-8 rounded-[10px] bg-[#61876E]">
           <p className="text-[20px] font-semibold text-white">แก้ไขข้อมูล</p>
         </Link>
       </div>

@@ -9,11 +9,14 @@ import doorIcon from "../../assets/Logout-icon.svg"
 import calendarIcon from "../../assets/calendar-icon.svg"
 import arrowRightIcon from "../../assets/arrow-right.svg"
 import Loading from '../component/Loading';
-import { Select, Input, DatePicker } from "antd";
+import moment from 'moment';
+import dayjs from 'dayjs';
+import { Select, Input, DatePicker, Pagination } from "antd";
 import type { DatePickerProps } from 'antd';
 import axios from 'axios';
 import path from '../../../path';
 import { useParams } from 'react-router-dom';
+import { convertIsoToThaiDateTime, convertIsoToThaiDateTimeFullYear, getImage } from '../../tools/tools';
 
 const PieChart: any = Pie
 
@@ -23,8 +26,72 @@ const UserProfile: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [classifyUserTodayCount, setClassifyUserTodayCount] = useState(0);
   const [classifyUserWaitVerify, setClassifyUserWaitVerify] = useState(0);
+  const [pageSize, setPageSize] = useState(10);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(0);
+  const [statusFilter, setStatusFilter] = useState('การตรวจทั้งหมด')
+  const [classify, setClassify] = useState<any>();
+  const [woodType, setWoodType] = useState<any>();
+  const [filterWood, setFilterWood] = useState<any>('ไม้ทั้งหมด')
+  const [pickerFrom, setPickerFrom] = useState();
+  const [pickerTo, setPickerTo] = useState();
+  const [dateFrom, setDateFrom] = useState('');
+  const [dateTo, setDateTo] = useState('');
   const { u_id } = useParams();
   const divRef = useRef<HTMLDivElement>(null);
+  const color = [
+    "#F7E987",
+    "#5B9A8B",
+    "#445069",
+    "#7B61FF",
+    "#DF8633",
+    "#0B56F1",
+    "#7E57C2",
+    "#26A69A",
+    "#FF7043",
+    "#8E24AA",
+    "#7CB342",
+    "#0288D1",
+    "#D81B60",
+    "#A21B60",
+  ]
+  const [data, setData] = useState();
+  const [dataStatus, setDataStatus] = useState<any>();
+
+  type DataType = Array<{
+    typeWood: string;
+    value: number;
+    color: string
+  }>;
+  type DataStatusType = Array<{
+    typeStatus: string;
+    value: number;
+    color: string
+  }>;
+
+  const handlePageChangePage = (page) => {
+    setCurrentPage(page);
+  };
+
+  const handleChange = (value: string) => {
+    console.log(`selected ${value}`);
+  };
+
+  const handleChangeStatus = (value: string) => {
+    setStatusFilter(value)
+  };
+
+  const handleChangeWood = (value: string) => {
+    setFilterWood(value)
+  };
+
+  const handleChangePageSize = (value: string) => {
+    setPageSize(parseInt(value))
+  };
+
+  const onChange: DatePickerProps['onChange'] = (date, dateString) => {
+    console.log(date, dateString);
+  };
 
   const getUserById = async () => {
     await axios.get(`${path}/user/${u_id}`)
@@ -35,11 +102,108 @@ const UserProfile: React.FC = () => {
         console.log(err);
       })
   }
+  
+
+  const dateFromPicker = async (value) => {
+    const date = new Date(value);
+    const formattedDate = moment(date).format('YYYY-MM-DD');
+    setDateFrom(formattedDate);
+    setPickerFrom(value);
+  }
+  const dateToPicker = async (value) => {
+    const date = new Date(value);
+    const formattedDate = moment(date).format('YYYY-MM-DD');
+    setDateTo(formattedDate);
+    setPickerTo(value);
+  }
 
   const getClassifyTodayWithId = async () => {
     await axios.get(`${path}/classify_today_with_user_id/${u_id}`)
       .then((res) => {
         setClassifyUserTodayCount(res.data)
+      })
+      .catch((err) => {
+        console.log(err);
+      })
+  }
+
+  const filterData = async () => {
+    let filter = {};
+    if (statusFilter != 'การตรวจทั้งหมด') {
+      filter['status_verify'] = (statusFilter)
+    }
+    if (filterWood != 'ไม้ทั้งหมด') {
+      filter['select_result'] = filterWood.replace('ไม้', '')
+    }
+    if(dateTo != ''){
+      filter['create_at'] = filter['create_at'] || {};
+      filter['create_at']['lte'] = new Date(dateTo.replace(/-/g, '/'));
+    }
+    if(dateFrom != ''){
+      filter['create_at'] = filter['create_at'] || {};
+      filter['create_at']['gte'] = new Date(dateFrom.replace(/-/g, '/'));
+    }
+
+    await axios.post(`${path}/classify_user_id`, {
+      currentPage: currentPage,
+      pageSize: pageSize,
+      u_id: u_id,
+      filter: filter
+    })
+      .then((res) => {
+        setClassify(res.data.data)
+        setTotalPages(Math.ceil(res.data.total / pageSize));
+      })
+      .catch((err) => {
+        console.log(err);
+      })
+  }
+
+  useEffect(() => {
+    filterData();
+  }, [filterWood, statusFilter, pageSize, currentPage, dateFrom, dateTo])
+  
+  const getClassifyDonutChart = async () => {
+    await axios.get(`${path}/classify_donut_with_userid/${u_id}`)
+      .then((res) => {
+        let prepareData: any = []
+        let prepareWoodType: any = []
+        res.data.forEach((wood: any, index: number) => {
+          prepareData.push({
+            typeWood: `ไม้${wood.wood_name}`,
+            value: parseInt(wood.amount),
+            color: color[index]
+          })
+        });
+        prepareWoodType.push({ value: `ไม้ทั้งหมด`, label: `ไม้ทั้งหมด` })
+        res.data.forEach(element => {
+          prepareWoodType.push({ value: `ไม้${element.wood_name}`, label: `ไม้${element.wood_name}` })
+        })
+        setWoodType(prepareWoodType)
+        setData(prepareData)
+      })
+      .catch((err) => {
+        console.log(err);
+      })
+  }
+
+
+  const getClassifyStatusDonutChart = async () => {
+    await axios.get(`${path}/classify_status_donut_with_userid/${u_id}`)
+      .then((res) => {
+        let prepareData: any = []
+        res.data.forEach((classifyStatus: any) => {
+          prepareData.push({
+            typeStatus: classifyStatus.status,
+            value: parseInt(classifyStatus.amount),
+            color: classifyStatus.status == 'ผ่าน' ? '#3C6255' : classifyStatus.status == 'ไม่ผ่าน' ? '#EB5050' : '#E4AD6C'
+          })
+        });
+        prepareData.sort((a, b) => {
+          const order = { "ผ่าน": 0, "ไม่ผ่าน": 1, "รอการรับรอง": 2 };
+          return order[a.typeStatus] - order[b.typeStatus];
+        });
+        setDataStatus(prepareData)
       })
       .catch((err) => {
         console.log(err);
@@ -60,6 +224,8 @@ const UserProfile: React.FC = () => {
     await getUserById();
     await getClassifyTodayWithId();
     await getClassifyWaitVerifyWithUserId();
+    await getClassifyDonutChart();
+    await getClassifyStatusDonutChart();
     await setIsLoading(false);
   }
 
@@ -67,12 +233,6 @@ const UserProfile: React.FC = () => {
     getData();
   }, [])
 
-  const handleChange = (value: string) => {
-    console.log(`selected ${value}`);
-  };
-  const onChange: DatePickerProps['onChange'] = (date, dateString) => {
-    console.log(date, dateString);
-  };
   useEffect(() => {
     const handleResize = () => {
       if (divRef.current) {
@@ -86,83 +246,7 @@ const UserProfile: React.FC = () => {
       window.removeEventListener('resize', handleResize);
     };
   }, [isLoading]);
-  type DataType = Array<{
-    typeWood: string;
-    value: number;
-    color: string
-  }>;
-  type DataStatusType = Array<{
-    typeStatus: string;
-    value: number;
-    color: string
-  }>;
-  const [data, setData] = useState([
-    {
-      typeWood: "ไม้สัก",
-      value: 8300,
-      color: '#F7E987'
-    },
-    {
-      typeWood: "ไม้ยาง",
-      value: 7000,
-      color: '#5B9A8B'
-    },
-    {
-      typeWood: "ไม้ประดู่",
-      value: 2000,
-      color: '#445069'
-    },
-    {
-      typeWood: "ไม้ชิงชัน",
-      value: 12000,
-      color: '#7B61FF'
-    },
-    {
-      typeWood: "ไม้เก็ดแดง",
-      value: 9465,
-      color: '#DF8633'
-    },
-    {
-      typeWood: "ไม้อีเม่ง",
-      value: 3452,
-      color: '#0B56F1'
-    },
-    {
-      typeWood: "ไม้กระพี้",
-      value: 2134,
-      color: '#7E57C2'
-    },
-    {
-      typeWood: "ไม้แดงจีน",
-      value: 4567,
-      color: '#26A69A'
-    },
-    {
-      typeWood: "ไม้เก็ดเขาควาย",
-      value: 2345,
-      color: '#FF7043'
-    },
-    {
-      typeWood: "ไม้อีเฒ่า",
-      value: 6784,
-      color: '#8E24AA'
-    },
-    {
-      typeWood: "ไม้เก็ดดำ",
-      value: 9678,
-      color: '#7CB342'
-    },
-    {
-      typeWood: "ไม้หมากพลูตั๊กแตน",
-      value: 5678,
-      color: '#0288D1'
-    },
-    {
-      typeWood: "ไม้พะยูง",
-      value: 5780,
-      color: '#D81B60'
-    },
-  ]);
+
   const AllPie = () => {
     function renderStatistic(containerWidth, text, style) {
       const { width: textWidth, height: textHeight } = measureTextWidth(text, style);
@@ -177,98 +261,15 @@ const UserProfile: React.FC = () => {
       const textStyleStr = `width:${containerWidth}px;`;
       return `<div style="${textStyleStr};font-size:${scale}em;line-height:${scale < 1 ? 1 : 'inherit'};">${text}</div>`;
     }
-
-    const [data, setData] = useState([
-      {
-        typeWood: "ไม้สัก",
-        value: 8300,
-        color: '#F7E987'
-      },
-      {
-        typeWood: "ไม้ยาง",
-        value: 7000,
-        color: '#5B9A8B'
-      },
-      {
-        typeWood: "ไม้ประดู่",
-        value: 2000,
-        color: '#445069'
-      },
-      {
-        typeWood: "ไม้ชิงชัน",
-        value: 12000,
-        color: '#7B61FF'
-      },
-      {
-        typeWood: "ไม้เก็ดแดง",
-        value: 9465,
-        color: '#DF8633'
-      },
-      {
-        typeWood: "ไม้อีเม่ง",
-        value: 3452,
-        color: '#0B56F1'
-      },
-      {
-        typeWood: "ไม้กระพี้",
-        value: 2134,
-        color: '#7E57C2'
-      },
-      {
-        typeWood: "ไม้แดงจีน",
-        value: 4567,
-        color: '#26A69A'
-      },
-      {
-        typeWood: "ไม้เก็ดเขาควาย",
-        value: 2345,
-        color: '#FF7043'
-      },
-      {
-        typeWood: "ไม้อีเฒ่า",
-        value: 6784,
-        color: '#8E24AA'
-      },
-      {
-        typeWood: "ไม้เก็ดดำ",
-        value: 9678,
-        color: '#7CB342'
-      },
-      {
-        typeWood: "ไม้หมากพลูตั๊กแตน",
-        value: 5678,
-        color: '#0288D1'
-      },
-      {
-        typeWood: "ไม้พะยูง",
-        value: 5780,
-        color: '#D81B60'
-      },
-    ]);
     const config = {
       legend: false,
       appendPadding: 10,
       data,
       angleField: 'value',
-      colorField: 'typeWood',
+      colorField: 'color',
       radius: 0.7,
       color: (d) => {
-        const colorMapping = {
-          ไม้สัก: "#F7E987",
-          ไม้ยาง: "#5B9A8B",
-          ไม้ประดู่: "#445069",
-          ไม้ชิงชัน: "#7B61FF",
-          ไม้เก็ดแดง: "#DF8633",
-          ไม้อีเม่ง: "#0B56F1",
-          ไม้กระพี้: "#7E57C2",
-          ไม้แดงจีน: "#26A69A",
-          ไม้เก็ดเขาควาย: "#FF7043",
-          ไม้อีเฒ่า: "#8E24AA",
-          ไม้เก็ดดำ: "#7CB342",
-          ไม้หมากพลูตั๊กแตน: "#0288D1",
-          ไม้พะยูง: "#D81B60",
-        };
-        return colorMapping[d.typeWood] || "#000000";
+        return d.color || "#000000";
       },
       innerRadius: 0.75,
       meta: {
@@ -317,23 +318,7 @@ const UserProfile: React.FC = () => {
     };
     return <PieChart {...config} />;
   };
-  const [dataStatus, setDataStatus] = useState([
-    {
-      typeStatus: "ผ่าน",
-      value: 8300,
-      color: '#3C6255'
-    },
-    {
-      typeStatus: "ไม่ผ่าน",
-      value: 7000,
-      color: '#EB5050'
-    },
-    {
-      typeStatus: "รอการรับรอง",
-      value: 2000,
-      color: '#E4AD6C'
-    },
-  ]);
+
   const StatusPie = () => {
     function renderStatistic(containerWidth, text, style) {
       const { width: textWidth, height: textHeight } = measureTextWidth(text, style);
@@ -349,23 +334,8 @@ const UserProfile: React.FC = () => {
       return `<div style="${textStyleStr};font-size:${scale}em;line-height:${scale < 1 ? 1 : 'inherit'};">${text}</div>`;
     }
 
-    const [data, setData] = useState([
-      {
-        typeStatus: "ผ่าน",
-        value: 8300,
-        color: '#3C6255'
-      },
-      {
-        typeStatus: "ไม่ผ่าน",
-        value: 7000,
-        color: '#EB5050'
-      },
-      {
-        typeStatus: "รอการรับรอง",
-        value: 2000,
-        color: '#E4AD6C'
-      },
-    ]);
+    const data = dataStatus
+
     const config = {
       legend: false,
       appendPadding: 10,
@@ -382,7 +352,7 @@ const UserProfile: React.FC = () => {
         };
         return colorMapping[d.typeStatus] || "#000000";
       },
-      innerRadius: 0.75,
+      innerRadius: 0.65,
       meta: {
         value: {
           formatter: (v) => v,
@@ -433,7 +403,8 @@ const UserProfile: React.FC = () => {
     };
     return <PieChart {...config} />;
   };
-  function RenderValueGraph({ data }: { data: DataType }) {
+
+  function RenderValueGraph({ data }: { data: any }) {
     return (
       <div className="bg-white rounded-lg space-y-2 py-8 px-10 w-3/6">
         <div className="scrollable-content space-y-2 h-96">
@@ -486,7 +457,7 @@ const UserProfile: React.FC = () => {
           <div className="bg-white box-shadow rounded-[10px] px-6 pt-5 pb-9 col-span-7">
             <p className="font-semibold text-xl">ข้อมูลส่วนตัว</p>
             <div className="w-full flex flex-col items-center mt-3 space-y-5">
-              <img className="rounded-full w-36 h-36" src="https://plus.unsplash.com/premium_photo-1668319915384-3cccf7689bef?q=80&w=2564&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="" />
+              <img className="rounded-full w-36 h-36" src={user.image} alt="" />
               <p className="font-semibold text-lg">{user.firstname} {user.lastname}</p>
             </div>
             <div className="mt-8 grid grid-cols-2 gap-y-5 px-20 font-semibold text-lg">
@@ -537,60 +508,43 @@ const UserProfile: React.FC = () => {
               suffixIcon={<img src={selectIcon}></img>}
               className="h-full"
               style={{ width: 130 }}
-              onChange={handleChange}
+              onChange={handleChangePageSize}
               options={[
-                { value: "10 แถว", label: "10 แถว" },
-                { value: "20 แถว", label: "20 แถว" },
-                { value: "30 แถว", label: "30 แถว" },
+                { value: "10", label: "10 แถว" },
+                { value: "20", label: "20 แถว" },
+                { value: "30", label: "30 แถว" },
               ]}
             />
             <Select
-              defaultValue="การตรวจทั้งหมด"
+              defaultValue={statusFilter}
               suffixIcon={<img src={sortIcon}></img>}
               className="h-full"
               style={{ width: 130 }}
-              onChange={handleChange}
+              onChange={handleChangeStatus}
               options={[
-                { value: "ผ่านการรับรอง", label: "ผ่านการรับรอง" },
-                { value: "ไม่ผ่านการรับรอง", label: "ไม่ผ่านการรับรอง" },
+                { value: "PASSED_CERTIFICATION", label: "ผ่านการรับรอง" },
+                { value: "FAILED_CERTIFICATION", label: "ไม่ผ่านการรับรอง" },
+                { value: "WAITING_FOR_VERIFICATION", label: "รอการรับรอง" },
                 { value: "การตรวจทั้งหมด", label: "การตรวจทั้งหมด" },
               ]}
             />
             <div className='relative flex items-center'>
               <img className='absolute z-50 left-2' src={calendarIcon}></img>
-              <DatePicker style={{ width: 150 }} suffixIcon={<img src={selectIcon}></img>} onChange={onChange} />
+              <DatePicker value={pickerFrom} onChange={(value) => dateFromPicker(value)} style={{ width: 150 }} suffixIcon={<img src={selectIcon}></img>} />
             </div>
             <img src={arrowRightIcon}></img>
             <div className='relative flex items-center'>
               <img className='absolute z-50 left-2' src={calendarIcon}></img>
-              <DatePicker style={{ width: 150 }} suffixIcon={<img src={selectIcon}></img>} onChange={onChange} />
+              <DatePicker value={pickerTo} onChange={(value) => dateToPicker(value)} style={{ width: 150 }} suffixIcon={<img src={selectIcon}></img>} />
             </div>
             <Select
-              defaultValue="ไม้ทั้งหมด"
+              defaultValue={filterWood}
               suffixIcon={<img src={selectIcon}></img>}
               className="h-full"
               style={{ width: 130 }}
-              onChange={handleChange}
-              options={[
-                { value: "ไม้สัก", label: "ไม้สัก" },
-                { value: "ไม้ยาง", label: "ไม้ยาง" },
-                { value: "ไม้ประดู่", label: "ไม้ประดู่" },
-                { value: "ไม้ชิงชัน", label: "ไม้ชิงชัน" },
-                { value: "ไม้เก็ดแดง", label: "ไม้เก็ดแดง" },
-                { value: "ไม้อีเม่ง", label: "ไม้อีเม่ง" },
-                { value: "ไม้กระพี้", label: "ไม้กระพี้" },
-                { value: "ไม้จีนแดง", label: "ไม้จีนแดง" },
-                { value: "ไม้เก็ดเขาควาย", label: "ไม้เก็ดเขาควาย" },
-                { value: "ไม้อีเฒ่า", label: "ไม้อีเฒ่า" },
-                { value: "ไม้เก็ดดำ", label: "ไม้เก็ดดำ" },
-                { value: "ไม้หมากพลูตั๊กแตน", label: "ไม้หมากพลูตั๊กแตน" },
-                { value: "ไม้พะยูง", label: "ไม้พะยูง" },
-                { value: "ไม้ทั้งหมด", label: "ไม้ทั้งหมด" },
-              ]}
+              onChange={handleChangeWood}
+              options={woodType}
             />
-            <div className="h-full">
-              <Input className="h-full w-[280px] font-semibold" suffix={<img src={search} />} />
-            </div>
           </div>
         </div>
         <table className="table-auto w-full mt-8 border-spacing-y-4 border-separate">
@@ -606,48 +560,41 @@ const UserProfile: React.FC = () => {
             </tr>
           </thead>
           <tbody>
-            <tr className="bg-white shadow-[0px_0px_4px_0px_rgba(0,0,0,0.25)] rounded-[10px] font-semibold">
-              <td className="rounded-l-[10px] text-center">31545</td>
-              <td className="py-3 flex justify-center items-center">
-                <div className="w-14 h-14 bg-gray-300"></div>
-              </td>
-              <td className="py-5 text-center">ไม้ประดู่</td>
-              <td className="py-5 text-center">98.8%</td>
-              <td className="py-5 text-[#3C6255]">
-                <div className="flex justify-center items-center">
-                  <img className="mr-3" src={clockIcon} alt="" />
-                  <p>
-                    ผ่าน
-                  </p>
-                </div>
-              </td>
-              <td className="py-5 text-center">4/9/2566 12:08 น.</td>
-              <td className="py-5 rounded-r-[10px]">
-                <img src={doorIcon} alt="" />
-              </td>
-            </tr>
-            <tr className="bg-white shadow-[0px_0px_4px_0px_rgba(0,0,0,0.25)] rounded-[10px] font-semibold">
-              <td className="rounded-l-[10px] text-center">31545</td>
-              <td className="py-3 flex justify-center items-center">
-                <div className="w-14 h-14 bg-gray-300"></div>
-              </td>
-              <td className="py-5 text-center">ไม้ประดู่</td>
-              <td className="py-5 text-center">98.8%</td>
-              <td className="py-5 text-[#3C6255]">
-                <div className="flex justify-center items-center">
-                  <img className="mr-3" src={clockIcon} alt="" />
-                  <p>
-                    ผ่าน
-                  </p>
-                </div>
-              </td>
-              <td className="py-5 text-center">4/9/2566 12:08 น.</td>
-              <td className="py-5 rounded-r-[10px]">
-                <img src={doorIcon} alt="" />
-              </td>
-            </tr>
+            {classify && classify.map((c: any, index: number) => {
+              return (
+                <tr key={c.c_id} className="bg-white shadow-[0px_0px_4px_0px_rgba(0,0,0,0.25)] rounded-[10px] font-semibold">
+                  <td className="rounded-l-[10px] text-center">{(index + 1) + ((currentPage - 1) * 10)}</td>
+                  <td className="py-3 flex justify-center items-center">
+                    <div className="w-14 h-14 bg-gray-300">
+                      {c.image && <img src={getImage(c.image)} alt="" />}
+                    </div>
+                  </td>
+                  <td className="py-5 text-center">ไม้{c.select_result}</td>
+                  <td className="py-5 text-center">{c.result[0]?.percentage}</td>
+                  <td className="py-5 text-[#3C6255]">
+                    <div className="flex justify-center items-center">
+                      <img className="mr-3" src={clockIcon} alt="" />
+                      <p>
+                        {c.status_verify == 'WAITING_FOR_VERIFICATION' ? 'รอการรับรอง' : c.status_verify == 'FAILED_CERTIFICATION' ? 'ไม่ผ่าน' : 'ผ่าน'}
+                      </p>
+                    </div>
+                  </td>
+                  <td className="py-5 text-center">{convertIsoToThaiDateTimeFullYear(c.create_at)}</td>
+                  <td className="py-5 rounded-r-[10px]">
+                    <img src={doorIcon} alt="" />
+                  </td>
+                </tr>
+              )
+            })}
           </tbody>
         </table>
+        <Pagination
+          current={currentPage}
+          total={totalPages * pageSize}
+          pageSize={pageSize}
+          onChange={handlePageChangePage}
+          className='pt-1 pb-5'
+        />
       </div>)}
     </div>
   );

@@ -15,6 +15,7 @@ import axios from 'axios';
 import path from '../../../path';
 import { convertIsoToThaiDateTime, convertIsoToThaiDateTimeFullYear, getImage } from '../../tools/tools';
 import { useNavigate } from 'react-router-dom';
+import moment from 'moment';
 
 const PieChart: any = Pie;
 
@@ -29,6 +30,13 @@ const ClassifyWood: React.FC = () => {
   const [totalPages, setTotalPages] = useState(0);
   const [allClassifyCount, getAllClassifyCount] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
+  const [statusFilter, setStatusFilter] = useState('การตรวจทั้งหมด')
+  const [woodType, setWoodType] = useState<any>();
+  const [filterWood, setFilterWood] = useState<any>('ไม้ทั้งหมด')
+  const [pickerFrom, setPickerFrom] = useState();
+  const [pickerTo, setPickerTo] = useState();
+  const [dateFrom, setDateFrom] = useState('');
+  const [dateTo, setDateTo] = useState('');
   const [data, setData] = useState<any>();
   const divRef = useRef<HTMLDivElement>(null);
   const router = useNavigate();
@@ -62,15 +70,26 @@ const ClassifyWood: React.FC = () => {
     };
   }, [isLoading]);
 
-  const getAllClassify = async (currentPage, pageSize) => {
-    await axios.get(`${path}/classify/${currentPage}/${pageSize}`)
-      .then((res) => {
-        setClassify(res.data.data)
-        setTotalPages(Math.ceil(res.data.total / pageSize));
-      })
-      .catch((err) => {
-        console.log(err);
-      })
+
+  const handleChangeStatus = (value: string) => {
+    setStatusFilter(value)
+  };
+
+  const handleChangeWood = (value: string) => {
+    setFilterWood(value)
+  };
+
+  const dateFromPicker = async (value) => {
+    const date = new Date(value);
+    const formattedDate = moment(date).format('YYYY-MM-DD');
+    setDateFrom(formattedDate);
+    setPickerFrom(value);
+  }
+  const dateToPicker = async (value) => {
+    const date = new Date(value);
+    const formattedDate = moment(date).format('YYYY-MM-DD');
+    setDateTo(formattedDate);
+    setPickerTo(value);
   }
 
   const getClassifyWaitVerify = async () => {
@@ -137,9 +156,40 @@ const ClassifyWood: React.FC = () => {
     setIsLoading(false);
   }
 
+  const filterData = async () => {
+    let filter = {};
+    if (statusFilter != 'การตรวจทั้งหมด') {
+      filter['status_verify'] = (statusFilter)
+    }
+    if (filterWood != 'ไม้ทั้งหมด') {
+      filter['select_result'] = filterWood.replace('ไม้', '')
+    }
+    if (dateTo != '') {
+      filter['create_at'] = filter['create_at'] || {};
+      filter['create_at']['lte'] = new Date(dateTo.replace(/-/g, '/'));
+    }
+    if (dateFrom != '') {
+      filter['create_at'] = filter['create_at'] || {};
+      filter['create_at']['gte'] = new Date(dateFrom.replace(/-/g, '/'));
+    }
+
+    await axios.post(`${path}/classify_user_id`, {
+      currentPage: currentPage,
+      pageSize: pageSize,
+      filter: filter
+    })
+      .then((res) => {
+        setClassify(res.data.data)
+        setTotalPages(Math.ceil(res.data.total / pageSize));
+      })
+      .catch((err) => {
+        console.log(err);
+      })
+  }
+
   useEffect(() => {
-    getAllClassify(currentPage, pageSize)
-  }, [currentPage, pageSize]);
+    filterData();
+  }, [filterWood, statusFilter, pageSize, currentPage, dateFrom, dateTo])
 
   useEffect(() => {
     getData();
@@ -303,48 +353,92 @@ const ClassifyWood: React.FC = () => {
                 suffixIcon={<img src={sortIcon}></img>}
                 className="h-full"
                 style={{ width: 170 }}
-                onChange={handleChange}
+                onChange={handleChangeStatus}
                 options={[
-                  { value: "ผ่าน", label: "ผ่าน" },
-                  { value: "ไม่ผ่าน", label: "ไม่ผ่าน" },
+                  { value: "PASSED_CERTIFICATION", label: "ผ่าน" },
+                  { value: "FAILED_CERTIFICATION", label: "ไม่ผ่าน" },
+                  { value: "WAITING_FOR_VERIFICATION", label: "รอการรับรอง" },
                   { value: "การตรวจทั้งหมด", label: "การตรวจทั้งหมด" },
                 ]}
               />
               <div className='relative flex items-center'>
                 <img className='absolute z-50 left-2' src={calendarIcon}></img>
-                <DatePicker style={{ width: 150 }} suffixIcon={<img src={selectIcon}></img>} onChange={onChange} />
+                <DatePicker style={{ width: 150 }} suffixIcon={<img src={selectIcon}></img>} value={pickerFrom} onChange={(value) => dateFromPicker(value)} />
               </div>
               <img src={arrowRightIcon}></img>
               <div className='relative flex items-center'>
                 <img className='absolute z-50 left-2' src={calendarIcon}></img>
-                <DatePicker style={{ width: 150 }} suffixIcon={<img src={selectIcon}></img>} onChange={onChange} />
+                <DatePicker style={{ width: 150 }} suffixIcon={<img src={selectIcon}></img>} value={pickerTo} onChange={(value) => dateToPicker(value)} />
               </div>
               <Select
                 defaultValue="ไม้ทั้งหมด"
                 suffixIcon={<img src={selectIcon}></img>}
                 className="h-full"
                 style={{ width: 170 }}
-                onChange={handleChange}
+                onChange={handleChangeWood}
                 options={[
-                  { value: "ไม้สัก", label: "ไม้สัก" },
-                  { value: "ไม้ยาง", label: "ไม้ยาง" },
-                  { value: "ไม้ประดู่", label: "ไม้ประดู่" },
-                  { value: "ไม้ชิงชัน", label: "ไม้ชิงชัน" },
-                  { value: "ไม้เก็ดแดง", label: "ไม้เก็ดแดง" },
-                  { value: "ไม้อีเม่ง", label: "ไม้อีเม่ง" },
-                  { value: "ไม้กระพี้", label: "ไม้กระพี้" },
-                  { value: "ไม้จีนแดง", label: "ไม้จีนแดง" },
-                  { value: "ไม้เก็ดเขาควาย", label: "ไม้เก็ดเขาควาย" },
-                  { value: "ไม้อีเฒ่า", label: "ไม้อีเฒ่า" },
-                  { value: "ไม้เก็ดดำ", label: "ไม้เก็ดดำ" },
-                  { value: "ไม้หมากพลูตั๊กแตน", label: "ไม้หมากพลูตั๊กแตน" },
-                  { value: "ไม้พะยูง", label: "ไม้พะยูง" },
-                  { value: "ไม้ทั้งหมด", label: "ไม้ทั้งหมด" },
+                  {
+                    value: "ไม้ทั้งหมด",
+                    label: "ไม้ทั้งหมด"
+                  },
+                  {
+                    value: "ไม้ยาง",
+                    label: "ไม้ยาง"
+                  },
+                  {
+                    value: "ไม้ตะเคียนราก",
+                    label: "ไม้ตะเคียนราก"
+                  },
+                  {
+                    value: "ไม้มะค่าโมง",
+                    label: "ไม้มะค่าโมง"
+                  },
+                  {
+                    value: "ไม้รัง",
+                    label: "ไม้รัง"
+                  },
+                  {
+                    value: "ไม้ยางพารา",
+                    label: "ไม้ยางพารา"
+                  },
+                  {
+                    value: "ไม้เต็ง",
+                    label: "ไม้เต็ง"
+                  },
+                  {
+                    value: "ไม้พะยูง",
+                    label: "ไม้พะยูง"
+                  },
+                  {
+                    value: "ไม้แดง",
+                    label: "ไม้แดง"
+                  },
+                  {
+                    value: "ไม้ตะเคียนทอง",
+                    label: "ไม้ตะเคียนทอง"
+                  },
+                  {
+                    value: "ไม้สัก",
+                    label: "ไม้สัก"
+                  },
+                  {
+                    value: "ไม้ชุมแพรก",
+                    label: "ไม้ชุมแพรก"
+                  },
+                  {
+                    value: "ไม้แอ๊ก",
+                    label: "ไม้แอ๊ก"
+                  },
+                  {
+                    value: "ไม้พะยอม",
+                    label: "ไม้พะยอม"
+                  },
+                  {
+                    value: "ไม้balau",
+                    label: "ไม้balau"
+                  }
                 ]}
               />
-              <div className="h-full">
-                <Input className="h-full w-[280px] font-semibold" suffix={<img src={search} />} />
-              </div>
             </div>
           </div>
           <table className="table-auto w-full mt-8 border-spacing-y-4 border-separate">

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 // import { Link } from "react-router-dom";
-import { DatePicker, Select, Space } from 'antd';
+import { DatePicker, Pagination, Select, Space } from 'antd';
 import Line from '../../assets/line.svg'
 import Wood from '../../assets/S12-3balau 2.png'
 import Bin from '../../assets/bin.svg'
@@ -8,7 +8,11 @@ import Bin_Button from '../../assets/bin_button.svg'
 import Eye from '../../assets/eye.svg'
 import CloseEye from '../../assets/close_eye.svg'
 import { Pie } from "@ant-design/plots";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import axios from "axios";
+import path from "../../../path";
+import { convertIsoToThaiDateTime, convertIsoToThaiDateTimeFullYear } from "../../tools/tools";
+import moment from "moment";
 const { Option } = Select;
 
 const thaiMonths = [
@@ -66,316 +70,60 @@ function formatDateToThai(dateString: string) {
 const HistoryClassify: React.FC = () => {
     const navigate = useNavigate();
     const [menuFocus, setMenuFocus] = useState('ประวัติการตรวจสอบ');
-    const [backup, setBackUp] = useState([
-        {
-            typeWood: "ไม้สัก",
-            value: 8300,
-            color: '#D32F2F'
-        },
-        {
-            typeWood: "ไม้ยาง",
-            value: 7000,
-            color: '#7B1FA2'
-        },
-        {
-            typeWood: "ไม้ประดู่",
-            value: 2000,
-            color: '#1976D2'
-        },
-        {
-            typeWood: "ไม้ชิงชัน",
-            value: 12000,
-            color: '#388E3C'
-        },
-        {
-            typeWood: "ไม้เก็ดแดง",
-            value: 9465,
-            color: '#FBC02D'
-        },
-        {
-            typeWood: "ไม้อีเม่ง",
-            value: 3452,
-            color: '#8D6E63'
-        },
-        {
-            typeWood: "ไม้กระพี้",
-            value: 2134,
-            color: '#7E57C2'
-        },
-        {
-            typeWood: "ไม้แดงจีน",
-            value: 4567,
-            color: '#26A69A'
-        },
-        {
-            typeWood: "ไม้เก็ดเขาควาย",
-            value: 2345,
-            color: '#FF7043'
-        },
-        {
-            typeWood: "ไม้อีเฒ่า",
-            value: 6784,
-            color: '#8E24AA'
-        },
-        {
-            typeWood: "ไม้เก็ดดำ",
-            value: 9678,
-            color: '#7CB342'
-        },
-        {
-            typeWood: "ไม้หมากพลูตั๊กแตน",
-            value: 5678,
-            color: '#0288D1'
-        },
-        {
-            typeWood: "ไม้พะยูง",
-            value: 5780,
-            color: '#D81B60'
-        },
-    ]);
-    const [data, setData] = useState([
-        {
-            typeWood: "ไม้สัก",
-            value: 8300,
-            color: '#D32F2F'
-        },
-        {
-            typeWood: "ไม้ยาง",
-            value: 7000,
-            color: '#7B1FA2'
-        },
-        {
-            typeWood: "ไม้ประดู่",
-            value: 2000,
-            color: '#1976D2'
-        },
-        {
-            typeWood: "ไม้ชิงชัน",
-            value: 12000,
-            color: '#388E3C'
-        },
-        {
-            typeWood: "ไม้เก็ดแดง",
-            value: 9465,
-            color: '#FBC02D'
-        },
-        {
-            typeWood: "ไม้อีเม่ง",
-            value: 3452,
-            color: '#8D6E63'
-        },
-        {
-            typeWood: "ไม้กระพี้",
-            value: 2134,
-            color: '#7E57C2'
-        },
-        {
-            typeWood: "ไม้แดงจีน",
-            value: 4567,
-            color: '#26A69A'
-        },
-        {
-            typeWood: "ไม้เก็ดเขาควาย",
-            value: 2345,
-            color: '#FF7043'
-        },
-        {
-            typeWood: "ไม้อีเฒ่า",
-            value: 6784,
-            color: '#8E24AA'
-        },
-        {
-            typeWood: "ไม้เก็ดดำ",
-            value: 9678,
-            color: '#7CB342'
-        },
-        {
-            typeWood: "ไม้หมากพลูตั๊กแตน",
-            value: 5678,
-            color: '#0288D1'
-        },
-        {
-            typeWood: "ไม้พะยูง",
-            value: 5780,
-            color: '#D81B60'
-        },
-    ]);
+    const [data, setData] = useState<any>();
+    const [backup, setBackup] = useState<any>();
     const [filter, setFilter] = useState<string[]>([]);
-    const [config, setConfig] = useState({
-        appendPadding: 10,
-        data,
-        angleField: "value",
-        colorField: "typeWood",
-        height: 200,
-        color: (d) => {
-            const colorMapping = {
-                ไม้สัก: "#D32F2F",
-                ไม้ยาง: "#7B1FA2",
-                ไม้ประดู่: "#1976D2",
-                ไม้ชิงชัน: "#388E3C",
-                ไม้เก็ดแดง: "#FBC02D",
-                ไม้อีเม่ง: "#8D6E63",
-                ไม้กระพี้: "#7E57C2",
-                ไม้แดงจีน: "#26A69A",
-                ไม้เก็ดเขาควาย: "#FF7043",
-                ไม้อีเฒ่า: "#8E24AA",
-                ไม้เก็ดดำ: "#7CB342",
-                ไม้หมากพลูตั๊กแตน: "#0288D1",
-                ไม้พะยูง: "#D81B60",
-            };
-            return colorMapping[d.typeWood] || "#000000";
-        },
-        radius: 0.9,
-        label: {
-            type: "inner",
-            offset: "-30%",
-            content: ({ percent }) => `${(percent * 100).toFixed(0)}%`,
-            style: {
-                fontSize: 10,
-                textAlign: "center",
-            },
-        },
-        legend: false,
-        interactions: [
-            {
-                type: "element-active",
-            },
-        ],
-    });
-    const [historys, setHistorys] = useState<HistoryItem[]>([
-        {
-            id: 1,
-            woodName: "ไม้ประดู่",
-            similar: "99%",
-            updateAt: formatDateToThai('17/10/2023 11:46:30'),
-            img: Wood
-        },
-        {
-            id: 2,
-            woodName: "ไม้สัก",
-            similar: "96%",
-            updateAt: formatDateToThai('17/10/2023 11:46:30'),
-            img: Wood
-        },
-        {
-            id: 3,
-            woodName: "ไม้รัง",
-            similar: "99%",
-            updateAt: formatDateToThai('17/10/2023 11:46:30'),
-            img: Wood
-        },
-        {
-            id: 4,
-            woodName: "ไม้มะค่าโมง",
-            similar: "99%",
-            updateAt: formatDateToThai('17/10/2023 11:46:30'),
-            img: Wood
-        },
-        {
-            id: 5,
-            woodName: "ไม้ตะเคียนราก",
-            similar: "99%",
-            updateAt: formatDateToThai('17/10/2023 11:46:30'),
-            img: Wood
-        },
-        {
-            id: 6,
-            woodName: "ไม้ยางพารา",
-            similar: "99%",
-            updateAt: formatDateToThai('17/10/2023 11:46:30'),
-            img: Wood
-        },
-        {
-            id: 7,
-            woodName: "ไม้ตะเคียนทอง",
-            similar: "99%",
-            updateAt: formatDateToThai('17/10/2023 11:46:30'),
-            img: Wood
-        },
-        {
-            id: 8,
-            woodName: "ไม้แดง",
-            similar: "99%",
-            updateAt: formatDateToThai('17/10/2023 11:46:30'),
-            img: Wood
-        },
-    ])
-    const [backupHistory, setBackUpHistory] = useState<HistoryItem[]>([
-        {
-            id: 1,
-            woodName: "ไม้ประดู่",
-            similar: "99%",
-            updateAt: formatDateToThai('17/10/2023 11:46:30'),
-            img: Wood
-        },
-        {
-            id: 2,
-            woodName: "ไม้สัก",
-            similar: "96%",
-            updateAt: formatDateToThai('17/10/2023 11:46:30'),
-            img: Wood
-        },
-        {
-            id: 3,
-            woodName: "ไม้รัง",
-            similar: "99%",
-            updateAt: formatDateToThai('17/10/2023 11:46:30'),
-            img: Wood
-        },
-        {
-            id: 4,
-            woodName: "ไม้มะค่าโมง",
-            similar: "99%",
-            updateAt: formatDateToThai('17/10/2023 11:46:30'),
-            img: Wood
-        },
-        {
-            id: 5,
-            woodName: "ไม้ตะเคียนราก",
-            similar: "99%",
-            updateAt: formatDateToThai('17/10/2023 11:46:30'),
-            img: Wood
-        },
-        {
-            id: 6,
-            woodName: "ไม้ยางพารา",
-            similar: "99%",
-            updateAt: formatDateToThai('17/10/2023 11:46:30'),
-            img: Wood
-        },
-        {
-            id: 7,
-            woodName: "ไม้ตะเคียนทอง",
-            similar: "99%",
-            updateAt: formatDateToThai('17/10/2023 11:46:30'),
-            img: Wood
-        },
-        {
-            id: 8,
-            woodName: "ไม้แดง",
-            similar: "99%",
-            updateAt: formatDateToThai('17/10/2023 11:46:30'),
-            img: Wood
-        },
-    ])
     const [isDelete, setIsDelete] = useState(false);
     const [focusHistoryDelete, setFocusHistoryDelete] = useState<HistoryItem>();
     const [focusIndexDelete, setFocusIndexDelete] = useState<number>(0)
-    const [selectFilter, setSelectFilter] = useState([])
+    const [selectFilter, setSelectFilter] = useState<any>([])
+    const { u_id } = useParams();
+    const [pageSize, setPageSize] = useState(10);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(0);
+    const [statusFilter, setStatusFilter] = useState('การตรวจทั้งหมด')
+    const [classify, setClassify] = useState<any>();
+    const [woodType, setWoodType] = useState<any>();
+    const [pickerFrom, setPickerFrom] = useState();
+    const [pickerTo, setPickerTo] = useState();
+    const [dateFrom, setDateFrom] = useState('');
+    const [dateTo, setDateTo] = useState('');
+    const color = [
+        "#F7E987",
+        "#5B9A8B",
+        "#445069",
+        "#7B61FF",
+        "#DF8633",
+        "#0B56F1",
+        "#7E57C2",
+        "#26A69A",
+        "#FF7043",
+        "#8E24AA",
+        "#7CB342",
+        "#0288D1",
+        "#D81B60",
+        "#A21B60",
+    ]
 
-    function filterWood(value){
+    const onChangeWood = async (value) => {
         setSelectFilter(value)
-        let filterData
-        filterData = backupHistory.filter((wood) => {
-            if(value.indexOf(wood.woodName) != -1){
-                return wood
-            }
-        })
-        if(value.length == 0){
-            filterData = backupHistory
+    }
+
+    function FilterDataClassify(wood: string) {
+        let newFilter: string[];
+        if (filter.includes(wood)) {
+            newFilter = filter.filter(item => item !== wood);
+        } else {
+            newFilter = [...filter, wood];
         }
-        
-        setHistorys(filterData);
+        setFilter(newFilter);
+
+        const filteredData = backup.filter(item => !newFilter.includes(item.typeWood));
+        setData(filteredData);
+        // setConfig(prevConfig => ({
+        //     ...prevConfig,
+        //     data: filteredData
+        // }));
     }
 
     function RenderClassify() {
@@ -386,7 +134,7 @@ const HistoryClassify: React.FC = () => {
                         mode="multiple"
                         style={{ width: '100%' }}
                         value={selectFilter}
-                        onChange={filterWood}
+                        onChange={onChangeWood}
                         placeholder="เลือกพันธุ์ไม้ที่ต้องการค้นหา"
                         optionLabelProp="label"
                     >
@@ -459,9 +207,9 @@ const HistoryClassify: React.FC = () => {
                 </div>
                 <div className="space-y-4 mt-4">
                     {
-                        historys.map((history, index) => {
+                        classify && classify.map((history, index) => {
                             return (
-                                <div key={history.id} className="relative mx-6 bg-white p-2 rounded-lg">
+                                <div key={history.c_id} className="relative mx-6 bg-white p-2 rounded-lg">
                                     <button onClick={() => {
                                         setIsDelete(true);
                                         setFocusHistoryDelete(history)
@@ -469,14 +217,16 @@ const HistoryClassify: React.FC = () => {
                                     }} className="w-6 absolute right-1 top-1">
                                         <img src={Bin} alt="" />
                                     </button>
-                                    <div onClick={() =>{
+                                    <div onClick={() => {
                                         navigate('/line/classify_detail');
                                     }} className="grid grid-cols-3">
-                                        <img className="w-20 h-20 object-cover rounded-xl col-span-1" src={history.img} alt="" />
+                                        <div className="w-20 h-20 bg-gray-300">
+                                            {history.image && <img className="w-20 h-20 object-cover rounded-xl col-span-1" src={history.img} alt="" />}
+                                        </div>
                                         <div className="col-span-2">
-                                            <p className="text-xl font-bold">{history.woodName}</p>
-                                            <p className="text-lg">ความคล้ายคลึง {history.similar}</p>
-                                            <p className="text-right text-[#AA9F9F]">{history.updateAt}</p>
+                                            <p className="text-xl font-bold">ไม้{history.select_result}</p>
+                                            <p className="text-lg">ความคล้ายคลึง :  {history.result[0]?.percentage}%</p>
+                                            <p className="text-right text-[#AA9F9F]">{convertIsoToThaiDateTimeFullYear(history.create_at)}</p>
                                         </div>
                                     </div>
                                 </div>
@@ -488,14 +238,38 @@ const HistoryClassify: React.FC = () => {
         )
     }
 
-    function deleteClassify(index: number) {
-        let newHistorys = historys.filter((_, idx) => idx !== index);
-        setHistorys(newHistorys);
-        setIsDelete(false);
-
-    }
-
-    function RenderGraph({ config }: { config: ConfigType }) {
+    function RenderGraph() {
+        const [config, setConfig] = useState({
+            appendPadding: 10,
+            data,
+            angleField: "value",
+            colorField: "typeWood",
+            height: 200,
+            color: (d) => {
+                const valueColor = data.filter((value) => {
+                    if (value.typeWood == d.typeWood) {
+                        return value.color
+                    }
+                })
+                return valueColor[0].color || "#000000";
+            },
+            radius: 0.9,
+            label: {
+                type: "inner",
+                offset: "-30%",
+                content: ({ percent }) => `${(percent * 100).toFixed(0)}%`,
+                style: {
+                    fontSize: 10,
+                    textAlign: "center",
+                },
+            },
+            legend: false,
+            interactions: [
+                {
+                    type: "element-active",
+                },
+            ],
+        });
         return (
             <div className="mx-6 space-y-4 pb-4">
                 <div className="m-0 bg-white rounded-lg">
@@ -505,7 +279,7 @@ const HistoryClassify: React.FC = () => {
         )
     }
 
-    function RenderValueGraph({ data }: { data: DataType }) {
+    function RenderValueGraph() {
         return (
             <div className="bg-white rounded-lg space-y-2 mx-6">
                 <p className="text-center text-xl pt-2">จำนวนของแต่ละพันธุ์ไม้ที่ตรวจสอบ</p>
@@ -533,7 +307,7 @@ const HistoryClassify: React.FC = () => {
         const isVisible = !filter.includes(wood);
 
         return (
-            <button onClick={() => FilterData(wood)}>
+            <button onClick={() => FilterDataClassify(wood)}>
                 {isVisible
                     ? <img src={Eye} alt="open_eye" />
                     : <img src={CloseEye} alt="close_eye" />
@@ -542,23 +316,90 @@ const HistoryClassify: React.FC = () => {
         );
     }
 
-    function FilterData(wood: string) {
-        let newFilter: string[];
-        if (filter.includes(wood)) {
-            newFilter = filter.filter(item => item !== wood);
-        } else {
-            newFilter = [...filter, wood];
-        }
-        setFilter(newFilter);
+    const handlePageChangePage = (page) => {
+        setCurrentPage(page);
+    };
 
-        const filteredData = backup.filter(item => !newFilter.includes(item.typeWood));
-        setData(filteredData);
-        setConfig(prevConfig => ({
-            ...prevConfig,
-            data: filteredData
-        }));
+    const filterData = async () => {
+        let filter = {};
+        let filterGraph = {};
+        if (statusFilter != 'การตรวจทั้งหมด') {
+            filter['status_verify'] = (statusFilter)
+        }
+        if (selectFilter.length != 0) {
+            const prepareFilter = selectFilter.map((value) => value.replace('ไม้', ''))
+            filter['select_result'] = {
+                in: prepareFilter
+            }
+        }
+        if (dateTo != '') {
+            filter['create_at'] = filter['create_at'] || {};
+            filter['create_at']['lte'] = new Date(dateTo.replace(/-/g, '/'));
+            filterGraph['create_at'] = filterGraph['create_at'] || {};
+            filterGraph['create_at']['lte'] = new Date(dateTo.replace(/-/g, '/'));
+        }
+        if (dateFrom != '') {
+            filterGraph['create_at'] = filterGraph['create_at'] || {};
+            filterGraph['create_at']['gte'] = new Date(dateFrom.replace(/-/g, '/'));
+        }
+
+        await axios.post(`${path}/classify_user_id`, {
+            currentPage: currentPage,
+            pageSize: pageSize,
+            u_id: u_id,
+            filter: filter
+        })
+            .then((res) => {
+                setClassify(res.data.data)
+                setTotalPages(Math.ceil(res.data.total / pageSize));
+            })
+            .catch((err) => {
+                console.log(err);
+            })
+
+        await axios.post(`${path}/classify_donut_with_userid_query`, {
+            u_id: u_id,
+            filter: filterGraph
+        })
+            .then((res) => {
+                let prepareData: any = []
+                let prepareWoodType: any = []
+                res.data.forEach((wood: any, index: number) => {
+                    prepareData.push({
+                        typeWood: `ไม้${wood.wood_name}`,
+                        value: parseInt(wood.amount),
+                        color: color[index]
+                    })
+                });
+                prepareWoodType.push({ value: `ไม้ทั้งหมด`, label: `ไม้ทั้งหมด` })
+                res.data.forEach(element => {
+                    prepareWoodType.push({ value: `ไม้${element.wood_name}`, label: `ไม้${element.wood_name}` })
+                })
+                setWoodType(prepareWoodType)
+                setData(prepareData)
+                setBackup(prepareData)
+            })
+            .catch((err) => {
+                console.log(err);
+            })
     }
 
+    const dateFromPicker = async (value) => {
+        const date = new Date(value);
+        const formattedDate = moment(date).format('YYYY-MM-DD');
+        setDateFrom(formattedDate);
+        setPickerFrom(value);
+    }
+    const dateToPicker = async (value) => {
+        const date = new Date(value);
+        const formattedDate = moment(date).format('YYYY-MM-DD');
+        setDateTo(formattedDate);
+        setPickerTo(value);
+    }
+
+    useEffect(() => {
+        filterData();
+    }, [pageSize, currentPage, dateFrom, dateTo, selectFilter])
 
     return (
         <div className="Kanit bg-[#CEDEBD] min-h-screen flex flex-col">
@@ -571,7 +412,7 @@ const HistoryClassify: React.FC = () => {
                         <p className="text-center text-xl">คุณต้องการลบ ไม้ประดู่ ใช่หรือไม่</p>
                         <div className="grid grid-cols-2 gap-4">
                             <button onClick={() => {
-                                deleteClassify(focusIndexDelete)
+                                // deleteClassify(focusIndexDelete)
                             }} className="px-4 py-2 bg-[#FF6161] text-white flex item-center space-x-2 rounded-lg">
                                 <img src={Bin_Button} alt="" />
                                 ยืนยันการลบ
@@ -598,19 +439,30 @@ const HistoryClassify: React.FC = () => {
             </div>
             <div className="flex justify-between mx-6 py-4">
                 <div className="bg-white rounded-lg" style={{ width: "45%" }}>
-                    <DatePicker placeholder="เลือกวันที่เริ่ม" format="DD-MM-YYYY" style={{ width: "100%" }} />
+                    <DatePicker value={pickerFrom} onChange={(value) => dateFromPicker(value)} placeholder="เลือกวันที่เริ่ม" format="DD-MM-YYYY" style={{ width: "100%" }} />
                 </div>
                 <img style={{ width: "6%" }} src={Line} alt="" />
                 <div className="bg-white rounded-lg" style={{ width: "45%" }}>
-                    <DatePicker placeholder="เลือกวันที่สิ้นสุด" format="DD-MM-YYYY" style={{ width: "100%" }} />
+                    <DatePicker value={pickerTo} onChange={(value) => dateToPicker(value)} placeholder="เลือกวันที่สิ้นสุด" format="DD-MM-YYYY" style={{ width: "100%" }} />
                 </div>
             </div>
             {
                 menuFocus == 'ประวัติการตรวจสอบ' ? <RenderClassify /> : <div>
-                    <RenderGraph config={config} />
-                    <RenderValueGraph data={backup} />
+                    <RenderGraph />
+                    <RenderValueGraph />
                 </div>
             }
+            <div className="px-4 pt-4">
+                {menuFocus == 'ประวัติการตรวจสอบ' && (
+                    <Pagination
+                        current={currentPage}
+                        total={totalPages * pageSize}
+                        pageSize={pageSize}
+                        onChange={handlePageChangePage}
+                        className='pt-1 pb-5'
+                    />
+                )}
+            </div>
         </div>
     );
 };

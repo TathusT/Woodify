@@ -44,7 +44,7 @@ function LineRoutes() {
       <Route path="login" element={<LoginLine />} />
       <Route path="signup" element={<RegisterLine />} />
       <Route path="information_wood" element={<InformationWoodLine />} />
-      <Route path="history_classify" element={<HistoryClassify />} />
+      <Route path="history_classify/:u_id" element={<HistoryClassify />} />
       <Route path="classify_detail/:classifyId" element={<ClassifyDetail />} />
       <Route path="profile" element={<Profile />} />
       <Route path="wood_detail/:woodId" element={<WoodDetail />} />

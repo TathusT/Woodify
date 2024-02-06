@@ -29,6 +29,10 @@ const SignUpWeb: React.FC = () => {
     setShowConfirmPassword(!showConfirmPassword);
   };
 
+  const signUp = async () => {
+
+  }
+
   return (
     <div className="Kanit h-[100vh] min-h-screen bg-[#E6F2FD] flex flex-col bg-no-repeat bg-cover bg-[center_top_-4rem]" style={{ backgroundImage: `url(${background})` }}>
       <div className="flex justify-between px-24 pt-7 items-center">
@@ -103,7 +107,7 @@ const SignUpWeb: React.FC = () => {
                 </div>
               </div>
                 <div onClick={() => {
-                  signUp(username, name, surname, email, password, confirmPassword)
+                  signUp()
                 }} className="py-3 rounded-[15px] bg-[#3C6255] flex justify-center">
                     <p className="text-white text-[20px]">สมัครสมาชิก</p>
                 </div>

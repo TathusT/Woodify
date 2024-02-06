@@ -1,9 +1,11 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Link, useLocation, Outlet } from 'react-router-dom';
+import { Link, useLocation, Outlet, useNavigate } from 'react-router-dom';
 import LogoWoodify from "../../assets/logo_woodify.svg";
-import { useAuthenticationUserWebsite } from '../../tools/tools';
+import { getImage, useAuthenticationUserWebsite } from '../../tools/tools';
 import Arrow from "../../assets/setting_arrow.svg"
 import doorIcon from "../../assets/Logout-icon.svg"
+import axios from 'axios';
+import path from '../../../path';
 
 const HomeIcon = ({ color = "#A1A1A1" }) => {
   return (
@@ -58,9 +60,11 @@ const ArrowIcon = ({ color = "#A1A1A1" }) => {
 const NavigationBar: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [title, setTitle] = useState('');
+  const [user, setUser] = useState<any>();
   const [submenuFocus, setSubmenuFocus] = useState(false)
   const contentRef = useRef<HTMLUListElement | null>(null);
   const { authenticationUser } = useAuthenticationUserWebsite();
+  const router = useNavigate();
   const menus = [
     {
       name: "หน้าหลัก",
@@ -97,6 +101,18 @@ const NavigationBar: React.FC = () => {
 
   const location = useLocation();
 
+  const getUser = async () => {
+    const token = localStorage.getItem('access_token')
+    await axios.post(`${path}/user_with_token`, {
+      token: token
+    }).then((res) => {
+      setUser(res.data)
+    })
+      .catch((err) => {
+        console.log(err);
+      })
+  }
+
   useEffect(() => {
     authenticationUser();
     if (contentRef.current) {
@@ -127,6 +143,11 @@ const NavigationBar: React.FC = () => {
     }
 
   }, [isOpen, location.pathname]);
+
+
+  useEffect(() => {
+    getUser()
+  }, [])
 
   return (
     <div className="flex Kanit h-screen">
@@ -188,23 +209,30 @@ const NavigationBar: React.FC = () => {
             }
           </ul>
         </div>
-        <div className="border py-4 shadow-[0px_-1px_4px_0px_rgba(0,0,0,0.25)]">
-          <div className="flex items-center mb-6 pl-7 ">
-            <div className="w-50">
-              <div className="w-20 h-20 rounded-full bg-[#D9D9D9]"></div>
+        {user && (
+          <div className="border py-4 shadow-[0px_-1px_4px_0px_rgba(0,0,0,0.25)]">
+            <div className="flex items-center mb-6 pl-7 ">
+              <div className="w-50">
+                <div className="w-20 h-20 rounded-full bg-[#D9D9D9]">
+                  {user.image && <img className='rounded-full' src={user.image} alt="" />}
+                </div>
+              </div>
+              <div className="py-2 pl-7">
+                <p className="pb-2 font-semibold text-xl">{user.firstname} {user.lastname}</p>
+                <p className="text-lg font-semibold text-[#3C6255]">{user.role}</p>
+              </div>
             </div>
-            <div className="py-2 pl-7">
-                <p className="pb-2 font-semibold text-xl">ภูฟ้า รุจิภาสวัฒน์</p>
-                <p className="text-lg font-semibold text-[#3C6255]">admin</p>
-            </div>
-          </div>
-          <div className="flex justify-center items-center">
+            <div onClick={() => {
+              router('/admin/login')
+              localStorage.removeItem('access_token')
+            }} className="flex justify-center items-center cursor-pointer">
               <div className="flex justify-center items-center">
                 <img className='h-8' src={doorIcon} alt="" />
                 <p className="pl-2 font-semibold text-xl">ออกจากระบบ</p>
               </div>
+            </div>
           </div>
-        </div>
+        )}
       </nav>
       <div className='px-7 w-full bg-[#F5F6FA] overflow-y-auto'>
         <div id="content">

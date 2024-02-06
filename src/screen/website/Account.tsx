@@ -13,6 +13,7 @@ import clockIcon from "../../assets/last-status-icon.svg"
 import blockIcon from "../../assets/block-icon.svg"
 import changeRoleIcon from "../../assets/change-role-icon.svg"
 import garbageIcon from "../../assets/garbage-red-icon.svg"
+import { useNavigate } from "react-router-dom";
 const Account: React.FC = () => {
   const [infoWood, setInfoWood] = useState<any>()
   const [isLoading, setIsLoading] = useState(true);
@@ -26,6 +27,7 @@ const Account: React.FC = () => {
   const handleChange = (value: string) => {
     setSelectRole(value);
   };
+  const router = useNavigate();
 
   const getUser = async () => {
     await axios.get(`${path}/user`).then((res) => { setUsers(res.data) }).catch((err) => console.log(err))
@@ -182,18 +184,18 @@ const Account: React.FC = () => {
             {users && users.map((user, index) => {
               return (
                 <tr key={index} className="bg-white shadow-[0px_0px_4px_0px_rgba(0,0,0,0.25)] rounded-[10px] font-semibold">
-                  <td className="rounded-l-[10px] text-center pl-4">
+                  <td onClick={() => router(`/admin/user_profile/${user.u_id}`)} className="rounded-l-[10px] text-center pl-4">
                     <div className="w-12 h-12 rounded-full bg-gray-300 overflow-hidden">
                       {user.image && (
                         <img src={user.image} alt="" />
                       )}
                     </div>
                   </td>
-                  <td className="py-5 text-center">{user.u_id}</td>
-                  <td className="py-5 text-center">{user.firstname} {user.lastname}</td>
-                  <td className="py-5 text-center">{user.role}</td>
-                  <td className="py-5 text-center">{user.email ? user.email : "-"}</td>
-                  <td className="py-5 text-[#3C6255]">
+                  <td onClick={() => router(`/admin/user_profile/${user.u_id}`)} className="py-5 text-center">{user.u_id}</td>
+                  <td onClick={() => router(`/admin/user_profile/${user.u_id}`)} className="py-5 text-center">{user.firstname} {user.lastname}</td>
+                  <td onClick={() => router(`/admin/user_profile/${user.u_id}`)} className="py-5 text-center">{user.role}</td>
+                  <td onClick={() => router(`/admin/user_profile/${user.u_id}`)} className="py-5 text-center">{user.email ? user.email : "-"}</td>
+                  <td onClick={() => router(`/admin/user_profile/${user.u_id}`)} className="py-5 text-[#3C6255]">
                     <div className="flex justify-center items-center">
                       <img className="mr-3" src={clockIcon} alt="" />
                       <p>
