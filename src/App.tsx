@@ -25,6 +25,7 @@ import HomePage from "./screen/website/HomePage";
 import ManualDetail from "./screen/website/ManualDetail"
 import SignUpWeb from "./screen/website/Signup";
 import InformationWoodLine from "./screen/line/InformationWood";
+import NotPermission from './screen/website/NotPermission'
 
 
 function App() {
@@ -91,6 +92,7 @@ function AdminRoutes() {
       <Route path="signup/:a_id" element={<SignUpWeb />} />
       <Route path="signup" element={<SignUpWeb />} />
       <Route path="woodify" element={<HomePage />} />
+      <Route path="error/not_permission" element={<NotPermission />} />
     </Routes>
   );
 }

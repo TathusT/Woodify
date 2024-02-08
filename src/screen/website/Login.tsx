@@ -73,12 +73,9 @@ const LoginWeb: React.FC = () => {
           axios.post(`${path}/admin/login`, {
             lineProfile: profile
           }).then((res) => {
-            console.log(res.data);
-
             if (res.data.message == 'not have permission') {
               liff.logout();
-              alert('ไม่มีสิทธิการเข้าถึง')
-              // router('/line/signup')
+              router('/admin/error/not_permission')
             }
             else {
               localStorage.setItem('access_token', res.data.access_token)
