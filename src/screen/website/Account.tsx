@@ -35,12 +35,14 @@ const Account: React.FC = () => {
   }
 
   const sendMailToExpert = async () => {
+    const token = localStorage.getItem('access_token')
     await axios.post(`${path}/send_email`, {
-      email: email
+      email: email,
+      token : token
     })
       .then((res) => {
-        if (res.data.message == 'email is taken') {
-          alert('email is taken')
+        if (res.data.message == 'email is expert') {
+          alert('email is expert')
         }
         setEmail('')
       })

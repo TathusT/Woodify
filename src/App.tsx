@@ -88,6 +88,7 @@ function AdminRoutes() {
         <Route path="information_wood_detail/:w_id" element={<InformationWoodDetail />} />
       </Route>
       <Route path="login" element={<LoginWeb />} />
+      <Route path="signup/:a_id" element={<SignUpWeb />} />
       <Route path="signup" element={<SignUpWeb />} />
       <Route path="woodify" element={<HomePage />} />
     </Routes>

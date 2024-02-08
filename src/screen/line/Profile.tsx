@@ -6,6 +6,7 @@ import EditProfile from "../../assets/edit_profile.svg"
 import Loading from "../component/Loading";
 import axios from "axios";
 import path from "../../../path";
+import { closeLiff } from "../../tools/liff";
 
 interface UserIdProps {
     userId: string;
@@ -25,32 +26,52 @@ const Profile: React.FC<UserIdProps> = ({ userId }) => {
 
     const getUser = async () => {
         await axios.get(`${path}/user/${u_id}`)
-        .then((res) => {
-            const data = res.data
-            setFirstname(data.firstname)
-            setLastname(data.lastname)
-            setEmail(data.email)
-            setPhone(data.phone)
-            setUsername(data.username)
-            setIsLoading(false)
-        })
-        .catch((err) => {
-            console.log(err);
-        })
+            .then((res) => {
+                const data = res.data
+                setFirstname(data.firstname)
+                setLastname(data.lastname)
+                setEmail(data.email)
+                setPhone(data.phone)
+                setUsername(data.username)
+                setIsLoading(false)
+            })
+            .catch((err) => {
+                console.log(err);
+            })
     }
 
     const getData = async () => {
         await getUser();
     }
 
+    const logout = async () => {
+        const token = localStorage.getItem('access_token')
+        await axios.post(`${path}/line/logout`, {
+            token: token
+        })
+            .then((res) => {
+                console.log(res.data);
+                localStorage.removeItem('access_token')
+                closeLiff();
+            })
+            .catch((err) => {
+                console.log(err);
+            })
+    }
+
     useEffect(() => {
         getData();
-    },[])
+    }, [])
 
     return (
-        <div className="min-h-screen bg-[#EBEBEB] Kanit relative">
+        <div className="min-h-screen bg-[#EBEBEB] flex flex-col flex-grow Kanit relative">
             {isLoading ? <div className="flex items-center justify-center flex-1 h-full"><Loading /></div> : (
                 <div>
+                    <div className="absolute top-5 right-0">
+                        <div className="px-6">
+                            <button onClick={() => logout()} className="flex items-center justify-center bg-red-300 px-4 py-2 text-white rounded-lg w-full text-sm">ออกจากระบบ</button>
+                        </div>
+                    </div>
                     <div style={{
                         height: `${parseInt(Number(height / 2.5).toFixed(0))}px`,
                         borderBottomLeftRadius: "5rem",
@@ -67,10 +88,6 @@ const Profile: React.FC<UserIdProps> = ({ userId }) => {
                     </div>
                     <div className="w-full mt-5 text-lg">
                         <div className="bg-[#FDFDFD] mx-6 rounded-xl shadow-lg">
-                            <div className="flex justify-between px-4 border-b-2 py-2">
-                                <p className="text-[#0D5D8A]">ชื่อผู้ใช้ :</p>
-                                {editProfile ? <Input className="text-right w-3/4 text-[#BCBCBC] Kanit" value={username} /> : <p className="text-[#BCBCBC]">{username}</p>}
-                            </div>
                             <div className="flex justify-between px-4 border-b-2 py-2">
                                 <p className="text-[#0D5D8A]">ชื่อจริง :</p>
                                 {editProfile ? <Input className="text-right w-3/4 text-[#BCBCBC] Kanit" value={firstname} /> : <p className="text-[#BCBCBC]">{firstname}</p>}

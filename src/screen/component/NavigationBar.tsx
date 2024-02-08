@@ -210,16 +210,16 @@ const NavigationBar: React.FC = () => {
           </ul>
         </div>
         {user && (
-          <div className="border py-4 shadow-[0px_-1px_4px_0px_rgba(0,0,0,0.25)]">
-            <div className="flex items-center mb-6 pl-7 ">
+          <div className="border py-2 shadow-[0px_-1px_4px_0px_rgba(0,0,0,0.25)]">
+            <div className="flex items-center mb-2 pl-7 ">
               <div className="w-50">
-                <div className="w-20 h-20 rounded-full bg-[#D9D9D9]">
+                <div className="w-24 h-24 rounded-full bg-[#D9D9D9]">
                   {user.image && <img className='rounded-full' src={user.image} alt="" />}
                 </div>
               </div>
               <div className="py-2 pl-7">
                 <p className="pb-2 font-semibold text-xl">{user.firstname} {user.lastname}</p>
-                <p className="text-lg font-semibold text-[#3C6255]">{user.role}</p>
+                <p className="text-xl font-semibold text-[#3C6255]">{user.role}</p>
               </div>
             </div>
             <div onClick={() => {
@@ -227,7 +227,7 @@ const NavigationBar: React.FC = () => {
               localStorage.removeItem('access_token')
             }} className="flex justify-center items-center cursor-pointer">
               <div className="flex justify-center items-center">
-                <img className='h-8' src={doorIcon} alt="" />
+                <img className='h-10' src={doorIcon} alt="" />
                 <p className="pl-2 font-semibold text-xl">ออกจากระบบ</p>
               </div>
             </div>
