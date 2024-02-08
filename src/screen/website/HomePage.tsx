@@ -8,6 +8,7 @@ import instagram from "../../assets/icon-instagram.svg"
 import youtube from "../../assets/icon-youtube.svg"
 import twitter from "../../assets/icon-twitter.svg"
 import rfd from "../../assets/icon-rfd.svg"
+import logoIt from "../../assets/it-logo.png"
 const HomePage: React.FC = () => {
   return (
     <div className="min-h-screen overflow-x-hidden bg-[#E6F2FD] Kanit">
@@ -25,12 +26,9 @@ const HomePage: React.FC = () => {
             </a>
         </div>
         <div className="flex space-x-3">
-            <div className="px-4 py-2 rounded-md bg-white">
+            <Link to={"/admin/login"} className="px-4 py-2 rounded-md bg-white">
                 <p>เข้าสู่ระบบ</p>
-            </div>
-            <div className="px-4 py-2 rounded-md bg-[#3C6255] text-white">
-                <p>ลงทะเบียน</p>
-            </div>
+            </Link>
         </div>
       </div>
       <div className="w-full min-h-screen">
@@ -42,7 +40,7 @@ const HomePage: React.FC = () => {
                 กดเพื่อเริ่มได้เลย!
               </p>
               <Link
-                to={"/dashboard"}
+                to={"/admin/login"}
                 className="bg-[#3C6255] font-semibold text-lg text-white px-8 py-3 rounded-xl"
               >
                 เริ่มเลย
@@ -82,9 +80,10 @@ const HomePage: React.FC = () => {
                 </div>
               </div>
               <div className="flex space-y-5 flex-col justify-end">
-                <div className="flex space-x-2 justify-end">
+                <div className="flex space-x-3 justify-end">
                   <img src={rfd} alt="" />
                   <img src={LogoWoodify} width={96} alt="" />
+                  <img src={logoIt} width={96} alt="" />
                 </div>
                 <p>© 2023 COPYRIGHT WOODIFY. ALL RIGHTS RESERVED.</p>
               </div>
