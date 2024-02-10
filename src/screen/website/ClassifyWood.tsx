@@ -455,6 +455,8 @@ const ClassifyWood: React.FC = () => {
             </thead>
             <tbody>
               {classify && classify.map((data, index) => {
+                console.log(data);
+                
                 return (
                   <tr key={data.c_id} onClick={() => router(`/admin/classify_wood_detail/${data.c_id}`)} className="bg-white shadow-[0px_0px_4px_0px_rgba(0,0,0,0.25)] rounded-[10px] font-semibold">
                     {/* <td className="rounded-l-[10px] text-center">{data.c_id}</td> */}
@@ -472,8 +474,9 @@ const ClassifyWood: React.FC = () => {
                       </div>
                     </td>
                     <td className="py-5 text-center">{convertIsoToThaiDateTimeFullYear(data?.create_at)}</td>
-                    <td className="py-5 rounded-r-[10px]">
+                    <td className="py-5 rounded-r-[10px] relative">
                       <img src={doorIcon} alt="" />
+                      <div className='absolute right-1 top-1 flex justify-center items-center bg-green-600 text-white w-5 h-5 rounded-full'>{data.notes.filter((value) => (value.create_by != data.creator.create_by) && value.read_status == false).length}</div>
                     </td>
                   </tr>
                 )

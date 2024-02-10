@@ -74,7 +74,7 @@ const ClassifyWoodDetail: React.FC = () => {
             .then((res) => {
                 let makeData: any = [];
                 console.log(res.data);
-                
+
                 setClassify(res.data)
                 res.data.result.map((data: any, index: number) => {
                     makeData.push({ value: data.wood, label: `${index + 1}. ${data.wood} ${data.percentage}%` });
@@ -227,11 +227,12 @@ const ClassifyWoodDetail: React.FC = () => {
                         </div>
                     </div>
                     <p className="text-xl text-[#5C5C5C] font-semibold mt-4">บันทึกของการตรวจสอบ</p>
-                    <div className='w-full border border-1 border-[#61876E] rounded-[10px] h-[500px] bg-white mt-3 overflow-y-auto space-y-2'>
+                    <div className='w-full border border-1 border-[#61876E] rounded-[10px] h-[500px] bg-white mt-3 overflow-y-auto space-y-2 p-2'>
                         {note != null && note.map((value) => {
                             return (
-                                <div key={value.n_id} className='p-2 rounded-lg border bg-blue-500 text-white'>
+                                <div key={value.n_id} className={`p-2 rounded-lg border ${classify.creator.u_id == value.create_by ? 'bg-blue-500 text-white' : 'bg-gray-300'}`}>
                                     <p>{value.description}</p>
+                                    <p className='text-right'>{convertIsoToThaiDateTime(value.create_at)}</p>
                                 </div>
                             )
                         })}
