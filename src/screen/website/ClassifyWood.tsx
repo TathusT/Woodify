@@ -476,7 +476,7 @@ const ClassifyWood: React.FC = () => {
                     <td className="py-5 text-center">{convertIsoToThaiDateTimeFullYear(data?.create_at)}</td>
                     <td className="py-5 rounded-r-[10px] relative">
                       <img src={doorIcon} alt="" />
-                      <div className='absolute right-1 top-1 flex justify-center items-center bg-green-600 text-white w-5 h-5 rounded-full'>{data.notes.filter((value) => (value.create_by != data.creator.create_by) && value.read_status == false).length}</div>
+                      <div className='absolute right-1 top-1 flex justify-center items-center bg-green-600 text-white w-5 h-5 rounded-full'>{data.notes.filter((value) => (value.create_by != data.creator.u_id && value.read_status == false)).length}</div>
                     </td>
                   </tr>
                 )

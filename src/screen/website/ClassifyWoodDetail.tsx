@@ -1,7 +1,7 @@
 import React, { useRef, useEffect, useState } from 'react';
 import Wood from '../../assets/S12-3balau 2.png'
 import selectIcon from "../../assets/select-icon.svg"
-import { Select, Modal } from "antd";
+import { Select, Modal, Descriptions } from "antd";
 import axios from 'axios';
 import path from '../../../path';
 import { useParams } from 'react-router-dom';
@@ -16,6 +16,8 @@ const ClassifyWoodDetail: React.FC = () => {
     const [valueBefore, setValueBefore] = useState<any>();
     const [valueAfter, setValueAfter] = useState('');
     const [isLoading, setIsLoading] = useState(true);
+    const [description, setDescription] = useState('');
+    const [userId, setUserId] = useState();
     function clickModal(check) {
         setModalCertification(true)
         if (check == 'ผ่าน') {
@@ -36,12 +38,54 @@ const ClassifyWoodDetail: React.FC = () => {
     const [message, setMessage] = useState<string>('')
     const [classify, setClassify] = useState<any>()
     const [changeResult, setChangeResult] = useState<any>();
+    const [statusVerify, setStatusVerify] = useState('');
     const { c_id } = useParams();
     const similarColor = [
         "text-green-500",
         "text-yellow-500",
         "text-red-500"
     ]
+
+    const updateStatusVerify = async () => {
+        let status
+        if (checkModalCertification) {
+            status = 'PASSED_CERTIFICATION'
+        }
+        else {
+            status = "FAILED_CERTIFICATION"
+        }
+
+        await axios.post(`${path}/verify_status_classify`, {
+            status: status,
+            c_id: c_id,
+            u_id: userId,
+            description: description
+        })
+        .then((res) => {
+            console.log(res.data);
+            
+            if(res.data.message == 'verify success'){
+                addNoteVerify();
+                setStatusVerify(status)
+                setDescription('')
+            }
+        })
+        .catch((err) => {
+            console.log(err);
+        })
+    }
+
+    const getUserId = async () => {
+        try {
+            const token = localStorage.getItem("access_token");
+            const response = await axios.post(`${path}/user_with_token/`, {
+                token: token,
+            });
+            setUserId(response.data.u_id);
+        } catch (error) {
+            console.log(error);
+        }
+    }
 
     const addNote = async () => {
         const token = localStorage.getItem('access_token');
@@ -51,7 +95,21 @@ const ClassifyWoodDetail: React.FC = () => {
             c_id: c_id,
             sessionId: classify.session_id_note_room
         }).then((res) => {
-            // getNoteFromId();
+            setMessage('');
+        })
+            .catch((err) => {
+                console.log(err);
+            })
+    }
+
+    const addNoteVerify = async () => {
+        const token = localStorage.getItem('access_token');
+        await axios.post(`${path}/note`, {
+            token: token,
+            description: description,
+            c_id: c_id,
+            sessionId: classify.session_id_note_room
+        }).then((res) => {
             setMessage('');
         })
             .catch((err) => {
@@ -79,8 +137,23 @@ const ClassifyWoodDetail: React.FC = () => {
                 res.data.result.map((data: any, index: number) => {
                     makeData.push({ value: data.wood, label: `${index + 1}. ${data.wood} ${data.percentage}%` });
                 });
+                setStatusVerify(res.data.status_verify);
                 setChangeResult(makeData);
                 setValueBefore(makeData[0])
+            })
+            .catch((err) => {
+                console.log(err);
+            })
+    }
+
+    const readMessage = async () => {
+        const token = localStorage.getItem('access_token')
+        await axios.post(`${path}/read_message`, {
+            c_id: c_id,
+            token: token
+        })
+            .then((res) => {
+                console.log(res.data);
             })
             .catch((err) => {
                 console.log(err);
@@ -103,7 +176,9 @@ const ClassifyWoodDetail: React.FC = () => {
 
     const getData = async () => {
         await getClassifyWithId();
+        await getUserId();
         await getNoteFromId();
+        await readMessage();
         await setIsLoading(false)
     }
 
@@ -213,7 +288,7 @@ const ClassifyWoodDetail: React.FC = () => {
                                 />
                                 <div className="flex text-lg font-semibold space-x-4 items-center">
                                     <p>สถานะ:</p>
-                                    <p>{classify.status_verify == "WAITING_FOR_VERIFICATION" ? "รอการรับรอง" : classify.status_verify == 'PASSED_CERTIFICATION' ? "ผ่านการรับรอง" : "ไม่ผ่านการรับรอง"}</p>
+                                    <p>{statusVerify == "WAITING_FOR_VERIFICATION" ? "รอการรับรอง" : statusVerify == 'PASSED_CERTIFICATION' ? "ผ่านการรับรอง" : "ไม่ผ่านการรับรอง"}</p>
                                 </div>
                                 <div className="flex items-center space-x-2 text-lg font-semibold">
                                     <div onClick={() => clickModal('ผ่าน')} className="bg-[#61876E] text-white py-2 px-5 rounded-[10px]">
@@ -230,7 +305,7 @@ const ClassifyWoodDetail: React.FC = () => {
                     <div className='w-full border border-1 border-[#61876E] rounded-[10px] h-[500px] bg-white mt-3 overflow-y-auto space-y-2 p-2'>
                         {note != null && note.map((value) => {
                             return (
-                                <div key={value.n_id} className={`p-2 rounded-lg border ${classify.creator.u_id == value.create_by ? 'bg-blue-500 text-white' : 'bg-gray-300'}`}>
+                                <div key={value.n_id} className={`p-2 rounded-lg border ${(value.create_by == userId) ? 'bg-blue-500 text-white' : 'bg-gray-300'}`}>
                                     <p>{value.description}</p>
                                     <p className='text-right'>{convertIsoToThaiDateTime(value.create_at)}</p>
                                 </div>
@@ -265,10 +340,14 @@ const ClassifyWoodDetail: React.FC = () => {
                     <div className="flex items-center justify-center space-x-2 font-semibold pt-3 mb-4">
                         <div onClick={() => {
                             setModalCertification(false)
+                            updateStatusVerify();
                         }} className="bg-[#3C6255] py-2 w-1/6 text-white cursor-pointer rounded-[10px] text-center">
                             <p>ยืนยัน</p>
                         </div>
-                        <div onClick={() => setModalCertification(false)} className="bg-[#C1C1C1] py-2 w-1/6 cursor-pointer rounded-[10px] text-center">
+                        <div onClick={() => {
+                            setModalCertification(false)
+                            setDescription('')
+                        }} className="bg-[#C1C1C1] py-2 w-1/6 cursor-pointer rounded-[10px] text-center">
                             <p>ยกเลิก</p>
                         </div>
                     </div>
@@ -289,7 +368,7 @@ const ClassifyWoodDetail: React.FC = () => {
                     </div>
                     <div className='w-4/5'>
                         <p className='text-lg font-semibold'>บันทึกการรับรอง</p>
-                        <textarea className='w-full border border-1 border-[#61876E] rounded-[15px] p-3 h-72 text-lg font-semibold max-h-80' name="" id=""></textarea>
+                        <textarea value={description} onChange={(text) => setDescription(text.target.value)} className='w-full border border-1 border-[#61876E] rounded-[15px] p-3 h-72 text-lg font-semibold max-h-80' name="" id=""></textarea>
                     </div>
                 </div>
             </Modal>
