@@ -13,7 +13,7 @@ import { useNavigate } from 'react-router-dom';
 import liff from "@line/liff";
 import Loading from "../component/Loading";
 import { deleteAllCookies } from "../../tools/tools";
-
+import iconLine from "../../assets/icon-line.webp"
 
 const LoginWeb: React.FC = () => {
   const [showPassword, setShowPassword] = useState<boolean>(false);
@@ -113,7 +113,7 @@ const LoginWeb: React.FC = () => {
 
   return (
     <div className="Kanit h-[100vh] min-h-screen bg-[#E6F2FD] flex flex-col bg-no-repeat bg-cover bg-[center_top_-4rem]" style={{ backgroundImage: `url(${background})` }}>
-      {isLoading ? <div className="flex items-center justify-center flex-1 h-full"><Loading /></div> : (<div>
+      {isLoading ? <div className="flex items-center flex-1 h-full"><Loading /></div> : (<div className="flex flex-col justify-between h-full">
         <div className="flex justify-between px-24 pt-7 items-center">
           <img src={LogoWoodify} className="w-[96px]" alt="" />
           <div className="flex space-x-20">
@@ -128,10 +128,10 @@ const LoginWeb: React.FC = () => {
           </div>
         </div>
         <div className="flex justify-center items-center h-full">
-          <div className="bg-white rounded-[20px] w-[40%] px-16 pt-8 pb-14 flex flex-col items-center box-shadow">
+          <div className="bg-white rounded-[20px] w-[40%] px-16 py-10 flex flex-col items-center box-shadow">
             <p className="text-2xl text-[32px] font-bold">เข้าสู่ระบบ</p>
             <div className="w-full space-y-8 mt-8">
-              <div className="space-y-2">
+              {/* <div className="space-y-2">
                 <div className="flex flex-col">
                   <p className="font-medium text-[18px]">ชื่อผู้ใช้</p>
                   <input defaultValue={username} onChange={(text) => {
@@ -152,11 +152,14 @@ const LoginWeb: React.FC = () => {
                     </button>
                   </div>
                 </div>
+              </div> */}
+              <div className="flex justify-center">
+                <img width={90} src={iconLine} alt="" />
               </div>
-              <div className="py-2 rounded-[15px] border-[#61876E] border-[1px] flex justify-center items-center space-x-1">
+              {/* <div className="py-2 rounded-[15px] border-[#61876E] border-[1px] flex justify-center items-center space-x-1">
                 <img className="w-[2rem]" src={LogoGoogle} alt="" />
                 <p>เข้าสู่ระบบผ่าน Google</p>
-              </div>
+              </div> */}
               <div onClick={() => {
                 loginLiff()
               }} className="bg-[#06C654] rounded-xl py-2 px-3 flex justify-center space-x-4 cursor-pointer">

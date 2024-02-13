@@ -96,9 +96,9 @@ const InformationWood: React.FC = () => {
 
   return (
     <div className="w-full Kanit flex flex-col min-h-screen">
-      <div className="flex mt-10 justify-between">
-        <p className="text-[24px] font-semibold">จัดการข้อมูลไม้แต่ละพันธุ์</p>
-        <div className="flex items-center space-x-3">
+      <div className="flex mt-10 justify-between items-center">
+        <p className="text-[32px] font-semibold">จัดการข้อมูลไม้แต่ละพันธุ์</p>
+        <div className="flex items-center space-x-3 h-9">
           <Select
             defaultValue="ทั้งหมด"
             className="h-full"

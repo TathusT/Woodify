@@ -81,7 +81,7 @@ const InformationWoodDetail: React.FC = () => {
     <div className="w-full Kanit flex flex-col min-h-screen">
       <div className="flex mt-10">
         <img className="cursor-pointer" onClick={() => {router('/admin/information_wood')}} src={arrowIcon} alt="" />
-        <p className="text-[24px] font-semibold ml-6">ข้อมูลต้นแดง</p>
+        <p className="text-[32px] font-semibold ml-6">ข้อมูลต้นแดง</p>
       </div>
       {slides && (
         <div className={`py-7 px-8 bg-white box-shadow rounded-[10px] mt-10 ${slides.length <= 4 ? 'flex justify-center' : ""}`}>

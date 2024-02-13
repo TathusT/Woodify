@@ -37,9 +37,9 @@ const Manual: React.FC = () => {
   return (
     <div className="w-full Kanit flex flex-col min-h-screen">
       {isLoading ? <div className="flex items-center justify-center flex-1 h-full"><Loading /></div> : (<div>
-        <div className="flex mt-10 justify-between">
-          <p className="text-[24px] font-semibold">คู่มือใช้งานเบื้องต้น</p>
-          <div className="flex items-center space-x-3">
+        <div className="flex mt-10 justify-between items-center">
+          <p className="text-[32px] font-semibold">คู่มือใช้งานเบื้องต้น</p>
+          <div className="flex items-center space-x-3 h-9">
             <p className="font-semibold">แสดง</p>
             <Select
               defaultValue="10 แถว"
@@ -80,7 +80,7 @@ const Manual: React.FC = () => {
               <Input className="h-full w-[280px] font-semibold" suffix={<img src={search} />} />
             </div>
             <Link to='/admin/manage_manual' className="bg-[#3C6255] h-full flex justify-center space-x-2 items-center px-3 rounded-[8px] text-white cursor-pointer">
-              <p>เพื่มคู่มือ</p>
+              <p className="text-[18px]">เพื่มคู่มือ</p>
               <img src={add} alt="" />
             </Link>
           </div>

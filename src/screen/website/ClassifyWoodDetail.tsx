@@ -5,7 +5,7 @@ import { Select, Modal, Descriptions } from "antd";
 import axios from 'axios';
 import path from '../../../path';
 import { useParams } from 'react-router-dom';
-import { convertIsoToThaiDateTime, getImage } from '../../tools/tools';
+import { convertIsoToThaiDateTime, getImage, isoToThaiDateTime } from '../../tools/tools';
 import Loading from '../component/Loading';
 import { io } from 'socket.io-client';
 
@@ -302,13 +302,24 @@ const ClassifyWoodDetail: React.FC = () => {
                         </div>
                     </div>
                     <p className="text-xl text-[#5C5C5C] font-semibold mt-4">บันทึกของการตรวจสอบ</p>
-                    <div className='w-full border border-1 border-[#61876E] rounded-[10px] h-[500px] bg-white mt-3 overflow-y-auto space-y-2 p-2'>
+                    <div className='w-full border border-1 border-[#61876E] rounded-[10px] h-[500px] bg-white mt-3 overflow-y-auto space-y-2 p-2 scrollable-content'>
                         {note != null && note.map((value) => {
                             return (
-                                <div key={value.n_id} className={`p-2 rounded-lg border ${(value.create_by == userId) ? 'bg-blue-500 text-white' : 'bg-gray-300'}`}>
-                                    <p>{value.description}</p>
-                                    <p className='text-right'>{convertIsoToThaiDateTime(value.create_at)}</p>
-                                </div>
+                                (value.create_by == userId?
+                                    <div className='flex justify-end'>
+                                        <div key={value.n_id} className="p-2 rounded-lg border bg-blue-500 text-white w-2/5">
+                                            <p>{value.description}</p>
+                                            <p className='text-right'>อัปเดตล่าสุดเมื่อ {isoToThaiDateTime(value.create_at)}</p>
+                                            <p className='text-right'>เขียนโดย {value.creator.firstname}</p>
+                                        </div>
+                                    </div>
+                                :
+                                    <div key={value.n_id} className="p-2 rounded-lg border bg-gray-300 w-2/5">
+                                        <p>{value.description}</p>
+                                        <p className='text-right'>อัปเดตล่าสุดเมื่อ {isoToThaiDateTime(value.create_at)}</p>
+                                        <p className='text-right'>เขียนโดย {value.creator.firstname}</p>
+                                    </div>
+                                )
                             )
                         })}
                     </div>

@@ -8,6 +8,9 @@ import axios from "axios";
 import path from "../../../path";
 import moment from 'moment';
 import dayjs from 'dayjs';
+import selectIcon from "../../assets/select-icon.svg"
+import arrowRightIcon from "../../assets/arrow-right.svg"
+import calendarIcon from "../../assets/calendar-icon.svg"
 
 const LineChart: any = Line
 const ColumnChart: any = Column
@@ -245,25 +248,25 @@ const DashBoard: React.FC = () => {
   }
 
   return (
-    <div className="p-4 min-h-screen flex flex-col">
-      <p className="text-4xl font-bold">หน้าหลัก</p>
+    <div className="min-h-screen flex flex-col">
+      <p className="text-[32px] font-bold mt-10">หน้าหลัก</p>
       {isLoading ? <div className="flex items-center justify-center flex-1 h-full"><Loading /></div> : (
         <div>
           <div className="flex justify-between items-center">
             <div className="w-[70%]">
               <div className="flex justify-between items-center">
                 <p className="text-2xl font-bold">จำนวนการตรวจสอบ</p>
-                <div>
-                  <div className="flex justify-between py-4">
-                    <div className="bg-white rounded-lg" style={{ width: "45%" }}>
-                      <DatePicker value={pickerFrom} defaultValue={dayjs(new Date())} onChange={(value) => dateFromPicker(value)} placeholder="เลือกวันที่เริ่ม" format="DD-MM-YYYY" style={{ width: "100%" }} />
+                  <div className="flex space-x-3 items-center py-4">
+                    <div className="relative flex items-center">
+                      <img className='absolute z-50 left-2' src={calendarIcon}></img>
+                      <DatePicker style={{ width: 150 }} suffixIcon={<img src={selectIcon}></img>} value={pickerFrom} defaultValue={dayjs(new Date())} onChange={(value) => dateFromPicker(value)} placeholder="เลือกวันที่เริ่ม" format="DD-MM-YYYY"/>
                     </div>
-                    <img style={{ width: "6%" }} src={LineDate} alt="" />
-                    <div className="bg-white rounded-lg" style={{ width: "45%" }}>
-                      <DatePicker value={pickerTo} defaultValue={dayjs(new Date())} onChange={(value) => dateToPicker(value)} placeholder="เลือกวันที่สิ้นสุด" format="DD-MM-YYYY" style={{ width: "100%" }} />
+                    <img src={arrowRightIcon}></img>
+                    <div className="relative flex items-center">
+                      <img className='absolute z-50 left-2' src={calendarIcon}></img>
+                      <DatePicker style={{ width: 150 }} suffixIcon={<img src={selectIcon}></img>} value={pickerTo} defaultValue={dayjs(new Date())} onChange={(value) => dateToPicker(value)} placeholder="เลือกวันที่สิ้นสุด" format="DD-MM-YYYY"/>
                     </div>
                   </div>
-                </div>
               </div>
               <div className="bg-white p-2 rounded-lg border-2 border-gray-200">
                 {dataLine && <RenderLine data={dataLine} />}
@@ -303,6 +306,9 @@ const DashBoard: React.FC = () => {
                 <RenderColumn data={dataColumn} />
               )}
             </div>
+          </div>
+          <div className="flex justify-center font-semibold my-3 text-[18px]">
+            <p>© 2023 COPYRIGHT WOODIFY. ALL RIGHTS RESERVED.</p>
           </div>
         </div>
       )}

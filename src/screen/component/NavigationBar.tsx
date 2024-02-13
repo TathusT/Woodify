@@ -6,6 +6,7 @@ import Arrow from "../../assets/setting_arrow.svg"
 import doorIcon from "../../assets/Logout-icon.svg"
 import axios from 'axios';
 import path from '../../../path';
+import { Modal } from "antd";
 
 const HomeIcon = ({ color = "#A1A1A1" }) => {
   return (
@@ -65,6 +66,7 @@ const NavigationBar: React.FC = () => {
   const contentRef = useRef<HTMLUListElement | null>(null);
   const { authenticationUser } = useAuthenticationUserWebsite();
   const router = useNavigate();
+  const [modalSignout, setModalSignout] = useState(false);
   const menus = [
     {
       name: "หน้าหลัก",
@@ -151,7 +153,7 @@ const NavigationBar: React.FC = () => {
 
   return (
     <div className="flex Kanit h-screen">
-      <nav className='w-96 h-screen pt-4 border-r-2 flex flex-col justify-between'>
+      <nav className='w-80 h-screen pt-4 border-r-2 flex flex-col justify-between'>
         <div>
           <div className='flex justify-center pb-6'>
             <img className='max-w-[84px]' src={LogoWoodify} alt="" />
@@ -210,25 +212,24 @@ const NavigationBar: React.FC = () => {
           </ul>
         </div>
         {user && (
-          <div className="border py-2 shadow-[0px_-1px_4px_0px_rgba(0,0,0,0.25)]">
-            <div className="flex items-center mb-2 pl-7 ">
+          <div className="border py-4 shadow-[0px_-1px_4px_0px_rgba(0,0,0,0.25)]">
+            <div className="flex items-center mb-5 pl-7 ">
               <div className="w-50">
-                <div className="w-24 h-24 rounded-full bg-[#D9D9D9]">
+                <div className="w-16 h-16 rounded-full bg-[#D9D9D9]">
                   {user.image && <img className='rounded-full' src={user.image} alt="" />}
                 </div>
               </div>
               <div className="py-2 pl-7">
-                <p className="pb-2 font-semibold text-xl">{user.firstname} {user.lastname}</p>
-                <p className="text-xl font-semibold text-[#3C6255]">{user.role}</p>
+                <p className="pb-1 text-[20px]">{user.firstname} {user.lastname}</p>
+                <p className="text-[18px] text-[#3C6255]">{user.role}</p>
               </div>
             </div>
             <div onClick={() => {
-              router('/admin/login')
-              localStorage.removeItem('access_token')
+              setModalSignout(true)
             }} className="flex justify-center items-center cursor-pointer">
               <div className="flex justify-center items-center">
-                <img className='h-10' src={doorIcon} alt="" />
-                <p className="pl-2 font-semibold text-xl">ออกจากระบบ</p>
+                <img className='h-8' src={doorIcon} alt="" />
+                <p className="pl-2 text-[20px]">ออกจากระบบ</p>
               </div>
             </div>
           </div>
@@ -239,6 +240,37 @@ const NavigationBar: React.FC = () => {
           <Outlet />
         </div>
       </div>
+      {/* modal */}
+      <Modal
+        title={[
+          <div className="text-center text-[24px] mt-4">
+            <p>ออกจากระบบ</p>
+          </div>
+        ]}
+        className="Kanit"
+        centered
+        open={modalSignout}
+        width={550}
+        onCancel={() => setModalSignout(false)}
+        footer={[
+          <div className="flex items-center justify-center space-x-2 font-semibold pt-3 mb-4">
+            <div onClick={() => {
+              setModalSignout(false)
+              router('/admin/login')
+              localStorage.removeItem('access_token')
+              }} className="bg-[#3C6255] py-2 w-1/4 text-white cursor-pointer rounded-[10px] text-center">
+              <p>ยืนยันการออก</p>
+            </div>
+            <div onClick={() => setModalSignout(false)} className="bg-[#C1C1C1] py-2 w-1/4 cursor-pointer rounded-[10px] text-center">
+              <p>ยกเลิก</p>
+            </div>
+          </div>
+        ]}
+      >
+        <div className="flex justify-center my-10">
+          <p className="text-lg font-semibold">คุณต้องการออกจากระบบ ใช่หรือไม่?</p>
+        </div>
+      </Modal>
     </div>
   );
 }

@@ -51,6 +51,32 @@ export function useAuthenticationUserWebsite() {
   return { authenticationUser };
 }
 
+export function isoToThaiDateTime(isoDateTime) {
+  const thaiMonths = {
+      1: "มกราคม",
+      2: "กุมภาพันธ์",
+      3: "มีนาคม",
+      4: "เมษายน",
+      5: "พฤษภาคม",
+      6: "มิถุนายน",
+      7: "กรกฎาคม",
+      8: "สิงหาคม",
+      9: "กันยายน",
+      10: "ตุลาคม",
+      11: "พฤศจิกายน",
+      12: "ธันวาคม"
+  };
+
+  const [datePart, timePart] = isoDateTime.split('T');
+  const [year, month, day] = datePart.split('-').map(Number);
+  const [hours, minutes, seconds] = (timePart || '00:00:00').split(':').map(Number);
+  const thaiYear = year + 543;
+  const thaiMonth = thaiMonths[month];
+  
+  return `${day} ${thaiMonth} ${thaiYear} เวลา ${hours}:${minutes}`;
+}
+
+
 export function useAuthenticationUserLine() {
   const navigate = useNavigate();
 

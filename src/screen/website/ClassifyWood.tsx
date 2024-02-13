@@ -4,7 +4,9 @@ import { Pie, measureTextWidth } from '@ant-design/plots';
 import sortIcon from "../../assets/sort-icon.svg"
 import selectIcon from "../../assets/select-icon.svg"
 import search from "../../assets/search.svg";
-import clockIcon from "../../assets/last-status-icon.svg"
+import clockIcon from "../../assets/wait-for-verification.svg"
+import passIcon from "../../assets/pass-verification.svg"
+import notPassIcon from "../../assets/not-pass-verification.svg"
 import doorIcon from "../../assets/Logout-icon.svg"
 import calendarIcon from "../../assets/calendar-icon.svg"
 import arrowRightIcon from "../../assets/arrow-right.svg"
@@ -449,6 +451,7 @@ const ClassifyWood: React.FC = () => {
                 <th className="pb-5">ผลการตรวจที่ได้</th>
                 <th className="pb-5">ความคล้ายคลึง</th>
                 <th className="pb-5">การรับรอง</th>
+                <th className="pb-5">ผู้ส่งการตรวจ</th>
                 <th className="pb-5">วัน-เวลาที่ตรวจ</th>
                 <th className="pb-5 w-16"></th>
               </tr>
@@ -465,18 +468,19 @@ const ClassifyWood: React.FC = () => {
                     </td>
                     <td className="py-5 text-center">{data?.select_result}</td>
                     <td className="py-5 text-center">{data?.result[0]?.percentage}%</td>
-                    <td className="py-5 text-[#3C6255]">
+                    <td className="py-5">
                       <div className="flex justify-center items-center">
-                        <img className="mr-3" src={clockIcon} alt="" />
+                        <img className="mr-3" src={data.status_verify == 'WAITING_FOR_VERIFICATION' ? clockIcon : data?.status_verify == 'PASSED_CERTIFICATION' ? passIcon : notPassIcon} alt="" />
                         <p>
                           {data.status_verify == 'WAITING_FOR_VERIFICATION' ? "รอการรับรอง" : data?.status_verify == 'PASSED_CERTIFICATION' ? "ผ่าน" : "ไม่ผ่าน"}
                         </p>
                       </div>
                     </td>
+                    <td className="py-5 text-center">{data.creator.firstname} {data.creator.lastname}</td>
                     <td className="py-5 text-center">{convertIsoToThaiDateTimeFullYear(data?.create_at)}</td>
                     <td className="py-5 rounded-r-[10px] relative">
                       <img src={doorIcon} alt="" />
-                      <div className='absolute right-1 top-1 flex justify-center items-center bg-green-600 text-white w-5 h-5 rounded-full'>{data.notes.filter((value) => (value.create_by != data.creator.u_id && value.read_status == false)).length}</div>
+                      <div style={{top: -9, right: -9}} className='absolute flex justify-center items-center bg-[#3C6255] text-white w-5 h-5 rounded-full'>{data.notes.filter((value) => (value.create_by != data.creator.u_id && value.read_status == false)).length}</div>
                     </td>
                   </tr>
                 )
