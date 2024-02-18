@@ -28,8 +28,6 @@ const ManageInformationWood: React.FC = () => {
     const [isLoading, setIsLoading] = useState(w_id ? true : false)
     const fileInputRef = useRef<HTMLInputElement>(null);
 
-    console.log(fileInputRef.current?.files);
-    
     useEffect(() => {
         if (w_id) {
             axios.get(`${path}/wood/${w_id}`)
@@ -330,7 +328,10 @@ const ManageInformationWood: React.FC = () => {
                                 </div>
                             </div>
                             <div className="flex items-center justify-center space-x-8">
-                                <button onClick={() => setModalConfirmSave(true)} className="bg-[#61876E] w-40 py-3 text-xl rounded-xl text-white font-bold">บันทึก</button>
+                                <button onClick={() => {
+                                    setModalConfirmSave(true)
+                                    router('/admin/information_wood')
+                                }} className="bg-[#61876E] w-40 py-3 text-xl rounded-xl text-white font-bold">บันทึก</button>
                                 <button onClick={() => setModalCancel(true)} className="bg-[#C1C1C1] w-40 py-3 text-xl rounded-xl font-bold">ยกเลิก</button>
                             </div>
                         </div>

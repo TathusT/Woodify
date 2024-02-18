@@ -19,7 +19,7 @@ const LoginWeb: React.FC = () => {
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const router = useNavigate();
   const navigate = useNavigate();
   const togglePasswordVisibility = () => {
@@ -50,6 +50,9 @@ const LoginWeb: React.FC = () => {
       if (liff.isLoggedIn()) {
         getProfileAndChangeRichmenu();
       }
+      else{
+        loginLiff();
+      }
     })
       .catch(err => {
         console.error("Error initializing LIFF:", err);
@@ -63,6 +66,7 @@ const LoginWeb: React.FC = () => {
       console.log(error);
     }
   }
+
   function getProfileAndChangeRichmenu() {
     const data = localStorage.getItem('data')
     const google_data = localStorage.getItem('google_data')
@@ -112,8 +116,8 @@ const LoginWeb: React.FC = () => {
   }
 
   return (
-    <div className="Kanit h-[100vh] min-h-screen bg-[#E6F2FD] flex flex-col bg-no-repeat bg-cover bg-[center_top_-4rem]" style={{ backgroundImage: `url(${background})` }}>
-      {isLoading ? <div className="flex items-center flex-1 h-full"><Loading /></div> : (<div className="flex flex-col justify-between h-full">
+    <div className="Kanit h-[100vh] min-h-screen bg-[#E6F2FD] flex flex-col flex-grow bg-no-repeat bg-cover bg-[center_top_-4rem]" style={{ backgroundImage: `url(${background})` }}>
+      {isLoading ? <div className="flex items-center justify-center h-full"><Loading /></div> : (<div className="flex flex-col justify-between h-full">
         <div className="flex justify-between px-24 pt-7 items-center">
           <img src={LogoWoodify} className="w-[96px]" alt="" />
           <div className="flex space-x-20">

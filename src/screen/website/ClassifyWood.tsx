@@ -40,6 +40,7 @@ const ClassifyWood: React.FC = () => {
   const [dateFrom, setDateFrom] = useState('');
   const [dateTo, setDateTo] = useState('');
   const [data, setData] = useState<any>();
+  const [userId, setUserId] = useState();
   const divRef = useRef<HTMLDivElement>(null);
   const router = useNavigate();
   const handleChange = (value: string) => {
@@ -93,6 +94,18 @@ const ClassifyWood: React.FC = () => {
     setDateTo(formattedDate);
     setPickerTo(value);
   }
+
+  const getUserId = async () => {
+    try {
+        const token = localStorage.getItem("access_token");
+        const response = await axios.post(`${path}/user_with_token/`, {
+            token: token,
+        });
+        setUserId(response.data.u_id);
+    } catch (error) {
+        console.log(error);
+    }
+}
 
   const getClassifyWaitVerify = async () => {
     await axios.get(`${path}/classify_wait_for_verify`)
@@ -154,8 +167,11 @@ const ClassifyWood: React.FC = () => {
 
   const getData = async () => {
     await getClassifyToday();
+    await getUserId();
     await getClassifyWaitVerify();
-    setIsLoading(false);
+    setTimeout(async () => {
+      await setIsLoading(false);
+    }, 1000);
   }
 
   const filterData = async () => {
@@ -197,7 +213,7 @@ const ClassifyWood: React.FC = () => {
     getData();
     getClassifyStatusCount();
   }, [])
-
+  
   type DataStatusType = Array<{
     typeStatus: string;
     value: number;
@@ -458,7 +474,7 @@ const ClassifyWood: React.FC = () => {
             </thead>
             <tbody>
               {classify && classify.map((data, index) => {
-                console.log(data);
+                console.log(data.creator.u_id);
                 
                 return (
                   <tr key={data.c_id} onClick={() => router(`/admin/classify_wood_detail/${data.c_id}`)} className="bg-white shadow-[0px_0px_4px_0px_rgba(0,0,0,0.25)] rounded-[10px] font-semibold">
@@ -480,7 +496,7 @@ const ClassifyWood: React.FC = () => {
                     <td className="py-5 text-center">{convertIsoToThaiDateTimeFullYear(data?.create_at)}</td>
                     <td className="py-5 rounded-r-[10px] relative">
                       <img src={doorIcon} alt="" />
-                      <div style={{top: -9, right: -9}} className='absolute flex justify-center items-center bg-[#3C6255] text-white w-5 h-5 rounded-full'>{data.notes.filter((value) => (value.create_by != data.creator.u_id && value.read_status == false)).length}</div>
+                      <div style={{top: -9, right: -9}} className='absolute flex justify-center items-center bg-[#3C6255] text-white w-5 h-5 rounded-full'>{data.notes.filter((value) => (value.create_by != userId && value.read_status == false)).length}</div>
                     </td>
                   </tr>
                 )

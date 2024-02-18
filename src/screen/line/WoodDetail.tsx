@@ -30,6 +30,8 @@ const WoodDetail: React.FC = () => {
     useEffect(() => {
         getWoodInfo();
     }, [])
+    console.log(wood);
+    
     return (
         <div className="min-h-screen Kanit relative flex flex-col flex-grow">
             {isLoading ? <div className="flex items-center justify-center flex-1 h-full"><Loading /></div> : (
@@ -114,8 +116,8 @@ const WoodDetail: React.FC = () => {
                             </div>
                             <div className={`grid grid-cols-${column} gap-2 pt-4`}>
                                 {wood &&
-                                    Array.from({ length: 20 }).map((_, index) => {
-                                        return <img onClick={() => setOpenAllImage(false)} className="rounded-lg" key={index} src={wood.image} alt="" />
+                                    wood.wood_image.map((img, index) => {
+                                        return <img onClick={() => setOpenAllImage(false)} className="rounded-lg" key={index} src={getImage(img.path)} alt="" />
                                     })
                                 }
                             </div>

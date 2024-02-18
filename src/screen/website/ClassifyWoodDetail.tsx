@@ -17,6 +17,7 @@ const ClassifyWoodDetail: React.FC = () => {
     const [valueAfter, setValueAfter] = useState('');
     const [isLoading, setIsLoading] = useState(true);
     const [description, setDescription] = useState('');
+    const [percentageSelect, setPercentageSelect] = useState();
     const [userId, setUserId] = useState();
     function clickModal(check) {
         setModalCertification(true)
@@ -29,8 +30,6 @@ const ClassifyWoodDetail: React.FC = () => {
     const handleChange = (value, option) => {
         setModalChange(true)
         setValueAfter(value)
-        console.log(value);
-
     };
     const [heightBox, setHeightBox] = useState(0)
     const divRef = useRef<HTMLDivElement>(null);
@@ -45,6 +44,22 @@ const ClassifyWoodDetail: React.FC = () => {
         "text-yellow-500",
         "text-red-500"
     ]
+
+    const updateSelectResult = async () => {
+        await axios.put(`${path}/update_select_result`, {
+            u_id: userId,
+            c_id: c_id,
+            result: valueAfter
+        })
+            .then((res) => {
+                if (res.data.message == 'update success') {
+                    setValueBefore(valueAfter);
+                }
+            })
+            .catch((err) => {
+                console.log(err);
+            })
+    }
 
     const updateStatusVerify = async () => {
         let status
@@ -61,18 +76,16 @@ const ClassifyWoodDetail: React.FC = () => {
             u_id: userId,
             description: description
         })
-        .then((res) => {
-            console.log(res.data);
-            
-            if(res.data.message == 'verify success'){
-                addNoteVerify();
-                setStatusVerify(status)
-                setDescription('')
-            }
-        })
-        .catch((err) => {
-            console.log(err);
-        })
+            .then((res) => {
+                if (res.data.message == 'verify success') {
+                    addNoteVerify();
+                    setStatusVerify(status)
+                    setDescription('')
+                }
+            })
+            .catch((err) => {
+                console.log(err);
+            })
     }
 
     const getUserId = async () => {
@@ -131,15 +144,18 @@ const ClassifyWoodDetail: React.FC = () => {
         await axios.get(`${path}/classify/${c_id}`)
             .then((res) => {
                 let makeData: any = [];
-                console.log(res.data);
-
+                res.data.result.filter((value: any) => {
+                    if (value.wood == res.data.select_result) {
+                        setPercentageSelect(value.percentage);
+                    }
+                })
                 setClassify(res.data)
                 res.data.result.map((data: any, index: number) => {
                     makeData.push({ value: data.wood, label: `${index + 1}. ${data.wood} ${data.percentage}%` });
                 });
                 setStatusVerify(res.data.status_verify);
                 setChangeResult(makeData);
-                setValueBefore(makeData[0])
+                setValueBefore(res.data.select_result)
             })
             .catch((err) => {
                 console.log(err);
@@ -175,7 +191,6 @@ const ClassifyWoodDetail: React.FC = () => {
     }, [isLoading]);
 
     const getData = async () => {
-        await getClassifyWithId();
         await getUserId();
         await getNoteFromId();
         await readMessage();
@@ -187,9 +202,11 @@ const ClassifyWoodDetail: React.FC = () => {
     }, [])
 
     useEffect(() => {
-        if (classify) {
-            console.log(1);
+        getClassifyWithId();
+    }, [valueBefore])
 
+    useEffect(() => {
+        if (classify) {
             const socket = io(path, {
                 reconnectionAttempts: 3,
                 timeout: 10000,
@@ -227,49 +244,54 @@ const ClassifyWoodDetail: React.FC = () => {
                                 <div className="w-3/12 flex items-center justify-center">
                                     <img style={{ height: heightBox - 50 }} src={getImage(classify.image)} alt="" />
                                 </div>
-                                <div className="grid grid-cols-9 w-5/12 ml-20 gap-3 gap-x-7">
-                                    <div className="col-span-5">
+                                <div className="grid grid-cols-2 gap-4 ml-20 gap-3 gap-x-7">
+                                    <div className="">
                                         <div className="flex items-center space-x-4">
                                             <div className="bg-[#3C6255] rounded-full w-5 h-5"></div>
                                             <p className="text-lg font-semibold">ผลการตรวจสอบ:</p>
                                         </div>
                                     </div>
-                                    <div className="col-span-4">
+                                    <div className="">
                                         <div className="flex flex-col space-y-4 text-lg font-semibold">
-                                            {classify.result.slice(0, 3).map((value: any, index: number) => (
+                                            {(classify.result[0].wood == classify.select_result && classify.verify_by == null) ? classify.result.slice(0, 3).map((value: any, index: number) => (
                                                 <div className="flex justify-between" key={index}>
                                                     <p>{index + 1}. {value.wood}</p>
                                                     <p className={`${similarColor[index]}`}>{value.percentage}%</p>
                                                 </div>
-                                            ))}
+                                            )) : (
+                                                <div className="flex justify-between space-x-6">
+                                                    <p>{classify.select_result}</p>
+                                                    <p className={`${similarColor[0]}`}>{percentageSelect}%</p>
+                                                    <p>ถูกเลือกโดยผู้เชี่ยวชาญ</p>
+                                                </div>)}
                                         </div>
                                     </div>
-                                    <div className="col-span-5">
+                                    <div className="">
                                         <div className="flex items-center space-x-4">
                                             <div className="bg-[#3C6255] rounded-full w-5 h-5"></div>
                                             <p className="text-lg font-semibold">วัน-เวลาที่ทำการตรวจ:</p>
                                         </div>
                                     </div>
-                                    <div className="col-span-4">
+                                    <div className="">
                                         <p className="text-lg font-semibold">{convertIsoToThaiDateTime(classify.create_at)}</p>
                                     </div>
-                                    <div className="col-span-5">
+                                    <div className="">
                                         <div className="flex items-center space-x-4">
                                             <div className="bg-[#3C6255] rounded-full w-5 h-5"></div>
                                             <p className="text-lg font-semibold">ผู้ส่งการตรวจ:</p>
                                         </div>
                                     </div>
-                                    <div className="col-span-4">
+                                    <div className="">
                                         <p className="text-lg font-semibold">{classify.creator.firstname} {classify.creator.lastname}</p>
                                     </div>
-                                    <div className="col-span-5">
+                                    <div className="">
                                         <div className="flex items-center space-x-4">
                                             <div className="bg-[#3C6255] rounded-full w-5 h-5"></div>
                                             <p className="text-lg font-semibold">สถานที่พบ:</p>
                                         </div>
                                     </div>
-                                    <div className="col-span-4">
-                                        <p className="text-lg font-semibold">กรุงเทพมหานคร</p>
+                                    <div className="">
+                                        <p className="text-lg font-semibold">{classify.location ? classify.location : "ยังไม่มีการเลือกสถานที่พบ"}</p>
                                     </div>
                                 </div>
                             </div>
@@ -305,15 +327,15 @@ const ClassifyWoodDetail: React.FC = () => {
                     <div className='w-full border border-1 border-[#61876E] rounded-[10px] h-[500px] bg-white mt-3 overflow-y-auto space-y-2 p-2 scrollable-content'>
                         {note != null && note.map((value) => {
                             return (
-                                (value.create_by == userId?
-                                    <div className='flex justify-end'>
-                                        <div key={value.n_id} className="p-2 rounded-lg border bg-blue-500 text-white w-2/5">
+                                (value.create_by == userId ?
+                                    <div key={value.n_id} className='flex justify-end'>
+                                        <div className="p-2 rounded-lg border bg-blue-500 text-white w-2/5">
                                             <p>{value.description}</p>
                                             <p className='text-right'>อัปเดตล่าสุดเมื่อ {isoToThaiDateTime(value.create_at)}</p>
                                             <p className='text-right'>เขียนโดย {value.creator.firstname}</p>
                                         </div>
                                     </div>
-                                :
+                                    :
                                     <div key={value.n_id} className="p-2 rounded-lg border bg-gray-300 w-2/5">
                                         <p>{value.description}</p>
                                         <p className='text-right'>อัปเดตล่าสุดเมื่อ {isoToThaiDateTime(value.create_at)}</p>
@@ -398,7 +420,7 @@ const ClassifyWoodDetail: React.FC = () => {
                     <div className="flex items-center justify-center space-x-2 font-semibold pt-3 mb-4">
                         <div onClick={() => {
                             setModalChange(false)
-                            setValueBefore(valueAfter)
+                            updateSelectResult();
                         }} className="bg-[#3C6255] py-2 w-1/4 text-white cursor-pointer rounded-[10px] text-center">
                             <p>ยืนยัน</p>
                         </div>
