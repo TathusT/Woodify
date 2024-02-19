@@ -17,6 +17,7 @@ const Manual: React.FC = () => {
   const [modalDeleteManual, setmodalDeleteManual] = useState(false);
   const [dataManual, setDataManual] = useState<any>()
   const [isLoading, setIsLoading] = useState(true);
+  const [selectIdManual, setSelectIdManual] = useState('');
   const router = useNavigate();
   const handleChange = (value: string) => {
     console.log(`selected ${value}`);
@@ -26,8 +27,20 @@ const Manual: React.FC = () => {
   }
 
   const getManual = async () => {
-    await axios(`${path}/all_manual`).then((res) => { setDataManual(res.data) }).catch((err) => console.log(err))
+    await axios.get(`${path}/all_manual`).then((res) => { setDataManual(res.data) }).catch((err) => console.log(err))
     setIsLoading(false)
+  }
+
+  const deleteManual = async () => {
+    const token = localStorage.getItem('access_token');
+    await axios.post(`${path}/manual_delete`, {
+      token : token,
+      m_id : selectIdManual
+    }).then((res) => {
+      if(res.data == 'delete success'){
+        getManual();
+      }
+    }).catch((err) => console.log(err))
   }
 
   useEffect(() => {
@@ -99,22 +112,25 @@ const Manual: React.FC = () => {
           <tbody>
             {dataManual && dataManual.map((manual, index) => {
               return (
-                <tr onClick={() => router(`/admin/manage_manual/${manual.m_id}`)} key={index} className="bg-white shadow-[0px_0px_4px_0px_rgba(0,0,0,0.25)] rounded-[10px] font-semibold">
-                  <td className="py-6 rounded-l-[10px] text-center">{index + 1}</td>
-                  <td className="py-5 text-center">{manual.topic}</td>
-                  <td></td>
-                  <td className="py-5 text-center">
+                <tr key={index} className="bg-white shadow-[0px_0px_4px_0px_rgba(0,0,0,0.25)] rounded-[10px] font-semibold">
+                  <td onClick={() => router(`/admin/manage_manual/${manual.m_id}`)} className="py-6 rounded-l-[10px] text-center">{index + 1}</td>
+                  <td onClick={() => router(`/admin/manage_manual/${manual.m_id}`)} className="py-5 text-center">{manual.topic}</td>
+                  <td onClick={() => router(`/admin/manage_manual/${manual.m_id}`)}></td>
+                  <td onClick={() => router(`/admin/manage_manual/${manual.m_id}`)} className="py-5 text-center">
                     <div className="flex justify-center">
                       <img src={manual.status ? eye : closeEye} alt="" />
                     </div>
                   </td>
-                  <td className="py-5 text-[#3C6255]">
+                  <td onClick={() => router(`/admin/manage_manual/${manual.m_id}`)} className="py-5 text-[#3C6255]">
                     <div className="flex justify-center items-center">
                       <p>{convertIsoToThaiDateTime(manual.update_at)}</p>
                     </div>
                   </td>
                   <td className="py-5 rounded-r-[10px] text-center">
-                    <div onClick={() => clickModal()} className="flex justify-center">
+                    <div onClick={() => {
+                      setSelectIdManual(manual.m_id)
+                      clickModal()
+                    }} className="flex justify-center">
                       <img className="cursor-pointer" src={garbageIcon} alt="" />
                     </div>
                   </td>
@@ -138,7 +154,10 @@ const Manual: React.FC = () => {
         onCancel={() => setmodalDeleteManual(false)}
         footer={[
           <div className="flex items-center justify-center space-x-2 font-semibold pt-3 mb-4">
-            <div onClick={() => setmodalDeleteManual(false)} className="bg-[#3C6255] py-2 w-1/4 text-white cursor-pointer rounded-[10px] text-center">
+            <div onClick={() => {
+              deleteManual();
+              setmodalDeleteManual(false)
+            }} className="bg-[#3C6255] py-2 w-1/4 text-white cursor-pointer rounded-[10px] text-center">
               <p>ยืนยันการลบ</p>
             </div>
             <div onClick={() => setmodalDeleteManual(false)} className="bg-[#C1C1C1] py-2 w-1/4 cursor-pointer rounded-[10px] text-center">
