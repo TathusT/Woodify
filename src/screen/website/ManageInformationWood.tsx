@@ -331,8 +331,8 @@ const ManageInformationWood: React.FC = () => {
                                 <button onClick={() => {
                                     setModalConfirmSave(true)
                                     router('/admin/information_wood')
-                                }} className="bg-[#61876E] w-40 py-3 text-xl rounded-xl text-white font-bold">บันทึก</button>
-                                <button onClick={() => setModalCancel(true)} className="bg-[#C1C1C1] w-40 py-3 text-xl rounded-xl font-bold">ยกเลิก</button>
+                                }} className="bg-[#61876E] w-40 py-3 text-xl rounded-xl text-white">บันทึก</button>
+                                <button onClick={() => setModalCancel(true)} className="bg-[#C1C1C1] w-40 py-3 text-xl rounded-xl">ยกเลิก</button>
                             </div>
                         </div>
                     </div>
@@ -350,7 +350,7 @@ const ManageInformationWood: React.FC = () => {
                         width={550}
                         onCancel={() => setModalConfirmSave(false)}
                         footer={[
-                        <div className="flex items-center justify-center space-x-2 font-semibold pt-3 mb-4">
+                        <div className="flex items-center justify-center space-x-2 pt-3 mb-4">
                             <div onClick={() => 
                                 {
                                     setModalConfirmSave(false)
@@ -365,7 +365,7 @@ const ManageInformationWood: React.FC = () => {
                         ]}
                     >
                         <div className="flex justify-center my-10">
-                        <p className="text-lg font-semibold">คุณต้องการบันทึกข้อมูลนี้ ใช่หรือไม่?</p>
+                        <p className="text-lg">คุณต้องการบันทึกข้อมูลนี้ ใช่หรือไม่?</p>
                         </div>
                     </Modal>
                     {/* modal */}
@@ -381,7 +381,7 @@ const ManageInformationWood: React.FC = () => {
                         width={550}
                         onCancel={() => setModalCancel(false)}
                         footer={[
-                        <div className="flex items-center justify-center space-x-2 font-semibold pt-3 mb-4">
+                        <div className="flex items-center justify-center space-x-2 pt-3 mb-4">
                             <Link to={w_id?`/admin/information_wood_detail/${w_id}`:`/admin/information_wood`} className="bg-[#3C6255] py-2 w-1/4 text-white cursor-pointer rounded-[10px] text-center">
                                 <p>ยกเลิกการบันทึก</p>
                             </Link>
@@ -392,7 +392,7 @@ const ManageInformationWood: React.FC = () => {
                         ]}
                     >
                         <div className="flex justify-center my-10">
-                        <p className="text-lg font-semibold">คุณต้องการยกเลิกการบันทึกข้อมูลนี้ ใช่หรือไม่?</p>
+                        <p className="text-lg">คุณต้องการยกเลิกการบันทึกข้อมูลนี้ ใช่หรือไม่?</p>
                         </div>
                     </Modal>
                 </div>

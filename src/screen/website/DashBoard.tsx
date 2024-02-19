@@ -254,53 +254,53 @@ const DashBoard: React.FC = () => {
         <div>
           <div className="flex justify-between items-center">
             <div className="w-[70%]">
-              <div className="flex justify-between items-center">
-                <p className="text-2xl font-bold">จำนวนการตรวจสอบ</p>
-                  <div className="flex space-x-3 items-center py-4">
-                    <div className="relative flex items-center">
-                      <img className='absolute z-50 left-2' src={calendarIcon}></img>
-                      <DatePicker style={{ width: 150 }} suffixIcon={<img src={selectIcon}></img>} value={pickerFrom} defaultValue={dayjs(new Date())} onChange={(value) => dateFromPicker(value)} placeholder="เลือกวันที่เริ่ม" format="DD-MM-YYYY"/>
-                    </div>
-                    <img src={arrowRightIcon}></img>
-                    <div className="relative flex items-center">
-                      <img className='absolute z-50 left-2' src={calendarIcon}></img>
-                      <DatePicker style={{ width: 150 }} suffixIcon={<img src={selectIcon}></img>} value={pickerTo} defaultValue={dayjs(new Date())} onChange={(value) => dateToPicker(value)} placeholder="เลือกวันที่สิ้นสุด" format="DD-MM-YYYY"/>
-                    </div>
+              <div className="flex justify-between items-end">
+                <p className="text-[20px] pb-2">จำนวนการตรวจสอบ</p>
+                <div className="flex space-x-3 items-center py-4">
+                  <div className="relative flex items-center">
+                    <img className='absolute z-50 left-2' src={calendarIcon}></img>
+                    <DatePicker className="font-semibold" style={{ width: 150 }} suffixIcon={<img src={selectIcon}></img>} value={pickerFrom} defaultValue={dayjs(new Date())} onChange={(value) => dateFromPicker(value)} placeholder="เลือกวันที่เริ่ม" format="DD-MM-YYYY"/>
                   </div>
+                  <img src={arrowRightIcon}></img>
+                  <div className="relative flex items-center">
+                    <img className='absolute z-50 left-2' src={calendarIcon}></img>
+                    <DatePicker className="font-semibold" style={{ width: 150 }} suffixIcon={<img src={selectIcon}></img>} value={pickerTo} defaultValue={dayjs(new Date())} onChange={(value) => dateToPicker(value)} placeholder="เลือกวันที่สิ้นสุด" format="DD-MM-YYYY"/>
+                  </div>
+                </div>
               </div>
               <div className="bg-white p-2 rounded-lg border-2 border-gray-200">
                 {dataLine && <RenderLine data={dataLine} />}
               </div>
             </div>
-            <div className="w-[25%] space-y-3">
+            <div className="w-[25%] space-y-5">
               <div>
-                <p>จำนวนการตรวจสอบในวันนี้</p>
-                <div className={`rounded-lg border-2 border-gray-200 w-full h-20 bg-white flex items-center justify-center`}>
-                  <p className="text-2xl font-bold">{classifyToday} การตรวจ</p>
+                <p className="text-[20px]">จำนวนการตรวจสอบในวันนี้</p>
+                <div className={`rounded-lg border-2 border-gray-200 w-full h-16 bg-white flex items-center justify-center`}>
+                  <p className="text-2xl">{classifyToday} การตรวจ</p>
                 </div>
               </div>
               <div>
-                <p>จำนวนการลงทะเบียนในวันนี้</p>
-                <div className={`rounded-lg border-2 border-gray-200 w-full h-20 bg-white flex items-center justify-center`}>
-                  <p className="text-2xl font-bold">{userToday} ครั้ง</p>
+                <p className="text-[20px]">จำนวนการลงทะเบียนในวันนี้</p>
+                <div className={`rounded-lg border-2 border-gray-200 w-full h-16 bg-white flex items-center justify-center`}>
+                  <p className="text-2xl">{userToday} ครั้ง</p>
                 </div>
               </div>
               <div>
-                <p>จำนวนการตรวจทั้งหมด</p>
-                <div className={`rounded-lg border-2 border-gray-200 w-full h-20 bg-white flex items-center justify-center`}>
-                  <p className="text-2xl font-bold">{classifyAll} การตรวจ</p>
+                <p className="text-[20px]">จำนวนการตรวจทั้งหมด</p>
+                <div className={`rounded-lg border-2 border-gray-200 w-full h-16 bg-white flex items-center justify-center`}>
+                  <p className="text-2xl">{classifyAll} การตรวจ</p>
                 </div>
               </div>
               <div>
-                <p>จำนวนการตรวจที่รอการรับรอง</p>
-                <div className={`rounded-lg border-2 border-gray-200 w-full h-20 bg-white flex items-center justify-center`}>
-                  <p className="text-2xl font-bold">{classifyStatusWaitVerify} การตรวจ</p>
+                <p className="text-[20px]">จำนวนการตรวจที่รอการรับรอง</p>
+                <div className={`rounded-lg border-2 border-gray-200 w-full h-16 bg-white flex items-center justify-center`}>
+                  <p className="text-2xl">{classifyStatusWaitVerify} การตรวจ</p>
                 </div>
               </div>
             </div>
           </div>
-          <div className="mt-6 space-y-4">
-            <p className="text-2xl font-bold">ประเภทไม้ที่ตรวจสอบ</p>
+          <div className="mt-6 space-y-1">
+            <p className="text-[20px]">ประเภทไม้ที่ตรวจสอบ</p>
             <div className="bg-white p-2 rounded-lg border-2 border-gray-200">
               {dataColumn && (
                 <RenderColumn data={dataColumn} />

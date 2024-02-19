@@ -308,7 +308,7 @@ const ClassifyWood: React.FC = () => {
         <div className="scrollable-content space-y-2 h-36">
           {data && data.map((status) => {
             return (
-              <div key={status.typeStatus} className="flex justify-between items-center space-x-2 px-4 py-2 rounded-md font-semibold">
+              <div key={status.typeStatus} className="flex justify-between items-center space-x-2 px-4 py-2 rounded-md">
                 <div className="flex items-center space-x-6">
                   <div className={`w-5 h-5 rounded-full`} style={{ backgroundColor: status.color }}></div>
                   <p>{status.typeStatus}</p>
@@ -330,19 +330,19 @@ const ClassifyWood: React.FC = () => {
         <div>
           <div className="grid grid-cols-15 gap-7 my-10">
             <div ref={divRef} className="bg-white box-shadow rounded-[10px] col-span-4 px-6 pt-5 relative" style={{ height: widthBox }}>
-              <p className="font-semibold text-xl absolute">การตรวจสอบในวันนี้</p>
+              <p className="text-xl absolute">การตรวจสอบในวันนี้</p>
               <div className='w-full h-full flex justify-center items-center'>
-                <p className='text-4xl font-bold'>{classifyToday} การตรวจ</p>
+                <p className='text-4xl'>{classifyToday} การตรวจ</p>
               </div>
             </div>
             <div className="bg-white box-shadow rounded-[10px] col-span-4 px-6 pt-5 relative" style={{ height: widthBox }}>
-              <p className="font-semibold text-xl absolute">บันทึกใหม่ที่รอการตรวจสอบ</p>
+              <p className="text-xl absolute">บันทึกใหม่ที่รอการตรวจสอบ</p>
               <div className='w-full h-full flex justify-center items-center'>
-                <p className='text-4xl font-bold'>{classifyStatusWaitVerify} บันทึก</p>
+                <p className='text-4xl'>{classifyStatusWaitVerify} บันทึก</p>
               </div>
             </div>
             <div className="bg-white box-shadow rounded-[10px] col-span-8 px-6 pt-5 relative">
-              <p className="font-semibold text-xl absolute">กราฟแสดงสถานะการรับรอง</p>
+              <p className="text-xl absolute">กราฟแสดงสถานะการรับรอง</p>
               <div className='flex justify-between space-x-1 items-center'>
                 <div className='w-3/6'>
                   {data && <StatusPie />}
@@ -461,15 +461,15 @@ const ClassifyWood: React.FC = () => {
           </div>
           <table className="table-auto w-full mt-8 border-spacing-y-4 border-separate">
             <thead>
-              <tr className="w-full font-bold">
+              <tr className="w-full">
                 {/* <th className="pb-5">ลำดับ</th> */}
-                <th className="pb-5">รูปที่ตรวจ</th>
-                <th className="pb-5">ผลการตรวจที่ได้</th>
-                <th className="pb-5">ความคล้ายคลึง</th>
-                <th className="pb-5">การรับรอง</th>
-                <th className="pb-5">ผู้ส่งการตรวจ</th>
-                <th className="pb-5">วัน-เวลาที่ตรวจ</th>
-                <th className="pb-5 w-16"></th>
+                <th className="pb-5 font-medium">รูปที่ตรวจ</th>
+                <th className="pb-5 font-medium">ผลการตรวจที่ได้</th>
+                <th className="pb-5 font-medium">ความคล้ายคลึง</th>
+                <th className="pb-5 font-medium">การรับรอง</th>
+                <th className="pb-5 font-medium">ผู้ส่งการตรวจ</th>
+                <th className="pb-5 font-medium">วัน-เวลาที่ตรวจ</th>
+                <th className="pb-5 font-medium w-16"></th>
               </tr>
             </thead>
             <tbody>
@@ -477,10 +477,10 @@ const ClassifyWood: React.FC = () => {
                 console.log(data.creator.u_id);
                 
                 return (
-                  <tr key={data.c_id} onClick={() => router(`/admin/classify_wood_detail/${data.c_id}`)} className="bg-white shadow-[0px_0px_4px_0px_rgba(0,0,0,0.25)] rounded-[10px] font-semibold">
+                  <tr key={data.c_id} onClick={() => router(`/admin/classify_wood_detail/${data.c_id}`)} className="bg-white shadow-[0px_0px_4px_0px_rgba(0,0,0,0.25)] rounded-[10px]">
                     {/* <td className="rounded-l-[10px] text-center">{data.c_id}</td> */}
                     <td className="py-3 flex justify-center items-center">
-                      <div className="w-14 h-14 bg-gray-300">{data.image && <img src={getImage(data.image)} alt="" />}</div>
+                      {data.image && <div className="w-14 h-14 bg-center bg-cover" style={{backgroundImage: `url(${getImage(data.image)})`}}></div>}
                     </td>
                     <td className="py-5 text-center">{data?.select_result}</td>
                     <td className="py-5 text-center">{data?.result[0]?.percentage}%</td>

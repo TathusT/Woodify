@@ -17,6 +17,7 @@ import axios from 'axios';
 import path from '../../../path';
 import { useParams } from 'react-router-dom';
 import { convertIsoToThaiDateTime, convertIsoToThaiDateTimeFullYear, getImage } from '../../tools/tools';
+import { Link, useNavigate } from "react-router-dom";
 
 const PieChart: any = Pie
 
@@ -37,6 +38,7 @@ const UserProfile: React.FC = () => {
   const [pickerTo, setPickerTo] = useState();
   const [dateFrom, setDateFrom] = useState('');
   const [dateTo, setDateTo] = useState('');
+  const router = useNavigate();
   const { u_id } = useParams();
   const divRef = useRef<HTMLDivElement>(null);
   const color = [
@@ -410,7 +412,7 @@ const UserProfile: React.FC = () => {
         <div className="scrollable-content space-y-2 h-96">
           {data && data.map((wood) => {
             return (
-              <div key={wood.typeWood} className="flex justify-between items-center space-x-2 px-4 py-2 rounded-md font-semibold">
+              <div key={wood.typeWood} className="flex justify-between items-center space-x-2 px-4 py-2 rounded-md">
                 <div className="flex items-center space-x-6">
                   <div className={`w-5 h-5 rounded-full`} style={{ backgroundColor: wood.color }}></div>
                   <p>{wood.typeWood}</p>
@@ -431,7 +433,7 @@ const UserProfile: React.FC = () => {
         <div className="scrollable-content space-y-2 h-36">
           {data && data.map((status) => {
             return (
-              <div key={status.typeStatus} className="flex justify-between items-center space-x-2 px-4 py-2 rounded-md font-semibold">
+              <div key={status.typeStatus} className="flex justify-between items-center space-x-2 px-4 py-2 rounded-md">
                 <div className="flex items-center space-x-6">
                   <div className={`w-5 h-5 rounded-full`} style={{ backgroundColor: status.color }}></div>
                   <p>{status.typeStatus}</p>
@@ -450,17 +452,17 @@ const UserProfile: React.FC = () => {
     <div className="w-full Kanit flex flex-col min-h-screen">
       {isLoading ? <div className="flex items-center justify-center flex-1 h-full"><Loading /></div> : (<div>
         <div className="flex mt-10">
-          <img src={arrowIcon} alt="" />
-          <p className="text-[24px] font-semibold ml-6">บัญชีของ {user.firstname} {user.lastname}</p>
+          <img onClick={() => router(`/admin/account`)} className='cursor-pointer' src={arrowIcon} alt="" />
+          <p className="text-[24px]  ml-6">บัญชีของ {user.firstname} {user.lastname}</p>
         </div>
         <div className="grid grid-cols-15 gap-7 my-10">
           <div className="bg-white box-shadow rounded-[10px] px-6 pt-5 pb-9 col-span-7">
-            <p className="font-semibold text-xl">ข้อมูลส่วนตัว</p>
+            <p className="text-xl">ข้อมูลส่วนตัว</p>
             <div className="w-full flex flex-col items-center mt-3 space-y-5">
               <img className="rounded-full w-36 h-36" src={user.image} alt="" />
-              <p className="font-semibold text-lg">{user.firstname} {user.lastname}</p>
+              <p className="text-lg">{user.firstname} {user.lastname}</p>
             </div>
-            <div className="mt-8 grid grid-cols-2 gap-y-5 px-20 font-semibold text-lg">
+            <div className="mt-8 grid grid-cols-2 gap-y-5 px-20 text-lg">
               <p>ไลน์ไอดี</p>
               <p>{user.line_id}</p>
               <p>อีเมล</p>
@@ -470,7 +472,7 @@ const UserProfile: React.FC = () => {
             </div>
           </div>
           <div className="bg-white box-shadow rounded-[10px] col-span-8 w-full px-6 pt-5 relative">
-            <p className="font-semibold text-xl absolute">กราฟการตรวจสอบทั้งหมด</p>
+            <p className="text-xl absolute">กราฟการตรวจสอบทั้งหมด</p>
             <div className='flex justify-between space-x-1 items-center'>
               <div className='w-3/6'>
                 <AllPie />
@@ -479,19 +481,19 @@ const UserProfile: React.FC = () => {
             </div>
           </div>
           <div id="count" ref={divRef} className="bg-white box-shadow rounded-[10px] col-span-4 px-6 pt-5 relative" style={{ height: widthBox }}>
-            <p className="font-semibold text-xl absolute">การตรวจสอบในวันนี้</p>
+            <p className="text-xl absolute">การตรวจสอบในวันนี้</p>
             <div className='w-full h-full flex justify-center items-center'>
-              <p className='text-4xl font-bold'>{classifyUserTodayCount} การตรวจ</p>
+              <p className='text-4xl'>{classifyUserTodayCount} การตรวจ</p>
             </div>
           </div>
           <div className="bg-white box-shadow rounded-[10px] col-span-4 px-6 pt-5 relative" style={{ height: widthBox }}>
-            <p className="font-semibold text-xl absolute">บันทึกใหม่ที่รอการตรวจสอบ</p>
+            <p className="text-xl absolute">บันทึกใหม่ที่รอการตรวจสอบ</p>
             <div className='w-full h-full flex justify-center items-center'>
-              <p className='text-4xl font-bold'>{classifyUserWaitVerify} บันทึก</p>
+              <p className='text-4xl'>{classifyUserWaitVerify} บันทึก</p>
             </div>
           </div>
           <div className="bg-white box-shadow rounded-[10px] col-span-8 px-6 pt-5 relative">
-            <p className="font-semibold text-xl absolute">กราฟแสดงสถานะการรับรอง</p>
+            <p className="text-xl absolute">กราฟแสดงสถานะการรับรอง</p>
             <div className='flex justify-between space-x-1 items-center'>
               <div className='w-3/6'>
                 <StatusPie />
@@ -502,7 +504,7 @@ const UserProfile: React.FC = () => {
         </div>
         <div className="flex mt-3 justify-end">
           <div className="flex items-center space-x-3">
-            <p className="font-semibold">แสดง</p>
+            <p>แสดง</p>
             <Select
               defaultValue="10 แถว"
               suffixIcon={<img src={selectIcon}></img>}
@@ -519,7 +521,7 @@ const UserProfile: React.FC = () => {
               defaultValue={statusFilter}
               suffixIcon={<img src={sortIcon}></img>}
               className="h-full"
-              style={{ width: 130 }}
+              style={{ width: 170 }}
               onChange={handleChangeStatus}
               options={[
                 { value: "PASSED_CERTIFICATION", label: "ผ่านการรับรอง" },
@@ -550,24 +552,22 @@ const UserProfile: React.FC = () => {
         <table className="table-auto w-full mt-8 border-spacing-y-4 border-separate">
           <thead>
             <tr className="w-full font-bold">
-              <th className="pb-5">ลำดับ</th>
-              <th className="pb-5">รูปที่ตรวจ</th>
-              <th className="pb-5">ผลการตรวจที่ได้</th>
-              <th className="pb-5">ความคล้ายคลึง</th>
-              <th className="pb-5">การรับรอง</th>
-              <th className="pb-5">วัน-เวลาที่ตรวจ</th>
-              <th className="pb-5 w-16"></th>
+              <th className="pb-5 font-medium">ลำดับ</th>
+              <th className="pb-5 font-medium">รูปที่ตรวจ</th>
+              <th className="pb-5 font-medium">ผลการตรวจที่ได้</th>
+              <th className="pb-5 font-medium">ความคล้ายคลึง</th>
+              <th className="pb-5 font-medium">การรับรอง</th>
+              <th className="pb-5 font-medium">วัน-เวลาที่ตรวจ</th>
+              <th className="pb-5 font-medium w-16"></th>
             </tr>
           </thead>
           <tbody>
             {classify && classify.map((c: any, index: number) => {
               return (
-                <tr key={c.c_id} className="bg-white shadow-[0px_0px_4px_0px_rgba(0,0,0,0.25)] rounded-[10px] font-semibold">
+                <tr key={c.c_id} className="bg-white shadow-[0px_0px_4px_0px_rgba(0,0,0,0.25)] rounded-[10px]">
                   <td className="rounded-l-[10px] text-center">{(index + 1) + ((currentPage - 1) * 10)}</td>
                   <td className="py-3 flex justify-center items-center">
-                    <div className="w-14 h-14 bg-gray-300">
-                      {c.image && <img src={getImage(c.image)} alt="" />}
-                    </div>
+                    {c.image && <div className="w-14 h-14 bg-center bg-cover" style={{backgroundImage: `url(${getImage(c.image)})`}}></div>}
                   </td>
                   <td className="py-5 text-center">ไม้{c.select_result}</td>
                   <td className="py-5 text-center">{c.result[0]?.percentage}</td>

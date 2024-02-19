@@ -17,6 +17,7 @@ const Manual: React.FC = () => {
   const [modalDeleteManual, setmodalDeleteManual] = useState(false);
   const [dataManual, setDataManual] = useState<any>()
   const [isLoading, setIsLoading] = useState(true);
+  const [checkManualDelete , setCheckManualDelete] = useState('');
   const router = useNavigate();
   const handleChange = (value: string) => {
     console.log(`selected ${value}`);
@@ -88,33 +89,37 @@ const Manual: React.FC = () => {
         <table className="table-auto w-full mt-8 border-spacing-y-4 border-separate">
           <thead>
             <tr className="w-full font-bold">
-              <th className="pb-5" style={{ width: 100 }}>ลำดับ</th>
-              <th className="pb-5" style={{ width: 300 }}>ชื่อคู่มือ</th>
+              <th className="pb-5 font-medium" style={{ width: 100 }}>ลำดับ</th>
+              <th className="pb-5 font-medium" style={{ width: 300 }}>ชื่อคู่มือ</th>
               <th style={{ width: 550 }}></th>
-              <th className="pb-5">สถานะ</th>
-              <th className="pb-5">อัปเดดล่าสุด</th>
-              <th className="pb-5">ลบคู่มือ</th>
+              <th className="pb-5 font-medium">สถานะ</th>
+              <th className="pb-5 font-medium">อัปเดดล่าสุด</th>
+              <th className="pb-5 font-medium">ลบคู่มือ</th>
             </tr>
           </thead>
           <tbody>
             {dataManual && dataManual.map((manual, index) => {
               return (
-                <tr onClick={() => router(`/admin/manage_manual/${manual.m_id}`)} key={index} className="bg-white shadow-[0px_0px_4px_0px_rgba(0,0,0,0.25)] rounded-[10px] font-semibold">
-                  <td className="py-6 rounded-l-[10px] text-center">{index + 1}</td>
-                  <td className="py-5 text-center">{manual.topic}</td>
-                  <td></td>
-                  <td className="py-5 text-center">
+                <tr key={index} className="bg-white shadow-[0px_0px_4px_0px_rgba(0,0,0,0.25)] rounded-[10px] font-semibold">
+                  <td onClick={() => router(`/admin/manage_manual/${manual.m_id}`)} className="py-6 rounded-l-[10px] text-center">{index + 1}</td>
+                  <td onClick={() => router(`/admin/manage_manual/${manual.m_id}`)} className="py-5 text-center">{manual.topic}</td>
+                  <td onClick={() => router(`/admin/manage_manual/${manual.m_id}`)}></td>
+                  <td onClick={() => router(`/admin/manage_manual/${manual.m_id}`)} className="py-5 text-center">
                     <div className="flex justify-center">
                       <img src={manual.status ? eye : closeEye} alt="" />
                     </div>
                   </td>
-                  <td className="py-5 text-[#3C6255]">
+                  <td onClick={() => router(`/admin/manage_manual/${manual.m_id}`)} className="py-5 text-[#3C6255]">
                     <div className="flex justify-center items-center">
                       <p>{convertIsoToThaiDateTime(manual.update_at)}</p>
                     </div>
                   </td>
                   <td className="py-5 rounded-r-[10px] text-center">
-                    <div onClick={() => clickModal()} className="flex justify-center">
+                    <div onClick={() => 
+                      {
+                        clickModal()
+                        setCheckManualDelete(manual.topic)
+                      }} className="flex justify-center">
                       <img className="cursor-pointer" src={garbageIcon} alt="" />
                     </div>
                   </td>
@@ -127,8 +132,8 @@ const Manual: React.FC = () => {
       {/* modal */}
       <Modal
         title={[
-          <div className="text-center text-[24px] mt-4">
-            <p>ลบข้อมูลคู่มือใช้งานเบื้องต้น</p>
+          <div className="text-center font-medium text-[24px] mt-4">
+            <p>ลบข้อมูลคู่มือ{checkManualDelete}</p>
           </div>
         ]}
         className="Kanit"
@@ -137,7 +142,7 @@ const Manual: React.FC = () => {
         width={550}
         onCancel={() => setmodalDeleteManual(false)}
         footer={[
-          <div className="flex items-center justify-center space-x-2 font-semibold pt-3 mb-4">
+          <div className="flex items-center justify-center space-x-2 pt-3 mb-4">
             <div onClick={() => setmodalDeleteManual(false)} className="bg-[#3C6255] py-2 w-1/4 text-white cursor-pointer rounded-[10px] text-center">
               <p>ยืนยันการลบ</p>
             </div>
@@ -148,7 +153,7 @@ const Manual: React.FC = () => {
         ]}
       >
         <div className="flex justify-center my-10">
-          <p className="text-lg font-semibold">คุณต้องการลบข้อมูล การใช้งานระบบเบื้องต้น ใช่หรือไม่?</p>
+          <p className="text-lg">คุณต้องการลบข้อมูล {checkManualDelete} ใช่หรือไม่?</p>
         </div>
       </Modal>
     </div>

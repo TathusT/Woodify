@@ -138,7 +138,7 @@ const InformationWood: React.FC = () => {
             return (
               <div key={info.w_id} className="flex flex-col items-center col-span-2 space-y-3 box-shadow p-3 rounded-[10px] bg-white">
                 <img src={getImage(info.wood_image[0]?.path)} className="w-full aspect-[1.73/1] rounded-[10px]" alt="" />
-                <p className="text-[20px] font-semibold">{info.common_name}</p>
+                <p className="text-[20px]">{info.common_name}</p>
                 <p className="text-left text-ellipsis line-clamp-2 text-[16px] font-medium">{info.place_of_origin}</p>
                 <div className="flex space-x-2 text-[#3C6255] font-medium">
                   <p>อัพเดทล่าสุด</p>
@@ -170,7 +170,7 @@ const InformationWood: React.FC = () => {
       </div>}
       <Modal
         title={[
-          <div className="text-center text-[24px] mt-4">
+          <div className="text-center font-medium text-[24px] mt-4">
             <p>ลบข้อมูลต้น{checkTreeDelete}</p>
           </div>
         ]}
@@ -180,24 +180,24 @@ const InformationWood: React.FC = () => {
         width={550}
         onCancel={() => setmodalDeleteManual(false)}
         footer={[
-          <div className="flex items-center justify-center space-x-2 font-semibold pt-3 mb-4">
+          <div key={'footer'} className="flex items-center justify-center space-x-2 pt-3 mb-4">
             <div onClick={() => {
               deleteWoodInfo();
               setIsLoading(true)
               setmodalDeleteManual(false)
-            }} className="bg-[#3C6255] py-2 w-1/4 text-white cursor-pointer rounded-[10px] text-center">
+            }} className="bg-[#3C6255] py-2 w-1/4 text-white cursor-pointer rounded-[10px] text-center text-[18px]">
               <p>ยืนยันการลบ</p>
             </div>
-            <div onClick={() => setmodalDeleteManual(false)} className="bg-[#C1C1C1] py-2 w-1/4 cursor-pointer rounded-[10px] text-center">
+            <div onClick={() => setmodalDeleteManual(false)} className="bg-[#C1C1C1] py-2 w-1/4 cursor-pointer rounded-[10px] text-center text-[18px]">
               <p>ยกเลิก</p>
             </div>
           </div>
         ]}
       >
         <div className="flex justify-center my-10 space-x-3">
-          <p className="text-lg font-semibold">คุณต้องการลบข้อมูล</p>
-          <p className="text-lg font-semibold">ต้น{checkTreeDelete}</p>
-          <p className="text-lg font-semibold">ใช่หรือไม่?</p>
+          <p className="text-lg">คุณต้องการลบข้อมูล</p>
+          <p className="text-lg">ต้น{checkTreeDelete}</p>
+          <p className="text-lg">ใช่หรือไม่?</p>
         </div>
       </Modal>
     </div>

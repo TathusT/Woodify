@@ -68,7 +68,7 @@
 }
 
 .ant-select-selection-item{
-  font-weight: 600 !important;
+  /* font-weight: 600 !important; */
   font-size: 18px;
 }
 .grid-cols-15{
@@ -130,4 +130,20 @@
 }
 :where(.css-dev-only-do-not-override-amq5gd) a:hover {
   color: #ffffff !important;
+}
+.ql-toolbar.ql-snow{
+  border: solid 1px #61876E !important;
+  border-radius: 15px 15px 0px 0px  !important;
+}
+.ql-editor{
+  border-bottom: 1px solid  #61876E !important;
+  border-left: 1px solid  #61876E !important;
+  border-right: 1px solid  #61876E !important;
+  border-radius: 0px 0px 15px 15px !important;
+}
+:where(.css-dev-only-do-not-override-amq5gd).ant-pagination .ant-pagination-item-active{
+  background-color: #3C6255 !important;
+}
+:where(.css-dev-only-do-not-override-amq5gd).ant-pagination .ant-pagination-item-active a{
+  color: white !important;
 }

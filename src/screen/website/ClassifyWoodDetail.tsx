@@ -8,6 +8,7 @@ import { useParams } from 'react-router-dom';
 import { convertIsoToThaiDateTime, getImage, isoToThaiDateTime } from '../../tools/tools';
 import Loading from '../component/Loading';
 import { io } from 'socket.io-client';
+import paperplane from '../../assets/icon-paperplane.svg';
 
 const ClassifyWoodDetail: React.FC = () => {
     const [modalCertification, setModalCertification] = useState(false);
@@ -244,15 +245,15 @@ const ClassifyWoodDetail: React.FC = () => {
                                 <div className="w-3/12 flex items-center justify-center">
                                     <img style={{ height: heightBox - 50 }} src={getImage(classify.image)} alt="" />
                                 </div>
-                                <div className="grid grid-cols-2 gap-4 ml-20 gap-3 gap-x-7">
-                                    <div className="">
+                                <div className="grid grid-cols-2 gap-4 ml-20 gap-x-4">
+                                    <div className="flex">
                                         <div className="flex items-center space-x-4">
                                             <div className="bg-[#3C6255] rounded-full w-5 h-5"></div>
-                                            <p className="text-lg font-semibold">ผลการตรวจสอบ:</p>
+                                            <p className="text-lg">ผลการตรวจสอบ:</p>
                                         </div>
                                     </div>
-                                    <div className="">
-                                        <div className="flex flex-col space-y-4 text-lg font-semibold">
+                                    <div className="flex items-center">
+                                        <div className="flex flex-col space-y-4 text-lg">
                                             {(classify.result[0].wood == classify.select_result && classify.verify_by == null) ? classify.result.slice(0, 3).map((value: any, index: number) => (
                                                 <div className="flex justify-between" key={index}>
                                                     <p>{index + 1}. {value.wood}</p>
@@ -266,32 +267,32 @@ const ClassifyWoodDetail: React.FC = () => {
                                                 </div>)}
                                         </div>
                                     </div>
-                                    <div className="">
+                                    <div className="flex items-center">
                                         <div className="flex items-center space-x-4">
                                             <div className="bg-[#3C6255] rounded-full w-5 h-5"></div>
-                                            <p className="text-lg font-semibold">วัน-เวลาที่ทำการตรวจ:</p>
+                                            <p className="text-lg">วัน-เวลาที่ทำการตรวจ:</p>
                                         </div>
                                     </div>
-                                    <div className="">
-                                        <p className="text-lg font-semibold">{convertIsoToThaiDateTime(classify.create_at)}</p>
+                                    <div className="flex items-center">
+                                        <p className="text-lg">{convertIsoToThaiDateTime(classify.create_at)}</p>
                                     </div>
-                                    <div className="">
+                                    <div className="flex items-center">
                                         <div className="flex items-center space-x-4">
                                             <div className="bg-[#3C6255] rounded-full w-5 h-5"></div>
-                                            <p className="text-lg font-semibold">ผู้ส่งการตรวจ:</p>
+                                            <p className="text-lg">ผู้ส่งการตรวจ:</p>
                                         </div>
                                     </div>
-                                    <div className="">
-                                        <p className="text-lg font-semibold">{classify.creator.firstname} {classify.creator.lastname}</p>
+                                    <div className="flex items-center">
+                                        <p className="text-lg">{classify.creator.firstname} {classify.creator.lastname}</p>
                                     </div>
-                                    <div className="">
+                                    <div className="flex items-center">
                                         <div className="flex items-center space-x-4">
                                             <div className="bg-[#3C6255] rounded-full w-5 h-5"></div>
-                                            <p className="text-lg font-semibold">สถานที่พบ:</p>
+                                            <p className="text-lg">สถานที่พบ:</p>
                                         </div>
                                     </div>
-                                    <div className="">
-                                        <p className="text-lg font-semibold">{classify.location ? classify.location : "ยังไม่มีการเลือกสถานที่พบ"}</p>
+                                    <div className="flex items-center">
+                                        <p className="text-lg">{classify.location ? classify.location : "ยังไม่มีการเลือกสถานที่พบ"}</p>
                                     </div>
                                 </div>
                             </div>
@@ -299,7 +300,7 @@ const ClassifyWoodDetail: React.FC = () => {
                         <div className="w-4/12">
                             <p className="text-xl text-[#5C5C5C] font-semibold">การรับรอง</p>
                             <div ref={divRef} className="bg-white rounded-[10px] box-shadow py-7 px-12 mt-2 flex flex-col items-center space-y-9">
-                                <p className="text-lg font-semibold">เลือกเปลี่ยนผล </p>
+                                <p className="text-lg">เลือกเปลี่ยนผล </p>
                                 <Select
                                     suffixIcon={<img src={selectIcon}></img>}
                                     className="h-full w-full"
@@ -308,11 +309,11 @@ const ClassifyWoodDetail: React.FC = () => {
                                     options={changeResult}
                                     value={valueBefore}
                                 />
-                                <div className="flex text-lg font-semibold space-x-4 items-center">
+                                <div className="flex text-lg space-x-4 items-center">
                                     <p>สถานะ:</p>
                                     <p>{statusVerify == "WAITING_FOR_VERIFICATION" ? "รอการรับรอง" : statusVerify == 'PASSED_CERTIFICATION' ? "ผ่านการรับรอง" : "ไม่ผ่านการรับรอง"}</p>
                                 </div>
-                                <div className="flex items-center space-x-2 text-lg font-semibold">
+                                <div className="flex items-center space-x-2 text-lg">
                                     <div onClick={() => clickModal('ผ่าน')} className="bg-[#61876E] text-white py-2 px-5 rounded-[10px]">
                                         <p>ผ่านการรับรอง</p>
                                     </div>
@@ -345,15 +346,13 @@ const ClassifyWoodDetail: React.FC = () => {
                             )
                         })}
                     </div>
-                    <div className='flex mt-4 space-x-4 mb-6'>
+                    <div className='flex mt-4 space-x-4 mb-6 relative items-center'>
                         <input onChange={(msg) => {
                             setMessage(msg.target.value)
-                        }} value={message} className='p-3 border border-1 border-[#61876E] rounded-[10px] w-full' type="text" />
-                        <div onClick={() => {
+                        }} value={message} className='p-3 border border-1 border-[#61876E] rounded-[10px] w-full text-[18px]' type="text" />
+                        <img onClick={() => {
                             addNote()
-                        }} className='bg-[#61876E] flex justify-center items-center py-2 px-6 rounded-[10px] cursor-pointer'>
-                            <p className='text-lg font-semibold text-white'>โพสต์</p>
-                        </div>
+                        }} className=' absolute right-1 cursor-pointer' src={paperplane} alt="" />
                     </div>
                 </div>
             )}

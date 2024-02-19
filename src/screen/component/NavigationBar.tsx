@@ -170,7 +170,7 @@ const NavigationBar: React.FC = () => {
                       <li className={`py-4 pl-7 ${active ? 'bg-gradient-to-r from-[#F1EFEF]' : ''} w-full`}>
                         <Link to={menu.path} className={`flex items-center gap-5 ${active ? 'text-[#3C6255]' : ''}`}>
                           <IconFucntion color={`${active ? '#3C6255' : '#A1A1A1'}`} />
-                          <p className='text-lg'>
+                          <p className={`text-lg ${active ? 'text-[#3C6255] font-semibold' : 'text-[#A1A1A1]'}`}>
                             {menu.name}
                           </p>
                         </Link>
@@ -200,7 +200,11 @@ const NavigationBar: React.FC = () => {
                           const submenuActive = submenu.name == title;
                           const SubmenuIconFunction = submenu.icon;
                           return (
-                            <li key={submenu.name} className='py-4 pl-9 text-lg'><Link to={submenu.path} className={`flex items-center gap-7 ${submenuActive ? 'text-[#3C6255]' : ''}`}><SubmenuIconFunction color={`${submenuActive ? '#3C6255' : '#D9D9D9'}`} /> {submenu.name}</Link></li>
+                            <li key={submenu.name} className='py-4 pl-9 text-lg'>
+                              <Link to={submenu.path} className={`flex items-center gap-7 ${submenuActive ? 'text-[#3C6255] font-semibold' : ''}`}>
+                                <SubmenuIconFunction color={`${submenuActive ? '#3C6255' : '#D9D9D9'}`} /> {submenu.name}
+                              </Link>
+                            </li>
                           )
                         })}
                       </ul>

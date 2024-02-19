@@ -81,16 +81,16 @@ const InformationWoodDetail: React.FC = () => {
     <div className="w-full Kanit flex flex-col min-h-screen">
       <div className="flex mt-10">
         <img className="cursor-pointer" onClick={() => {router('/admin/information_wood')}} src={arrowIcon} alt="" />
-        <p className="text-[32px] font-semibold ml-6">ข้อมูลต้นแดง</p>
+        <p className="text-[32px] font-semibold ml-6">ข้อมูลต้น{wood.common_name}</p>
       </div>
       {slides && (
         <div className={`py-7 px-8 bg-white box-shadow rounded-[10px] mt-10 ${slides.length <= 4 ? 'flex justify-center' : ""}`}>
           <MySlider slides={slides} />
         </div>
       )}
-      <p className="text-[20px] font-semibold mt-4">รายละเอียดต้นไม้</p>
+      <p className="text-[20px] mt-4">รายละเอียดต้นไม้</p>
       {wood && (
-        <div className="mt-3 bg-white box-shadow rounded-[10px] p-5 text-[20px] font-semibold space-y-6">
+        <div className="mt-3 bg-white box-shadow rounded-[10px] p-5 text-[20px] space-y-6">
           <div className="flex items-center space-x-3">
             <div className="h-4 w-4 rounded-full bg-[#3C6255]"></div>
             <p>ชื่อสามัญ : {wood.common_name}</p>
@@ -135,7 +135,7 @@ const InformationWoodDetail: React.FC = () => {
       )}
       <div className="flex justify-end mt-6">
         <Link to={`/admin/manage_information_wood/${w_id}`} className="py-2 px-8 rounded-[10px] bg-[#61876E]">
-          <p className="text-[20px] font-semibold text-white">แก้ไขข้อมูล</p>
+          <p className="text-[20px] text-white">แก้ไขข้อมูล</p>
         </Link>
       </div>
     </div>

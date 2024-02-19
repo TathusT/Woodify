@@ -74,7 +74,7 @@ const Account: React.FC = () => {
     {
       key: '1',
       label: (
-        <a onClick={() => clickModal("บล็อกบัญชี")} className="flex items-center Kanit font-semibold space-x-2" rel="noopener noreferrer">
+        <a onClick={() => clickModal("บล็อกบัญชี")} className="flex items-center Kanit space-x-2" rel="noopener noreferrer">
           <img width={20} src={blockIcon} alt="" />
           <p>
             บล็อกบัญชี
@@ -85,7 +85,7 @@ const Account: React.FC = () => {
     {
       key: '2',
       label: (
-        <a onClick={() => clickModal("เปลี่ยนบทบาท")} className="flex items-center Kanit font-semibold space-x-2" rel="noopener noreferrer">
+        <a onClick={() => clickModal("เปลี่ยนบทบาท")} className="flex items-center Kanit space-x-2" rel="noopener noreferrer">
           <img width={20} src={changeRoleIcon} alt="" />
           <p>
             เปลี่ยนบทบาท
@@ -96,7 +96,7 @@ const Account: React.FC = () => {
     {
       key: '3',
       label: (
-        <a onClick={() => clickModal("ลบบัญชี")} className="flex items-center Kanit font-semibold space-x-2" rel="noopener noreferrer">
+        <a onClick={() => clickModal("ลบบัญชี")} className="flex items-center Kanit space-x-2" rel="noopener noreferrer">
           <img width={20} src={garbageIcon} alt="" />
           <p>
             ลบบัญชี
@@ -124,7 +124,7 @@ const Account: React.FC = () => {
         <div className="flex mt-10 justify-between items-center">
           <p className="text-[32px] font-semibold">บัญชี</p>
           <div className="flex items-center space-x-3 h-9">
-            <p className="font-semibold">แสดง</p>
+            <p className="text-[16px]">แสดง</p>
             <Select
               defaultValue="10 แถว"
               suffixIcon={<img src={selectIcon}></img>}
@@ -162,7 +162,7 @@ const Account: React.FC = () => {
               ]}
             />
             <div className="h-full">
-              <Input className="h-full w-[280px] font-semibold" suffix={<img src={search} />} />
+              <Input className="h-full w-[280px]" suffix={<img src={search} />} />
             </div>
             <div onClick={() => clickModal("สร้างบัญชี")} className="bg-[#3C6255] h-full flex justify-center space-x-2 items-center px-3 rounded-[8px] text-white cursor-pointer">
               <p>สร้างบัญชี</p>
@@ -172,20 +172,20 @@ const Account: React.FC = () => {
         </div>
         <table className="table-auto w-full mt-8 border-spacing-y-4 border-separate">
           <thead>
-            <tr className="w-full font-bold">
+            <tr className="w-full">
               <th className="pb-5 w-6"></th>
-              <th className="pb-5">ไอดีผู้ใช้งาน</th>
-              <th className="pb-5">ชื่อ-นามสกุล</th>
-              <th className="pb-5">บทบาท</th>
-              <th className="pb-5">อีเมล</th>
-              <th className="pb-5">สถานะ</th>
-              <th className="pb-5">จัดการ</th>
+              <th className="pb-5 font-medium">ไอดีผู้ใช้งาน</th>
+              <th className="pb-5 font-medium">ชื่อ-นามสกุล</th>
+              <th className="pb-5 font-medium">บทบาท</th>
+              <th className="pb-5 font-medium">อีเมล</th>
+              <th className="pb-5 font-medium">สถานะ</th>
+              <th className="pb-5 font-medium">จัดการ</th>
             </tr>
           </thead>
           <tbody>
             {users && users.map((user, index) => {
               return (
-                <tr key={index} className="bg-white shadow-[0px_0px_4px_0px_rgba(0,0,0,0.25)] rounded-[10px] font-semibold">
+                <tr key={index} className="bg-white shadow-[0px_0px_4px_0px_rgba(0,0,0,0.25)] rounded-[10px]">
                   <td onClick={() => router(`/admin/user_profile/${user.u_id}`)} className="rounded-l-[10px] text-center pl-4">
                     <div className="w-12 h-12 rounded-full bg-gray-300 overflow-hidden">
                       {user.image && (
@@ -226,7 +226,7 @@ const Account: React.FC = () => {
       {/* modal */}
       <Modal
         title={[
-          <div className="text-center text-xl">
+          <div className="text-center font-medium text-xl">
             <p>{titleModal}</p>
           </div>
         ]}
@@ -236,7 +236,7 @@ const Account: React.FC = () => {
         width={350}
         onCancel={() => setmodalAddUser(false)}
         footer={[
-          <div className="flex items-center space-x-2 font-semibold pt-3">
+          <div className="flex items-center space-x-2 pt-3">
             <div onClick={() => {
               setmodalAddUser(false)
               if (confirmButton == "ยืนยันการเปลี่ยน") {
@@ -259,7 +259,7 @@ const Account: React.FC = () => {
       >
         {confirmButton == 'ยืนยันการบล็อก' || confirmButton == 'ยืนยันการเปลี่ยน' || confirmButton == 'ยืนยันการลบ' ?
           (
-            <div className="flex flex-col items-center space-y-3 font-semibold">
+            <div className="flex flex-col items-center space-y-3">
               <img className="rounded-full w-32 h-32" src={`${selectUser.image}`} alt="" />
               <p>{selectUser.firstname} {selectUser.lastname}</p>
               {confirmButton == 'ยืนยันการบล็อก' ? (<p>คุณต้องการบล็อกบัญชีผู้ใช้นี้ใช่หรือไม่?</p>) : ('')}
@@ -283,7 +283,7 @@ const Account: React.FC = () => {
           :
           (
             <div className="pt-3">
-              <p className="mb-1 font-semibold text-base">อีเมลผู้เชี่ยวชาญ</p>
+              <p className="mb-1 text-base">อีเมลผู้เชี่ยวชาญ</p>
               <input value={email} onChange={(text) => { setEmail(text.target.value) }} className="rounded-[5px] font-semibold border-[1px] w-full text-base border-[#61876E] p-1 focus-visible:border-[#445f4e]"></input>
             </div>
           )

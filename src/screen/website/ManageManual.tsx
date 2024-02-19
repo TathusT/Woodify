@@ -148,14 +148,14 @@ const ManageManual: React.FC = () => {
         setManualTitle(event.target.value);
     };
     return (
-        <div className="pt-6">
-            <p className="text-[24px]">แก้ไขข้อมูลการใช้งานระบบเบื้องต้น</p>
+        <div className="mt-10">
+            <p className="text-[32px] font-semibold">แก้ไขข้อมูลการใช้งานระบบเบื้องต้น</p>
             <div className="pt-10 pb-6">
                 <p className="text-[#5C5C5C] text-xl">ชื่อหัวข้อคู่มือการใช้งาน</p>
                 <input
                     onChange={handleTitleChange}
                     value={manualTitle}
-                    className="shadow appearance-none border rounded-xl w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                    className="border-[#61876E] border-1 appearance-none border rounded-xl w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                     id="line_lastname"
                     type="text"
                 />
@@ -163,7 +163,7 @@ const ManageManual: React.FC = () => {
             <div>
                 <p className="text-[#5C5C5C] text-xl">รายละเอียดการใช้งาน</p>
                 <ReactQuill
-                    className="rounded-xl border box-border overflow-hidden bg-white"
+                    className="rounded-[15px] border-[#61876E] overflow-hidden bg-white border-b-[1px] border-[#61876E]"
                     style={{ height: '600px' }}
                     theme="snow"
                     value={body}
@@ -210,8 +210,8 @@ const ManageManual: React.FC = () => {
                         </div>
                     </div>
                     <div className="flex items-center justify-center space-x-8">
-                        <button onClick={() => setModalConfirmSave(true)} className="bg-[#61876E] w-40 py-3 text-xl rounded-xl text-white font-bold">บันทึก</button>
-                        <button onClick={() => setModalCancel(true)} className="bg-[#C1C1C1] w-40 py-3 text-xl rounded-xl font-bold">ยกเลิก</button>
+                        <button onClick={() => setModalConfirmSave(true)} className="bg-[#61876E] w-40 py-3 text-xl rounded-xl text-white">บันทึก</button>
+                        <button onClick={() => setModalCancel(true)} className="bg-[#C1C1C1] w-40 py-3 text-xl rounded-xl">ยกเลิก</button>
                     </div>
                 </div>
             </div>
@@ -219,7 +219,7 @@ const ManageManual: React.FC = () => {
             {/* modal */}
             <Modal
                 title={[
-                <div className="text-center text-[24px] mt-4">
+                <div className="text-center font-medium text-[24px] mt-4">
                     <p>ยืนยันการบันทึกข้อมูล</p>
                 </div>
                 ]}
@@ -229,7 +229,7 @@ const ManageManual: React.FC = () => {
                 width={550}
                 onCancel={() => setModalConfirmSave(false)}
                 footer={[
-                <div className="flex items-center justify-center space-x-2 font-semibold pt-3 mb-4">
+                <div className="flex items-center justify-center space-x-2 pt-3 mb-4">
                     <div onClick={() => isCreateMode ? CreateManual(manualTitle, body, status, fileInputRef.current?.files?.[0]) : editManual(manualTitle, body, status, fileInputRef.current?.files?.[0], id)} className="bg-[#3C6255] py-2 w-1/4 text-white cursor-pointer rounded-[10px] text-center">
                         <p>ยืนยันการบันทึก</p>
                     </div>
@@ -240,13 +240,13 @@ const ManageManual: React.FC = () => {
                 ]}
             >
                 <div className="flex justify-center my-10">
-                <p className="text-lg font-semibold">คุณต้องการบันทึกข้อมูลนี้ ใช่หรือไม่?</p>
+                <p className="text-lg">คุณต้องการบันทึกข้อมูลนี้ ใช่หรือไม่?</p>
                 </div>
             </Modal>
             {/* modal */}
             <Modal
                 title={[
-                <div className="text-center text-[24px] mt-4">
+                <div className="text-center font-medium text-[24px] mt-4">
                     <p>ยืนยันการยกเลิกการบันทึกข้อมูล</p>
                 </div>
                 ]}
@@ -256,7 +256,7 @@ const ManageManual: React.FC = () => {
                 width={550}
                 onCancel={() => setModalCancel(false)}
                 footer={[
-                <div className="flex items-center justify-center space-x-2 font-semibold pt-3 mb-4">
+                <div className="flex items-center justify-center space-x-2 pt-3 mb-4">
                     <div onClick={() => router('/admin/manual')} className="bg-[#3C6255] py-2 w-1/4 text-white cursor-pointer rounded-[10px] text-center">
                         <p>ยกเลิกการบันทึก</p>
                     </div>
