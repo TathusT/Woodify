@@ -6,10 +6,12 @@ import Wood from '../../assets/S12-3balau 2.png'
 import { Button, Modal, Select, Space, Input, message } from 'antd';
 import foreignCountry from '../../json/foreignCountry.json'
 import thailandCountry from '../../json/thailandCountry.json'
+import selectIcon from "../../assets/select-icon.svg"
 import { useLocation, useParams } from "react-router-dom";
 import { getImage, convertIsoToThaiDateTime } from "../../tools/tools";
 import path from "../../../path";
 import { io } from "socket.io-client";
+import Loading from "../component/Loading";
 import axios from "axios";
 
 const { Option } = Select;
@@ -38,17 +40,34 @@ const ClassidyDetail: React.FC = () => {
     const [user, setUser] = useState<any>();
     const [note, setNote] = useState<any>();
     const [userId, setUserId] = useState('');
+    const [isLoading, setIsLoading] = useState(true)
+    const [checkModalCertification, setCheckModalCertification] = useState(false);
     const { classifyId } = useParams();
     const [changeResult, setChangeResult] = useState<any>();
-    const [position, setPosition] = useState<string | null>(null);
-    console.log(note);
+    const [statusVerify, setStatusVerify] = useState('');
+    const [percentageSelect, setPercentageSelect] = useState();
 
+    const [position, setPosition] = useState<string | null>(null);
     const getClassify = async () => {
         await axios.get(`${path}/classify/${classifyId}`)
             .then((res) => {
                 setClassify(res.data)
                 setPosition(res.data.location)
                 setWoodImage(res.data.image)
+                setStatusVerify(res.data.status_verify)
+                let makeData: any = [];
+                res.data.result.filter((value: any) => {
+                    if (value.wood == res.data.select_result) {
+                        setPercentageSelect(value.percentage);
+                    }
+                })
+                setClassify(res.data)
+                res.data.result.map((data: any, index: number) => {
+                    makeData.push({ value: data.wood, label: `${index + 1}. ${data.wood} ${data.percentage}%` });
+                });
+                console.log(makeData);
+
+                setChangeResult(makeData);
             })
             .catch((err) => {
                 console.log(err);
@@ -75,8 +94,8 @@ const ClassidyDetail: React.FC = () => {
             })
     }
 
-    useEffect(() => {
-        axios.post(`${path}/authentication_user`, {}, {
+    const getData = async () => {
+        await axios.post(`${path}/authentication_user`, {}, {
             headers: {
                 "Authorization": `Bearer ${localStorage.getItem('access_token')}`
             }
@@ -88,8 +107,13 @@ const ClassidyDetail: React.FC = () => {
 
                 })
         });
-        getClassify();
-        getNoteFromId();
+        await getClassify();
+        await getNoteFromId();
+        await setIsLoading(false);
+    }
+
+    useEffect(() => {
+        getData();
     }, [])
 
     useEffect(() => {
@@ -158,7 +182,7 @@ const ClassidyDetail: React.FC = () => {
                     <div className="grid grid-cols-2 items-start gap-4">
                         <p className="flex items-center "><img className="pr-2" src={Dot} alt="" />ผลการตรวจสอบ :</p>
                         <div>
-                            {classify.result.slice(0, 3).map((value, index) => {
+                            {(classify.result[0].wood == classify.select_result && classify.verify_by == null) ? classify.result.slice(0, 3).map((value, index) => {
                                 return (
                                     <div key={index} className="grid grid-cols-6">
                                         <p className="col-span-1">{index + 1}.</p>
@@ -166,7 +190,13 @@ const ClassidyDetail: React.FC = () => {
                                         <p className={`col-span-2 text-center font-bold ${similarColor[index]}`}>{value.percentage}</p>
                                     </div>
                                 )
-                            })}
+                            }) : (
+                                <div className="flex justify-between space-x-6">
+                                    <p>{classify.select_result}</p>
+                                    <p className={`${similarColor[0]}`}>{percentageSelect}%</p>
+                                    <p>ถูกเลือกโดยผู้เชี่ยวชาญ</p>
+                                </div>
+                            )}
                         </div>
                     </div>
                     <div className="flex items-center space-x-2">
@@ -174,7 +204,7 @@ const ClassidyDetail: React.FC = () => {
                         สถานะ :
                         <img className="pr-1" src={StatusWait} alt="" />
                         {(() => {
-                            switch (classify.status_verify) {
+                            switch (statusVerify) {
                                 case "WAITING_FOR_VERIFICATION":
                                     return <p>รอการรับรอง</p>;
                                 case "PASSED_CERTIFICATION":
@@ -190,7 +220,7 @@ const ClassidyDetail: React.FC = () => {
                     <div className="flex items-center space-x-2">
                         <img className="pr-2" src={Dot} alt="" />
                         สถานที่พบ :
-                        {state.role == "EXPERT" && position == null ? "ยังไม่มีข้อมูลสถานที่พบ" : position ? (
+                        {state.role == "EXPERT" && position == null ? " ยังไม่มีข้อมูลสถานที่พบ" : position ? (
                             <p>{position}</p>
                         ) : (
                             <Button className="bg-[#61876E] text-white focus:none hover:none" onClick={() => setOpen(true)}>
@@ -272,7 +302,7 @@ const ClassidyDetail: React.FC = () => {
 
     function RenderVerify() {
         const [openModalResult, setOpenModalResult] = useState(false)
-        const [selectWood, setSelectWood] = useState('ไม้ประดู่')
+        const [selectWood, setSelectWood] = useState(classify.select_result)
         const [confirmWood, setConfirmWood] = useState('')
         const [textAreaConfirm, setTextAreaConfirm] = useState('')
         const [modalVerify, setModalVerify] = useState(false)
@@ -284,81 +314,75 @@ const ClassidyDetail: React.FC = () => {
         const onChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
             setTextAreaConfirm(e.target.value)
         };
+
+        const updateSelectResult = async () => {
+            await axios.put(`${path}/update_select_result`, {
+                u_id: userId,
+                c_id: classifyId,
+                result: confirmWood.replace('ไม้', "")
+            })
+                .then((res) => {
+                    console.log(res.data);
+
+                })
+                .catch((err) => {
+                    console.log(err);
+                })
+        }
+
+        const updateStatusVerify = async () => {
+            let status_verify
+            if (status) {
+                status_verify = 'PASSED_CERTIFICATION'
+            }
+            else {
+                status_verify = "FAILED_CERTIFICATION"
+            }
+
+            await axios.post(`${path}/verify_status_classify`, {
+                status: status_verify,
+                c_id: classifyId,
+                u_id: userId,
+                description: textAreaConfirm
+            })
+                .then((res) => {
+                    if (res.data.message == 'verify success') {
+                        addNoteVerify();
+                        setStatusVerify(status_verify)
+                        setTextAreaConfirm('')
+                    }
+                })
+                .catch((err) => {
+                    console.log(err);
+                })
+        }
+
+        const addNoteVerify = async () => {
+            const token = localStorage.getItem('access_token');
+            await axios.post(`${path}/note`, {
+                token: token,
+                description: textAreaConfirm,
+                c_id: classifyId,
+                sessionId: classify.session_id_note_room
+            }).then((res) => {
+
+            })
+                .catch((err) => {
+                    console.log(err);
+                })
+        }
+
         return (
             <div className="mx-6 mb-4 shadow border rounded py-4 space-y-4 px-8">
                 <p className="text-center">เลือกเปลี่ยนผล</p>
                 <Select
-                    style={{ width: '100%' }}
-                    defaultValue={'ไม้ประดู่'}
+                    suffixIcon={<img src={selectIcon}></img>}
+                    className="h-full w-full"
+                    style={{ height: 40 }}
+                    onChange={ChangeResult}
+                    options={changeResult}
                     value={selectWood}
-                    onChange={(value) => ChangeResult(value)}
-                >
-                    <Option value="ไม้ประดู่" label="ไม้ประดู่">
-                        <Space>
-                            <div className="rounded-full w-5 h-5 border border-black flex items-center justify-center">1</div> ไม้ประดู่ 98%
-                        </Space>
-                    </Option>
-                    <Option value="ไม้แดง" label="ไม้แดง">
-                        <Space>
-                            <div className="rounded-full w-5 h-5 border border-black flex items-center justify-center">2</div> ไม้แดง 60%
-                        </Space>
-                    </Option>
-                    <Option value="ไม้สัก" label="ไม้สัก">
-                        <Space>
-                            <div className="rounded-full w-5 h-5 border border-black flex items-center justify-center">3</div> ไม้สัก 50%
-                        </Space>
-                    </Option>
-                    <Option value="ไม้เต็ง" label="ไม้เต็ง">
-                        <Space>
-                            <div className="rounded-full w-5 h-5 border border-black flex items-center justify-center">4</div> ไม้เต็ง 47%
-                        </Space>
-                    </Option>
-                    <Option value="ไม้ชุมแพรก" label="ไม้ชุมแพรก">
-                        <Space>
-                            <div className="rounded-full w-5 h-5 border border-black flex items-center justify-center">5</div> ไม้ชุมแพรก 42%
-                        </Space>
-                    </Option>
-                    <Option value="ไม้ตะเคียนทอง" label="ไม้ตะเคียนทอง">
-                        <Space>
-                            <div className="rounded-full w-5 h-5 border border-black flex items-center justify-center">6</div> ไม้ตะเคียนทอง 36%
-                        </Space>
-                    </Option>
-                    <Option value="ไม้ตะเคียนราก" label="ไม้ตะเคียนราก">
-                        <Space>
-                            <div className="rounded-full w-5 h-5 border border-black flex items-center justify-center">7</div> ไม้ตะเคียนราก 32%
-                        </Space>
-                    </Option>
-                    <Option value="ไม้พะยอม" label="ไม้พะยอม">
-                        <Space>
-                            <div className="rounded-full w-5 h-5 border border-black flex items-center justify-center">8</div> ไม้พะยอม 29%
-                        </Space>
-                    </Option>
-                    <Option value="ไม้มะค่าโมง" label="ไม้มะค่าโมง">
-                        <Space>
-                            <div className="rounded-full w-5 h-5 border border-black flex items-center justify-center">9</div> ไม้มะค่าโมง 22%
-                        </Space>
-                    </Option>
-                    <Option value="ไม้ยางพารา" label="ไม้ยางพารา">
-                        <Space>
-                            <div className="rounded-full w-5 h-5 border border-black flex items-center justify-center">10</div> ไม้ยางพารา 19%
-                        </Space>
-                    </Option>
-                    <Option value="ไม้แอ๊ก" label="ไม้แอ๊ก">
-                        <Space>
-                            <div className="rounded-full w-5 h-5 border border-black flex items-center justify-center">11</div> ไม้แอ๊ก 14%
-                        </Space>
-                    </Option>
-                    <Option value="Rosewood" label="ไม้พะยูง">
-                        <Space>
-                            <div className="rounded-full w-5 h-5 border border-black flex items-center justify-center">12</div> ไม้พะยูง 9%
-                        </Space>
-                    </Option>
-                    <Option value="ไม้รัง" label="ไม้รัง">
-                        <Space>
-                            <div className="rounded-full w-5 h-5 border border-black flex items-center justify-center">13</div> ไม้รัง 7%
-                        </Space>
-                    </Option>
-                </Select>
+                />
                 <div className="flex items-center justify-between">
                     <button onClick={() => {
                         setStatus(true)
@@ -379,6 +403,7 @@ const ClassidyDetail: React.FC = () => {
                                 onClick={() => {
                                     setOpenModalResult(false)
                                     setSelectWood(confirmWood)
+                                    updateSelectResult();
                                     setConfirmWood('')
                                 }}>
                                 ยืนยัน
@@ -408,6 +433,7 @@ const ClassidyDetail: React.FC = () => {
                             <Button className="w-[45%] h-10 bg-[#3C6255] text-white" key="submit"
                                 onClick={() => {
                                     setModalVerify(false)
+                                    updateStatusVerify();
                                     setTextAreaConfirm('')
                                 }}>
                                 ยืนยัน
@@ -501,27 +527,31 @@ const ClassidyDetail: React.FC = () => {
 
     return (
         <div className="Kanit flex flex-col min-h-screen">
-            <div className="flex justify-center">
-                {woodImage && <img className="w-full h-96 object-cover p-8 rounded-xl" src={getImage(woodImage)} alt="" />}
-            </div>
-            <div className="grid grid-cols-2 mx-6 shadow-lg rounded overflow-hidden mb-4">
-                <div onClick={() => {
-                    setMenuFocus('ข้อมูลการตรวจสอบ')
-                }} className={`${menuFocus == 'ข้อมูลการตรวจสอบ' ? 'bg-[#3C6255] text-white' : 'bg-[#ECECEC]'} py-2`}>
-                    <p className="text-center">ข้อมูลการตรวจสอบ</p>
+            {isLoading ? <div className="flex items-center justify-center flex-1 h-full"><Loading /></div> : (
+                <div>
+                    <div className="flex justify-center">
+                        {woodImage && <img className="w-full h-96 object-cover p-8 rounded-xl" src={getImage(woodImage)} alt="" />}
+                    </div>
+                    <div className="grid grid-cols-2 mx-6 shadow-lg rounded overflow-hidden mb-4">
+                        <div onClick={() => {
+                            setMenuFocus('ข้อมูลการตรวจสอบ')
+                        }} className={`${menuFocus == 'ข้อมูลการตรวจสอบ' ? 'bg-[#3C6255] text-white' : 'bg-[#ECECEC]'} py-2`}>
+                            <p className="text-center">ข้อมูลการตรวจสอบ</p>
+                        </div>
+                        <div onClick={() => {
+                            setMenuFocus('บันทึก');
+                        }} className={`${menuFocus == 'บันทึก' ? 'bg-[#3C6255] text-white' : 'bg-[#ECECEC]'} py-2`}>
+                            <p className="text-center">บันทึก</p>
+                        </div>
+                    </div>
+                    {user && user.role == "EXPERT" && menuFocus == 'ข้อมูลการตรวจสอบ'
+                        ? <RenderVerify />
+                        : ""}
+                    {user && menuFocus == 'ข้อมูลการตรวจสอบ'
+                        ? <RenderClassifyInformation state={user} />
+                        : <div className="flex-grow flex flex-col"><RenderNote /><RenderInputSend /></div>}
                 </div>
-                <div onClick={() => {
-                    setMenuFocus('บันทึก');
-                }} className={`${menuFocus == 'บันทึก' ? 'bg-[#3C6255] text-white' : 'bg-[#ECECEC]'} py-2`}>
-                    <p className="text-center">บันทึก</p>
-                </div>
-            </div>
-            {user && user.role == "EXPERT" && menuFocus == 'ข้อมูลการตรวจสอบ'
-                ? <RenderVerify />
-                : ""}
-            {user && menuFocus == 'ข้อมูลการตรวจสอบ'
-                ? <RenderClassifyInformation state={user} />
-                : <div className="flex-grow flex flex-col"><RenderNote /><RenderInputSend /></div>}
+            )}
         </div>
     );
 };

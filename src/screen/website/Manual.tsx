@@ -17,6 +17,7 @@ const Manual: React.FC = () => {
   const [modalDeleteManual, setmodalDeleteManual] = useState(false);
   const [dataManual, setDataManual] = useState<any>()
   const [isLoading, setIsLoading] = useState(true);
+  const [selectIdManual, setSelectIdManual] = useState('');
   const [checkManualDelete , setCheckManualDelete] = useState('');
   const router = useNavigate();
   const handleChange = (value: string) => {
@@ -27,8 +28,20 @@ const Manual: React.FC = () => {
   }
 
   const getManual = async () => {
-    await axios(`${path}/all_manual`).then((res) => { setDataManual(res.data) }).catch((err) => console.log(err))
+    await axios.get(`${path}/all_manual`).then((res) => { setDataManual(res.data) }).catch((err) => console.log(err))
     setIsLoading(false)
+  }
+
+  const deleteManual = async () => {
+    const token = localStorage.getItem('access_token');
+    await axios.post(`${path}/manual_delete`, {
+      token : token,
+      m_id : selectIdManual
+    }).then((res) => {
+      if(res.data == 'delete success'){
+        getManual();
+      }
+    }).catch((err) => console.log(err))
   }
 
   useEffect(() => {
@@ -115,11 +128,7 @@ const Manual: React.FC = () => {
                     </div>
                   </td>
                   <td className="py-5 rounded-r-[10px] text-center">
-                    <div onClick={() => 
-                      {
-                        clickModal()
-                        setCheckManualDelete(manual.topic)
-                      }} className="flex justify-center">
+                    <div onClick={() => clickModal()} className="flex justify-center">
                       <img className="cursor-pointer" src={garbageIcon} alt="" />
                     </div>
                   </td>
@@ -142,8 +151,11 @@ const Manual: React.FC = () => {
         width={550}
         onCancel={() => setmodalDeleteManual(false)}
         footer={[
-          <div className="flex items-center justify-center space-x-2 pt-3 mb-4">
-            <div onClick={() => setmodalDeleteManual(false)} className="bg-[#3C6255] py-2 w-1/4 text-white cursor-pointer rounded-[10px] text-center">
+          <div className="flex items-center justify-center space-x-2 font-semibold pt-3 mb-4">
+            <div onClick={() => {
+              deleteManual();
+              setmodalDeleteManual(false)
+            }} className="bg-[#3C6255] py-2 w-1/4 text-white cursor-pointer rounded-[10px] text-center">
               <p>ยืนยันการลบ</p>
             </div>
             <div onClick={() => setmodalDeleteManual(false)} className="bg-[#C1C1C1] py-2 w-1/4 cursor-pointer rounded-[10px] text-center">

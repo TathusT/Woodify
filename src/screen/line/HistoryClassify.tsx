@@ -12,7 +12,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import path from "../../../path";
 import Loading from "../component/Loading";
-import { convertIsoToThaiDateTime, convertIsoToThaiDateTimeFullYear } from "../../tools/tools";
+import { convertIsoToThaiDateTime, convertIsoToThaiDateTimeFullYear, getImage } from "../../tools/tools";
 import moment from "moment";
 const { Option } = Select;
 
@@ -225,10 +225,10 @@ const HistoryClassify: React.FC<UserIdProps> = ({ userId }) => {
                                         <img src={Bin} alt="" />
                                     </button>
                                     <div onClick={() => {
-                                        navigate('/line/classify_detail');
+                                        navigate(`/line/classify_detail/${history.c_id}`);
                                     }} className="grid grid-cols-3">
                                         <div className="w-20 h-20 bg-gray-300">
-                                            {history.image && <img className="w-20 h-20 object-cover rounded-xl col-span-1" src={history.img} alt="" />}
+                                            {history.image && <img className="w-20 h-20 object-cover rounded-xl col-span-1" src={getImage(history.image)} alt="" />}
                                         </div>
                                         <div className="col-span-2">
                                             <p className="text-xl font-bold">ไม้{history.select_result}</p>

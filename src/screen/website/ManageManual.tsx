@@ -104,6 +104,7 @@ const ManageManual: React.FC = () => {
                 const data = res.data[0]
                 setBody(data.description)
                 setManualTitle(data.topic)
+                setStatus(data.status)
                 const image = getImage(`/image/manual/${data.image}`)
                 setSelectedImage(image)
                 setBackupImage(image);
@@ -112,7 +113,7 @@ const ManageManual: React.FC = () => {
                 console.log(err);
             });
     }, [])
-
+    
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
 
@@ -201,11 +202,11 @@ const ManageManual: React.FC = () => {
                     <div className="flex space-x-4">
                         <p className="text-xl text-center">สถานะการแสดงผล : </p>
                         <div className="flex items-center space-x-3 text-xl">
-                            <input onClick={() => setStatus(true)} defaultChecked type="radio" name="display" />
+                            <input onClick={() => setStatus(true)} checked={status} type="radio" name="display" />
                             <p>แสดง</p>
                         </div>
                         <div className="flex items-center space-x-3 text-xl">
-                            <input onClick={() => setStatus(false)} type="radio" name="display" />
+                            <input onClick={() => setStatus(false)} checked={!status} type="radio" name="display" />
                             <p>ไม่แสดง</p>
                         </div>
                     </div>
