@@ -18,7 +18,18 @@ export const RequireAuthLine = ({ children }) => {
       checkAuthentication();
     }, [authenticationUser, navigate]);  
     return isAuthenticated ? children : null;
-  };
+};
+
+export const RequireAccessTokenLine = ({children}) => {
+  const navigate = useNavigate();
+  useEffect(() => {
+    const token = localStorage.getItem('access_token');
+    if(token == undefined || token == null){
+      navigate('/line/login');
+    }
+  }, [])
+  return children
+}
 
 export const RequireAuthWebsite = ({children}) =>{
     const { authenticationUser } = useAuthenticationUserWebsite();

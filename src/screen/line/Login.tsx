@@ -18,13 +18,16 @@ import Loading from "../component/Loading.tsx";
 
 const LoginLine: React.FC = () => {
   const router = useNavigate();
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   useEffect(() => {
     liff.init({
       liffId: '2001173297-AoDv0582'
     }).then(() => {
       if (liff.isLoggedIn()) {
         getProfileAndChangeRichmenu();
+      }
+      else {
+        loginLiff();
       }
     })
       .catch(err => {
@@ -49,17 +52,20 @@ const LoginLine: React.FC = () => {
           axios.post(`${path}/liff/login`, {
             lineProfile: profile
           }).then((res) => {
-            console.log(res.data); 
-            
+            console.log(res.data);
+
             if (res.data.message == 'not_have_data' || res.data.message == "new_user") {
               liff.logout();
               router('/line/signup', { state: { data: res.data } })
             }
             else {
-              localStorage.clear();
               localStorage.setItem('access_token', res.data.line_access_token)
-              liff.logout();
+              if (localStorage.getItem('current_page') == "classifyDetail") {
+                router('/line/alert/login')
+              }
+              localStorage.removeItem('current_page');
               liff.closeWindow();
+              liff.logout();
             }
           }).catch((err) => {
             console.log(err);

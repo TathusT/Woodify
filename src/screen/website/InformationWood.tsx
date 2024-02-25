@@ -45,7 +45,7 @@ const InformationWood: React.FC = () => {
     }
     else{
       const filterValue = backUp.filter((wood) => {
-        if(wood.common_name.toString().indexOf(msg.target.value) != -1){
+        if(wood.common_name.toString().indexOf(msg.target.value) != -1 || wood.place_of_origin.toString().indexOf(msg.target.value) != -1){
           return wood
         }
       })

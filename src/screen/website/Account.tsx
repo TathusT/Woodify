@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Select, Input, Dropdown, MenuProps, Modal } from "antd";
+import { Select, Input, Dropdown, MenuProps, Modal, Pagination } from "antd";
 import add from "../../assets/add.svg";
 import search from "../../assets/search.svg";
 import axios from "axios";
@@ -24,6 +24,13 @@ const Account: React.FC = () => {
   const [selectUser, setSelectUser] = useState<any>();
   const [selectRole, setSelectRole] = useState('')
   const [email, setEmail] = useState('');
+  const [pageSize, setPageSize] = useState(10);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(0);
+
+  const handlePageChangePage = (page) => {
+    setCurrentPage(page);
+  };
   const handleChange = (value: string) => {
     setSelectRole(value);
   };
@@ -63,6 +70,18 @@ const Account: React.FC = () => {
       .catch((err) => {
         console.log(err);
       })
+  }
+
+  const deleteUser = async () => {
+    axios.post(`${path}/delete_user`, {
+      u_id : selectUser.u_id
+    })
+  }
+
+  const banUser = async () => {
+    axios.post(`${path}/ban_user`, {
+      u_id : selectUser.u_id
+    })
   }
 
   useEffect(() => {
@@ -130,11 +149,11 @@ const Account: React.FC = () => {
               suffixIcon={<img src={selectIcon}></img>}
               className="h-full"
               style={{ width: 130 }}
-              onChange={handleChange}
+              onChange={(value) => setPageSize(parseInt(value))}
               options={[
-                { value: "10 แถว", label: "10 แถว" },
-                { value: "20 แถว", label: "20 แถว" },
-                { value: "30 แถว", label: "30 แถว" },
+                { value: "10", label: "10 แถว" },
+                { value: "20", label: "20 แถว" },
+                { value: "30", label: "30 แถว" },
               ]}
             />
             <Select
@@ -201,7 +220,7 @@ const Account: React.FC = () => {
                     <div className="flex justify-center items-center">
                       <img className="mr-3" src={clockIcon} alt="" />
                       <p>
-                        ใช้งาน 10 นาทีที่แล้ว
+                        {user.status}
                       </p>
                     </div>
                   </td>
@@ -244,6 +263,12 @@ const Account: React.FC = () => {
               }
               if (confirmButton == "ยืนยันการส่ง") {
                 sendMailToExpert();
+              }
+              if(confirmButton == 'ยืนยันการลบ'){
+                deleteUser();
+              }
+              if(confirmButton == 'ยืนยันการบล็อก'){
+                banUser();
               }
             }} className="bg-[#3C6255] py-2 w-1/2 text-white cursor-pointer rounded-[10px] text-center">
               <p>{confirmButton}</p>
@@ -289,6 +314,13 @@ const Account: React.FC = () => {
           )
         }
       </Modal>
+      <Pagination
+          current={currentPage}
+          total={totalPages * pageSize}
+          pageSize={pageSize}
+          onChange={handlePageChangePage}
+          className='pt-1 pb-5'
+        />
     </div>
   );
 };

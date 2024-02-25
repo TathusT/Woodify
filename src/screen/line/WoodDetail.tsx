@@ -37,7 +37,7 @@ const WoodDetail: React.FC = () => {
             {isLoading ? <div className="flex items-center justify-center flex-1 h-full"><Loading /></div> : (
                 <div>
                     {wood && !openAllImage && (<div>
-                        <img className="w-full h-60 object-cover" src={getImage(wood.wood_image[0]?.path)} alt="" />
+                        <img className="w-full h-96 object-cover" src={getImage(wood.wood_image[0]?.path)} alt="" />
                         <div className="flex justify-center mt-5">
                             <button onClick={() => setOpenAllImage(true)} className="px-8 py-2 bg-[#3C6255] text-white rounded-lg">ดูรูปทั้งหมด</button>
                         </div>
@@ -117,7 +117,7 @@ const WoodDetail: React.FC = () => {
                             <div className={`grid grid-cols-${column} gap-2 pt-4`}>
                                 {wood &&
                                     wood.wood_image.map((img, index) => {
-                                        return <img onClick={() => setOpenAllImage(false)} className="rounded-lg" key={index} src={getImage(img.path)} alt="" />
+                                        return <img onClick={() => setOpenAllImage(false)} className="rounded-lg w-full h-40 object-cover" key={index} src={getImage(img.path)} alt="" />
                                     })
                                 }
                             </div>

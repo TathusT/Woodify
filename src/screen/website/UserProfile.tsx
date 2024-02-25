@@ -564,7 +564,9 @@ const UserProfile: React.FC = () => {
           <tbody>
             {classify && classify.map((c: any, index: number) => {
               return (
-                <tr key={c.c_id} className="bg-white shadow-[0px_0px_4px_0px_rgba(0,0,0,0.25)] rounded-[10px]">
+                <tr onClick={() => {
+                  router(`/admin/classify_wood_detail/${c.c_id}`)
+                }} key={c.c_id} className="bg-white shadow-[0px_0px_4px_0px_rgba(0,0,0,0.25)] rounded-[10px] cursor-pointer">
                   <td className="rounded-l-[10px] text-center">{(index + 1) + ((currentPage - 1) * 10)}</td>
                   <td className="py-3 flex justify-center items-center">
                     {c.image && <div className="w-14 h-14 bg-center bg-cover" style={{backgroundImage: `url(${getImage(c.image)})`}}></div>}

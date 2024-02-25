@@ -32,8 +32,12 @@ const optionsDate: Intl.DateTimeFormatOptions = {
     timeZoneName: 'short',
 };
 
+interface UserIdProps {
+    userAuthen: string;
+}
 
-const ClassidyDetail: React.FC = () => {
+
+const ClassidyDetail: React.FC<UserIdProps> = ({ userAuthen }) => {
     const [menuFocus, setMenuFocus] = useState('ข้อมูลการตรวจสอบ');
     const [woodImage, setWoodImage] = useState();
     const [classify, setClassify] = useState<any>();
@@ -187,7 +191,7 @@ const ClassidyDetail: React.FC = () => {
                                     <div key={index} className="grid grid-cols-6">
                                         <p className="col-span-1">{index + 1}.</p>
                                         <p className="col-span-3">ไม้{value.wood}</p>
-                                        <p className={`col-span-2 text-center font-bold ${similarColor[index]}`}>{value.percentage}</p>
+                                        <p className={`col-span-2 text-right font-bold ${similarColor[index]}`}>{value.percentage}%</p>
                                     </div>
                                 )
                             }) : (
@@ -220,7 +224,7 @@ const ClassidyDetail: React.FC = () => {
                     <div className="flex items-center space-x-2">
                         <img className="pr-2" src={Dot} alt="" />
                         สถานที่พบ :
-                        {state.role == "EXPERT" && position == null ? " ยังไม่มีข้อมูลสถานที่พบ" : position ? (
+                        {userId != classify.creator.u_id && position == null ? " ยังไม่มีข้อมูลสถานที่พบ" : position ? (
                             <p>{position}</p>
                         ) : (
                             <Button className="bg-[#61876E] text-white focus:none hover:none" onClick={() => setOpen(true)}>

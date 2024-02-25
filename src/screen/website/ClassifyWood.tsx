@@ -83,15 +83,25 @@ const ClassifyWood: React.FC = () => {
   };
 
   const dateFromPicker = async (value) => {
-    const date = new Date(value);
-    const formattedDate = moment(date).format('YYYY-MM-DD');
-    setDateFrom(formattedDate);
+    if(value != null){
+      const date = new Date(value);
+      const formattedDate = moment(date).format('YYYY-MM-DD');
+      setDateFrom(formattedDate);
+    }
+    else{
+      setDateFrom('')
+    }
     setPickerFrom(value);
   }
   const dateToPicker = async (value) => {
-    const date = new Date(value);
-    const formattedDate = moment(date).format('YYYY-MM-DD');
-    setDateTo(formattedDate);
+    if(value != null){
+      const date = new Date(value);
+      const formattedDate = moment(date).format('YYYY-MM-DD');
+      setDateTo(formattedDate);
+    }
+    else{
+      setDateTo('')
+    }
     setPickerTo(value);
   }
 
@@ -184,12 +194,17 @@ const ClassifyWood: React.FC = () => {
     }
     if (dateTo != '') {
       filter['create_at'] = filter['create_at'] || {};
-      filter['create_at']['lte'] = new Date(dateTo.replace(/-/g, '/'));
+      const dateToISO = new Date(dateTo + 'T16:59:59.999Z');
+      dateToISO.setDate(dateToISO.getDate());
+      filter['create_at']['lte'] = dateToISO;
     }
     if (dateFrom != '') {
       filter['create_at'] = filter['create_at'] || {};
       filter['create_at']['gte'] = new Date(dateFrom.replace(/-/g, '/'));
     }
+
+    console.log(filter);
+    
 
     await axios.post(`${path}/classify_user_id`, {
       currentPage: currentPage,

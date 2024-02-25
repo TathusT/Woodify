@@ -15,8 +15,8 @@ import Notification from "./screen/line/Notification";
 import LoginWeb from "./screen/website/Login";
 import UserProfile from "./screen/website/UserProfile"
 import ManageManual from "./screen/website/ManageManual";
-import { RequireAuthLine } from "./screen/auth/requireAccessToken";
 import { RequireUserId } from "./screen/auth/requireUserId";
+import { RequireAccessTokenLine } from "./screen/auth/requireAccessToken";
 import ManualLine from "./screen/line/Manual";
 import ClassifyWoodDetail from "./screen/website/ClassifyWoodDetail";
 import InformationWoodDetail from "./screen/website/InformationWoodDetail";
@@ -26,6 +26,7 @@ import ManualDetail from "./screen/website/ManualDetail"
 import SignUpWeb from "./screen/website/Signup";
 import InformationWoodLine from "./screen/line/InformationWood";
 import NotPermission from './screen/website/NotPermission'
+import AlertLogin from "./screen/line/AlertLogin";
 
 
 function App() {
@@ -45,6 +46,7 @@ function LineRoutes() {
     <Routes>
       <Route path="login" element={<LoginLine />} />
       <Route path="signup" element={<RegisterLine />} />
+      <Route path="alert/login" element={<AlertLogin />} />
       <Route path="information_wood" element={<InformationWoodLine />} />
       <Route
         path="history_classify"
@@ -54,7 +56,11 @@ function LineRoutes() {
           </RequireUserId>
         }
       />
-      <Route path="classify_detail/:classifyId" element={<ClassifyDetail />} />
+      <Route path="classify_detail/:classifyId" element={
+          <RequireUserId>
+            {(userId) => <ClassifyDetail userAuthen={userId} />}
+          </RequireUserId>
+        } />
       <Route
         path="profile"
         element={
@@ -64,7 +70,7 @@ function LineRoutes() {
         }
       />
       <Route path="wood_detail/:woodId" element={<WoodDetail />} />
-      <Route path="notification" element={<Notification />} />
+      <Route path="notification" element={<RequireAccessTokenLine><Notification /></RequireAccessTokenLine>} />
       <Route path="manual/:id" element={<ManualLine />} />
     </Routes>
   );

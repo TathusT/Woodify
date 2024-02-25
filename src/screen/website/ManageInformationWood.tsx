@@ -330,7 +330,6 @@ const ManageInformationWood: React.FC = () => {
                             <div className="flex items-center justify-center space-x-8">
                                 <button onClick={() => {
                                     setModalConfirmSave(true)
-                                    router('/admin/information_wood')
                                 }} className="bg-[#61876E] w-40 py-3 text-xl rounded-xl text-white">บันทึก</button>
                                 <button onClick={() => setModalCancel(true)} className="bg-[#C1C1C1] w-40 py-3 text-xl rounded-xl">ยกเลิก</button>
                             </div>

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Select, Input, Modal } from "antd";
+import { Select, Input, Modal, Pagination } from "antd";
 import add from "../../assets/add.svg";
 import search from "../../assets/search.svg";
 import Loading from "../component/Loading";
@@ -17,8 +17,14 @@ const Manual: React.FC = () => {
   const [modalDeleteManual, setmodalDeleteManual] = useState(false);
   const [dataManual, setDataManual] = useState<any>()
   const [isLoading, setIsLoading] = useState(true);
+  const [pageSize, setPageSize] = useState(10);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(0);
   const [selectIdManual, setSelectIdManual] = useState('');
-  const [checkManualDelete , setCheckManualDelete] = useState('');
+  const [checkManualDelete, setCheckManualDelete] = useState('');
+  const [statusFilter, setStatusFilter] = useState('สถานะทั้งหมด')
+  const [filterUpdate, setFilterUpdate] = useState('ทั้งหมด')
+  const [search, setSearch] = useState('')
   const router = useNavigate();
   const handleChange = (value: string) => {
     console.log(`selected ${value}`);
@@ -27,26 +33,61 @@ const Manual: React.FC = () => {
     setmodalDeleteManual(true)
   }
 
-  const getManual = async () => {
-    await axios.get(`${path}/all_manual`).then((res) => { setDataManual(res.data) }).catch((err) => console.log(err))
-    setIsLoading(false)
-  }
+  const handlePageChangePage = (page) => {
+    setCurrentPage(page);
+  };
 
   const deleteManual = async () => {
     const token = localStorage.getItem('access_token');
     await axios.post(`${path}/manual_delete`, {
-      token : token,
-      m_id : selectIdManual
+      token: token,
+      m_id: selectIdManual
     }).then((res) => {
-      if(res.data == 'delete success'){
-        getManual();
+      if (res.data == 'delete success') {
+        filterData();
       }
     }).catch((err) => console.log(err))
   }
 
+  const filterData = async () => {
+    let filter = {};
+    let orderBy = {};
+    if (statusFilter !== 'สถานะทั้งหมด') {
+      filter['status'] = statusFilter === 'สถานะไม่แสดง' ? false : true;
+    }
+    if (filterUpdate !== 'ทั้งหมด') {
+      orderBy['update_at'] = "desc";
+    }
+    if (search !== '') {
+      filter['OR'] = [
+        {
+          topic: { contains: search }
+        },
+        {
+          description: { contains: search }
+        }
+      ];
+    }
+
+    await axios.post(`${path}/all_manual_filter`, {
+      currentPage: currentPage,
+      pageSize: pageSize,
+      filter: filter,
+      orderBy
+    })
+      .then((res) => {
+        setDataManual(res.data.data)
+        setTotalPages(Math.ceil(res.data.total / pageSize));
+        setIsLoading(false)
+      })
+      .catch((err) => {
+        console.log(err);
+      })
+  }
+
   useEffect(() => {
-    getManual();
-  }, [])
+    filterData();
+  }, [statusFilter, filterUpdate, search])
 
   return (
     <div className="w-full Kanit flex flex-col min-h-screen">
@@ -56,34 +97,34 @@ const Manual: React.FC = () => {
           <div className="flex items-center space-x-3 h-9">
             <p className="font-semibold">แสดง</p>
             <Select
-              defaultValue="10 แถว"
+              value={pageSize.toString()}
               suffixIcon={<img src={selectIcon}></img>}
               className="h-full"
               style={{ width: 150 }}
-              onChange={handleChange}
+              onChange={(value) => setPageSize(parseInt(value))}
               options={[
-                { value: "10 แถว", label: "10 แถว" },
-                { value: "20 แถว", label: "20 แถว" },
-                { value: "30 แถว", label: "30 แถว" },
+                { value: "10", label: "10 แถว" },
+                { value: "20", label: "20 แถว" },
+                { value: "30", label: "30 แถว" },
               ]}
             />
             <Select
-              defaultValue="อัพเดทล่าสุด"
+              value={filterUpdate}
               suffixIcon={<img src={sortIcon}></img>}
               className="h-full"
               style={{ width: 150 }}
-              onChange={handleChange}
+              onChange={(value) => setFilterUpdate(value)}
               options={[
                 { value: "ทั้งหมด", label: "ทั้งหมด" },
                 { value: "อัพเดทล่าสุด", label: "อัพเดทล่าสุด" },
               ]}
             />
             <Select
-              defaultValue="สถานะทั้งหมด"
+              value={statusFilter}
               suffixIcon={<img src={selectIcon}></img>}
               className="h-full"
               style={{ width: 150 }}
-              onChange={handleChange}
+              onChange={(value) => setStatusFilter(value)}
               options={[
                 { value: "สถานะแสดง", label: "สถานะแสดง" },
                 { value: "สถานะไม่แสดง", label: "สถานะไม่แสดง" },
@@ -91,7 +132,7 @@ const Manual: React.FC = () => {
               ]}
             />
             <div className="h-full">
-              <Input className="h-full w-[280px] font-semibold" suffix={<img src={search} />} />
+              <Input onChange={(text) => setSearch(text.target.value)} className="h-full w-[280px] font-semibold" suffix={<img src={search} />} />
             </div>
             <Link to='/admin/manage_manual' className="bg-[#3C6255] h-full flex justify-center space-x-2 items-center px-3 rounded-[8px] text-white cursor-pointer">
               <p className="text-[18px]">เพื่มคู่มือ</p>
@@ -168,6 +209,13 @@ const Manual: React.FC = () => {
           <p className="text-lg">คุณต้องการลบข้อมูล {checkManualDelete} ใช่หรือไม่?</p>
         </div>
       </Modal>
+      <Pagination
+        current={currentPage}
+        total={totalPages * pageSize}
+        pageSize={pageSize}
+        onChange={handlePageChangePage}
+        className='pt-1 pb-5'
+      />
     </div>
   );
 };
