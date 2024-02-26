@@ -419,6 +419,10 @@ const ClassifyWood: React.FC = () => {
                     label: "ไม้ยาง"
                   },
                   {
+                    value: "ไม้ชิงชัน",
+                    label: "ไม้ชิงชัน"
+                  },
+                  {
                     value: "ไม้ตะเคียนราก",
                     label: "ไม้ตะเคียนราก"
                   },
