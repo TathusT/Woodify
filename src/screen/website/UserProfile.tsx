@@ -104,7 +104,7 @@ const UserProfile: React.FC = () => {
         console.log(err);
       })
   }
-  
+
 
   const dateFromPicker = async (value) => {
     const date = new Date(value);
@@ -137,11 +137,13 @@ const UserProfile: React.FC = () => {
     if (filterWood != 'ไม้ทั้งหมด') {
       filter['select_result'] = filterWood.replace('ไม้', '')
     }
-    if(dateTo != ''){
+    if (dateTo != '') {
       filter['create_at'] = filter['create_at'] || {};
-      filter['create_at']['lte'] = new Date(dateTo.replace(/-/g, '/'));
+      const dateToISO = new Date(dateTo + 'T16:59:59.999Z');
+      dateToISO.setDate(dateToISO.getDate());
+      filter['create_at']['lte'] = dateToISO;
     }
-    if(dateFrom != ''){
+    if (dateFrom != '') {
       filter['create_at'] = filter['create_at'] || {};
       filter['create_at']['gte'] = new Date(dateFrom.replace(/-/g, '/'));
     }
@@ -164,7 +166,7 @@ const UserProfile: React.FC = () => {
   useEffect(() => {
     filterData();
   }, [filterWood, statusFilter, pageSize, currentPage, dateFrom, dateTo])
-  
+
   const getClassifyDonutChart = async () => {
     await axios.get(`${path}/classify_donut_with_userid/${u_id}`)
       .then((res) => {
@@ -569,7 +571,7 @@ const UserProfile: React.FC = () => {
                 }} key={c.c_id} className="bg-white shadow-[0px_0px_4px_0px_rgba(0,0,0,0.25)] rounded-[10px] cursor-pointer">
                   <td className="rounded-l-[10px] text-center">{(index + 1) + ((currentPage - 1) * 10)}</td>
                   <td className="py-3 flex justify-center items-center">
-                    {c.image && <div className="w-14 h-14 bg-center bg-cover" style={{backgroundImage: `url(${getImage(c.image)})`}}></div>}
+                    {c.image && <div className="w-14 h-14 bg-center bg-cover" style={{ backgroundImage: `url(${getImage(c.image)})` }}></div>}
                   </td>
                   <td className="py-5 text-center">ไม้{c.select_result}</td>
                   <td className="py-5 text-center">{c.result[0]?.percentage}</td>

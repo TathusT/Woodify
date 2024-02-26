@@ -62,7 +62,7 @@ const ManageInformationWood: React.FC = () => {
         }
 
         if (!Array.isArray(commonName)) {
-            common_name = engName.split(',');
+            common_name = commonName.split(',');
         }
         else {
             common_name = commonName;

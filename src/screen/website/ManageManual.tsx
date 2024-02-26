@@ -101,20 +101,25 @@ const ManageManual: React.FC = () => {
     }
 
     useEffect(() => {
-        axios.get(`${path}/manual/${id}`)
-            .then((res) => {
-                const data = res.data[0]
-                setBody(data.description)
-                setManualTitle(data.topic)
-                setStatus(data.status)
-                const image = getImage(`/image/manual/${data.image}`)
-                setSelectedImage(image)
-                setBackupImage(image);
-                setIsLoading(false);
-            })
-            .catch((err) => {
-                console.log(err);
-            });
+        if (!isCreateMode) {
+            axios.get(`${path}/manual/${id}`)
+                .then((res) => {
+                    const data = res.data[0]
+                    setBody(data.description)
+                    setManualTitle(data.topic)
+                    setStatus(data.status)
+                    const image = getImage(`/image/manual/${data.image}`)
+                    setSelectedImage(image)
+                    setBackupImage(image);
+                    setIsLoading(false);
+                })
+                .catch((err) => {
+                    console.log(err);
+                });
+        }
+        else{
+            setIsLoading(false)
+        }
     }, [])
 
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {

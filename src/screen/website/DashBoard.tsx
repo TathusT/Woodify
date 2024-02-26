@@ -138,9 +138,10 @@ const RenderColumn = ({ data }) => {
 }
 
 const DashBoard: React.FC = () => {
+  const fromDateWithYear = `${today.slice(0,4)}-01-01`
   const [dataColumn, setDataColumn] = useState();
   const [dataLine, setDataLine] = useState();
-  const [dateFrom, setDateFrom] = useState(today);
+  const [dateFrom, setDateFrom] = useState(fromDateWithYear);
   const [dateTo, setDateTo] = useState(today);
   const [pickerFrom, setPickerFrom] = useState();
   const [pickerTo, setPickerTo] = useState();
@@ -149,36 +150,53 @@ const DashBoard: React.FC = () => {
   const [classifyAll, setClassifyAll] = useState(0);
   const [classifyStatusWaitVerify, setClassifyStatusWaitVerify] = useState(0)
   const [userToday, setUserToday] = useState(0)
+  
+  const filterData = async () => {
+    let filter = {};
+    if (dateTo != '') {
+      filter['create_at'] = filter['create_at'] || {};
+      const dateToISO = new Date(dateTo + 'T16:59:59.999Z');
+      dateToISO.setDate(dateToISO.getDate());
+      filter['create_at']['lte'] = dateToISO;
+    }
+    if (dateFrom != '') {
+      filter['create_at'] = filter['create_at'] || {};
+      filter['create_at']['gte'] = new Date(dateFrom.replace(/-/g, '/'));
+    }
 
-
-  const getColumn = async (dateFromDB: string, dateToDB: string) => {
-    await axios.get(`${path}/dashboard_classify_column/${dateFromDB}/${dateToDB}`)
+    await axios.post(`${path}/dashboard_classify_column`, {
+      filter: filter
+    })
       .then((res) => {
         setDataColumn(res.data)
       })
       .catch((err) => {
         console.log(err);
       })
-  }
-  const getLine = async (dateFromDB: string, dateToDB: string) => {
-    await axios.get(`${path}/dashboard_classify_Line/${dateFromDB}/${dateToDB}`)
+
+    await axios.post(`${path}/dashboard_classify_Line`, {
+      filter: filter
+    })
       .then((res) => {
         setDataLine(res.data)
       })
       .catch((err) => {
         console.log(err);
       })
+    await setIsLoading(false)
   }
 
-  const getData = async (dateFromDB: string, dateToDB: string) => {
-    await getColumn(dateFromDB, dateToDB)
-    await getLine(dateFromDB, dateToDB)
+  const getData = async () => {
     await getClassifyToday()
     await getClassifyAll();
     await getClassifyWaitVerify();
     await getUserToday();
     setIsLoading(false);
   }
+
+  useEffect(() => {
+    filterData();
+  }, [dateFrom, dateTo])
 
   const getClassifyToday = async () => {
     await axios.get(`${path}/get_classiy_today`)
@@ -222,28 +240,32 @@ const DashBoard: React.FC = () => {
   }
 
   useEffect(() => {
-    getData(dateFrom, dateTo);
+    getData();
   }, [])
 
   const dateFromPicker = async (value) => {
-    const date = new Date(value);
-    const formattedDate = moment(date).format('YYYY-MM-DD');
-    setDateFrom(formattedDate);
-    setPickerFrom(value);
-    if (formattedDate && dateTo) {
-      getData(formattedDate, dateTo);
+    if (value != null) {
+      const date = new Date(value);
+      const formattedDate = moment(date).format('YYYY-MM-DD');
+      setDateFrom(formattedDate);
     }
-
+    else {
+      setDateFrom('')
+    }
+    setPickerFrom(value);
     setIsLoading(true);
   }
+
   const dateToPicker = async (value) => {
-    const date = new Date(value);
-    const formattedDate = moment(date).format('YYYY-MM-DD');
-    setDateTo(formattedDate);
-    setPickerTo(value);
-    if (dateFrom && formattedDate) {
-      getData(dateFrom, formattedDate);
+    if (value != null) {
+      const date = new Date(value);
+      const formattedDate = moment(date).format('YYYY-MM-DD');
+      setDateTo(formattedDate);
     }
+    else {
+      setDateTo('')
+    }
+    setPickerTo(value);
     setIsLoading(true);
   }
 
@@ -259,12 +281,12 @@ const DashBoard: React.FC = () => {
                 <div className="flex space-x-3 items-center py-4">
                   <div className="relative flex items-center">
                     <img className='absolute z-50 left-2' src={calendarIcon}></img>
-                    <DatePicker className="font-semibold" style={{ width: 150 }} suffixIcon={<img src={selectIcon}></img>} value={pickerFrom} defaultValue={dayjs(new Date())} onChange={(value) => dateFromPicker(value)} placeholder="เลือกวันที่เริ่ม" format="DD-MM-YYYY"/>
+                    <DatePicker className="font-semibold" style={{ width: 150 }} suffixIcon={<img src={selectIcon}></img>} value={pickerFrom} defaultValue={dayjs().startOf('year').startOf('month')} onChange={(value) => dateFromPicker(value)} placeholder="เลือกวันที่เริ่ม" format="DD-MM-YYYY" />
                   </div>
                   <img src={arrowRightIcon}></img>
                   <div className="relative flex items-center">
                     <img className='absolute z-50 left-2' src={calendarIcon}></img>
-                    <DatePicker className="font-semibold" style={{ width: 150 }} suffixIcon={<img src={selectIcon}></img>} value={pickerTo} defaultValue={dayjs(new Date())} onChange={(value) => dateToPicker(value)} placeholder="เลือกวันที่สิ้นสุด" format="DD-MM-YYYY"/>
+                    <DatePicker className="font-semibold" style={{ width: 150 }} suffixIcon={<img src={selectIcon}></img>} value={pickerTo} defaultValue={dayjs(new Date())} onChange={(value) => dateToPicker(value)} placeholder="เลือกวันที่สิ้นสุด" format="DD-MM-YYYY" />
                   </div>
                 </div>
               </div>

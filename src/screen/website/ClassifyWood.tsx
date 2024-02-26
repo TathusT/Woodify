@@ -471,8 +471,8 @@ const ClassifyWood: React.FC = () => {
                     label: "ไม้พะยอม"
                   },
                   {
-                    value: "ไม้balau",
-                    label: "ไม้balau"
+                    value: "ไม้บาเลา",
+                    label: "ไม้บาเลา"
                   }
                 ]}
               />
