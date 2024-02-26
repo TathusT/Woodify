@@ -224,7 +224,7 @@ const NavigationBar: React.FC = () => {
                 </div>
               </div>
               <div className="py-2 pl-7">
-                <p className="pb-1 text-[20px]">{user.firstname} {user.lastname}</p>
+                <p className="pb-1 text-[20px] text-ellipsis line-clamp-1">{user.firstname} {user.lastname}</p>
                 <p className="text-[18px] text-[#3C6255]">{user.role}</p>
               </div>
             </div>
@@ -257,7 +257,7 @@ const NavigationBar: React.FC = () => {
         width={550}
         onCancel={() => setModalSignout(false)}
         footer={[
-          <div className="flex items-center justify-center space-x-2 font-semibold pt-3 mb-4">
+          <div className="flex items-center justify-center space-x-2 pt-3 mb-4">
             <div onClick={() => {
               setModalSignout(false)
               router('/admin/login')
@@ -272,7 +272,7 @@ const NavigationBar: React.FC = () => {
         ]}
       >
         <div className="flex justify-center my-10">
-          <p className="text-lg font-semibold">คุณต้องการออกจากระบบ ใช่หรือไม่?</p>
+          <p className="text-lg">คุณต้องการออกจากระบบ ใช่หรือไม่?</p>
         </div>
       </Modal>
     </div>
