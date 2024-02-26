@@ -22,7 +22,10 @@ const Account: React.FC = () => {
   const [confirmButton, setConfirmButton] = useState("")
   const [users, setUsers] = useState<any>();
   const [selectUser, setSelectUser] = useState<any>();
-  const [selectRole, setSelectRole] = useState('')
+  const [selectRoleUpdate, setSelectRoleUpdate] = useState('')
+  const [selectRole, setSelectRole] = useState('ผู้ใช้ทั้งหมด')
+  const [selectStatus, setSelectStatus] = useState('ทั้งหมด')
+  const [selectSearch, setSelectSearch] = useState('')
   const [email, setEmail] = useState('');
   const [pageSize, setPageSize] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
@@ -31,8 +34,15 @@ const Account: React.FC = () => {
   const handlePageChangePage = (page) => {
     setCurrentPage(page);
   };
-  const handleChange = (value: string) => {
+  const handleChangeRole = (value: string) => {
     setSelectRole(value);
+  };
+  const handleChangeRoleUpdate = (value: string) => {
+    setSelectRoleUpdate(value);
+  };
+
+  const handleChangeStatus = (value: string) => {
+    setSelectStatus(value);
   };
   const router = useNavigate();
 
@@ -61,7 +71,7 @@ const Account: React.FC = () => {
   const updateRole = async () => {
     await axios.put(`${path}/update_role`, {
       u_id: selectUser.u_id,
-      role: selectRole
+      role: selectRoleUpdate
     }).then((res) => {
       if (res.data.message == "update role success") {
         getUser();
@@ -84,9 +94,46 @@ const Account: React.FC = () => {
     })
   }
 
+  const filterData = async () => {
+    let filter = {};
+    if (selectRole !== 'ผู้ใช้ทั้งหมด') {
+      filter['role'] = selectRole == "ผู้เชี่ยวชาญ" ? "EXPERT" : "USER"
+    }
+    if (selectStatus !== 'ทั้งหมด') {
+      filter['status'] = selectStatus == 'ถูกบล็อก' ? "BAN" : selectStatus == "ถูกลบ" ? "DELETE" : "ACTIVE"
+    }
+    if (selectSearch !== '') {
+      filter['OR'] = [
+        {
+          firstname: { contains: selectSearch }
+        },
+        {
+          lastname: { contains: selectSearch }
+        },
+        {
+          email: { contains: selectSearch }
+        }
+      ];
+    }
+
+    await axios.post(`${path}/all_users_filter`, {
+      currentPage: currentPage,
+      pageSize: pageSize,
+      filter: filter,
+    })
+      .then((res) => {
+        setUsers(res.data.data)
+        setTotalPages(Math.ceil(res.data.total / pageSize));
+        setIsLoading(false)
+      })
+      .catch((err) => {
+        console.log(err);
+      })
+  }
+
   useEffect(() => {
-    getUser();
-  }, [])
+    filterData();
+  }, [selectRole, selectStatus, selectSearch])
   console.log(users);
 
   const items: MenuProps['items'] = [
@@ -157,23 +204,24 @@ const Account: React.FC = () => {
               ]}
             />
             <Select
-              defaultValue="ใช้งานล่าสุด"
+              value={selectStatus}
               suffixIcon={<img src={sortIcon}></img>}
               className="h-full"
               style={{ width: 130 }}
-              onChange={handleChange}
+              onChange={handleChangeStatus}
               options={[
                 { value: "ถูกบล็อก", label: "ถูกบล็อก" },
-                { value: "ไม่ได้ใช้งาน", label: "ไม่ได้ใช้งาน" },
-                { value: "ใช้งานล่าสุด", label: "ใช้งานล่าสุด" },
+                { value: "ถูกลบ", label: "ถูกลบ" },
+                { value: "กำลังใช้งาน", label: "กำลังใช้งาน" },
+                { value: "ทั้งหมด", label: "ทั้งหมด" },
               ]}
             />
             <Select
-              defaultValue="ผู้ใช้ทั้งหมด"
+              value={selectRole}
               suffixIcon={<img src={selectIcon}></img>}
               className="h-full"
               style={{ width: 130 }}
-              onChange={handleChange}
+              onChange={handleChangeRole}
               options={[
                 { value: "ผู้เชี่ยวชาญ", label: "ผู้เชี่ยวชาญ" },
                 { value: "ผู้ใช้ทั่วไป", label: "ผู้ใช้ทั่วไป" },
@@ -181,7 +229,7 @@ const Account: React.FC = () => {
               ]}
             />
             <div className="h-full">
-              <Input className="h-full w-[280px]" suffix={<img src={search} />} />
+              <Input onChange={(text) => setSelectSearch(text.target.value)} className="h-full w-[280px]" suffix={<img src={search} />} />
             </div>
             <div onClick={() => clickModal("สร้างบัญชี")} className="bg-[#3C6255] h-full flex justify-center space-x-2 items-center px-3 rounded-[8px] text-white cursor-pointer">
               <p>สร้างบัญชี</p>
@@ -229,7 +277,7 @@ const Account: React.FC = () => {
                       <img onClick={(e) => {
                         e.preventDefault()
                         setSelectUser(user);
-                        setSelectRole(user.role)
+                        setSelectRoleUpdate(user.role)
                       }} className="mx-auto" src={dotIcon} alt="" />
                     </Dropdown>
                   </td>
@@ -296,7 +344,7 @@ const Account: React.FC = () => {
                     value={selectRole}
                     suffixIcon={<img src={selectIcon}></img>}
                     className="h-full w-full"
-                    onChange={handleChange}
+                    onChange={handleChangeRoleUpdate}
                     options={[
                       { value: "EXPERT", label: "ผู้เชี่ยวชาญ" },
                       { value: "USER", label: "ผู้ใช้ทั่วไป" }

@@ -3,6 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import ReactQuill from "react-quill";
 import { Radio } from "@material-tailwind/react";
 import { modules, formats, getImage } from "../../tools/tools";
+import Loading from "../component/Loading";
 import axios from "axios";
 import path from "../../../path";
 import { Modal } from "antd";
@@ -13,6 +14,7 @@ const RadioButton: any = Radio
 const ManageManual: React.FC = () => {
     const [modalConfirmSave, setModalConfirmSave] = useState(false);
     const [modalCancel, setModalCancel] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
     const [body, setBody] = useState("");
     const [manualTitle, setManualTitle] = useState("");
     const [status, setStatus] = useState(true)
@@ -108,12 +110,13 @@ const ManageManual: React.FC = () => {
                 const image = getImage(`/image/manual/${data.image}`)
                 setSelectedImage(image)
                 setBackupImage(image);
+                setIsLoading(false);
             })
             .catch((err) => {
                 console.log(err);
             });
     }, [])
-    
+
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
 
@@ -139,8 +142,6 @@ const ManageManual: React.FC = () => {
         }
     };
 
-
-
     const handleChange = (value) => {
         setBody(value);
     };
@@ -148,129 +149,134 @@ const ManageManual: React.FC = () => {
     const handleTitleChange = (event) => {
         setManualTitle(event.target.value);
     };
+
     return (
-        <div className="mt-10">
-            <p className="text-[32px] font-semibold">แก้ไขข้อมูลการใช้งานระบบเบื้องต้น</p>
-            <div className="pt-10 pb-6">
-                <p className="text-[#5C5C5C] text-xl">ชื่อหัวข้อคู่มือการใช้งาน</p>
-                <input
-                    onChange={handleTitleChange}
-                    value={manualTitle}
-                    className="border-[#61876E] border-1 appearance-none border rounded-xl w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                    id="line_lastname"
-                    type="text"
-                />
-            </div>
-            <div>
-                <p className="text-[#5C5C5C] text-xl">รายละเอียดการใช้งาน</p>
-                <ReactQuill
-                    className="rounded-[15px] border-[#61876E] overflow-hidden bg-white border-b-[1px] border-[#61876E]"
-                    style={{ height: '600px' }}
-                    theme="snow"
-                    value={body}
-                    placeholder="เขียนคู่มือ"
-                    onChange={(value) => handleChange(value)}
-                    modules={modules}
-                    formats={formats}
-                />
-            </div>
-            <div className="flex items-center justify-center py-12">
-                <label htmlFor="imageUpload" className="w-96 h-60 border border-2 border-dashed border-gray-300 bg-white cursor-pointer flex items-center justify-center relative">
-                    {selectedImage ? (
-                        <>
-                            <img src={selectedImage} alt="Selected" className="w-full h-full object-cover" />
-                            <button onClick={() => handleRemoveImage()} className="absolute top-2 right-2 text-white bg-red-500 p-1 rounded-full">
-                                Remove
-                            </button>
-                        </>
-                    ) : (
-                        <span className="text-gray-500">คลิกเพื่อเลือกรูปภาพหรือลากมาวางที่นี่</span>
-                    )}
-                </label>
-                <input
-                    ref={fileInputRef}
-                    type="file"
-                    id="imageUpload"
-                    className="hidden"
-                    accept="image/*"
-                    onChange={handleImageChange}
-                />
-            </div>
-            <div className="flex items-center justify-center py-4">
-                <div className="space-y-8">
-                    <div className="flex justify-center"><button onClick={() => handleUploadImage()} className="bg-[#61876E] w-40 py-2 text-xl rounded-xl text-white">เพิ่มรูปภาพปก</button></div>
-                    <div className="flex space-x-4">
-                        <p className="text-xl text-center">สถานะการแสดงผล : </p>
-                        <div className="flex items-center space-x-3 text-xl">
-                            <input onClick={() => setStatus(true)} checked={status} type="radio" name="display" />
-                            <p>แสดง</p>
+        <div className="min-h-screen flex flex-col flex-grow">
+            {isLoading ? <div className="flex items-center justify-center flex-1 h-full"><Loading /></div> : (<div>
+                <div className="mt-10">
+                    <p className="text-[32px] font-semibold">แก้ไขข้อมูลการใช้งานระบบเบื้องต้น</p>
+                    <div className="pt-10 pb-6">
+                        <p className="text-[#5C5C5C] text-xl">ชื่อหัวข้อคู่มือการใช้งาน</p>
+                        <input
+                            onChange={handleTitleChange}
+                            value={manualTitle}
+                            className="border-[#61876E] border-1 appearance-none border rounded-xl w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                            id="line_lastname"
+                            type="text"
+                        />
+                    </div>
+                    <div>
+                        <p className="text-[#5C5C5C] text-xl">รายละเอียดการใช้งาน</p>
+                        <ReactQuill
+                            className="rounded-[15px] border-[#61876E] overflow-hidden bg-white border-b-[1px] border-[#61876E]"
+                            style={{ height: '600px' }}
+                            theme="snow"
+                            value={body}
+                            placeholder="เขียนคู่มือ"
+                            onChange={(value) => handleChange(value)}
+                            modules={modules}
+                            formats={formats}
+                        />
+                    </div>
+                    <div className="flex items-center justify-center py-12">
+                        <label htmlFor="imageUpload" className="w-96 h-60 border border-2 border-dashed border-gray-300 bg-white cursor-pointer flex items-center justify-center relative">
+                            {selectedImage ? (
+                                <>
+                                    <img src={selectedImage} alt="Selected" className="w-full h-full object-cover" />
+                                    <button onClick={() => handleRemoveImage()} className="absolute top-2 right-2 text-white bg-red-500 p-1 rounded-full">
+                                        Remove
+                                    </button>
+                                </>
+                            ) : (
+                                <span className="text-gray-500">คลิกเพื่อเลือกรูปภาพหรือลากมาวางที่นี่</span>
+                            )}
+                        </label>
+                        <input
+                            ref={fileInputRef}
+                            type="file"
+                            id="imageUpload"
+                            className="hidden"
+                            accept="image/*"
+                            onChange={handleImageChange}
+                        />
+                    </div>
+                    <div className="flex items-center justify-center py-4">
+                        <div className="space-y-8">
+                            <div className="flex justify-center"><button onClick={() => handleUploadImage()} className="bg-[#61876E] w-40 py-2 text-xl rounded-xl text-white">เพิ่มรูปภาพปก</button></div>
+                            <div className="flex space-x-4">
+                                <p className="text-xl text-center">สถานะการแสดงผล : </p>
+                                <div className="flex items-center space-x-3 text-xl">
+                                    <input onClick={() => setStatus(true)} checked={status} type="radio" name="display" />
+                                    <p>แสดง</p>
+                                </div>
+                                <div className="flex items-center space-x-3 text-xl">
+                                    <input onClick={() => setStatus(false)} checked={!status} type="radio" name="display" />
+                                    <p>ไม่แสดง</p>
+                                </div>
+                            </div>
+                            <div className="flex items-center justify-center space-x-8">
+                                <button onClick={() => setModalConfirmSave(true)} className="bg-[#61876E] w-40 py-3 text-xl rounded-xl text-white">บันทึก</button>
+                                <button onClick={() => setModalCancel(true)} className="bg-[#C1C1C1] w-40 py-3 text-xl rounded-xl">ยกเลิก</button>
+                            </div>
                         </div>
-                        <div className="flex items-center space-x-3 text-xl">
-                            <input onClick={() => setStatus(false)} checked={!status} type="radio" name="display" />
-                            <p>ไม่แสดง</p>
+                    </div>
+                    <p className='text-center text-xl font-semibold pb-3'>© 2023 COPYRIGHT 2023 WOODIFY. ALL RIGHTS RESERVED.</p>
+                    {/* modal */}
+                    <Modal
+                        title={[
+                            <div className="text-center font-medium text-[24px] mt-4">
+                                <p>ยืนยันการบันทึกข้อมูล</p>
+                            </div>
+                        ]}
+                        className="Kanit"
+                        centered
+                        open={modalConfirmSave}
+                        width={550}
+                        onCancel={() => setModalConfirmSave(false)}
+                        footer={[
+                            <div className="flex items-center justify-center space-x-2 pt-3 mb-4">
+                                <div onClick={() => isCreateMode ? CreateManual(manualTitle, body, status, fileInputRef.current?.files?.[0]) : editManual(manualTitle, body, status, fileInputRef.current?.files?.[0], id)} className="bg-[#3C6255] py-2 w-1/4 text-white cursor-pointer rounded-[10px] text-center">
+                                    <p>ยืนยันการบันทึก</p>
+                                </div>
+                                <div onClick={() => setModalConfirmSave(false)} className="bg-[#C1C1C1] py-2 w-1/4 cursor-pointer rounded-[10px] text-center">
+                                    <p>ยกเลิก</p>
+                                </div>
+                            </div>
+                        ]}
+                    >
+                        <div className="flex justify-center my-10">
+                            <p className="text-lg">คุณต้องการบันทึกข้อมูลนี้ ใช่หรือไม่?</p>
                         </div>
-                    </div>
-                    <div className="flex items-center justify-center space-x-8">
-                        <button onClick={() => setModalConfirmSave(true)} className="bg-[#61876E] w-40 py-3 text-xl rounded-xl text-white">บันทึก</button>
-                        <button onClick={() => setModalCancel(true)} className="bg-[#C1C1C1] w-40 py-3 text-xl rounded-xl">ยกเลิก</button>
-                    </div>
+                    </Modal>
+                    {/* modal */}
+                    <Modal
+                        title={[
+                            <div className="text-center font-medium text-[24px] mt-4">
+                                <p>ยืนยันการยกเลิกการบันทึกข้อมูล</p>
+                            </div>
+                        ]}
+                        className="Kanit"
+                        centered
+                        open={modalCancel}
+                        width={550}
+                        onCancel={() => setModalCancel(false)}
+                        footer={[
+                            <div className="flex items-center justify-center space-x-2 pt-3 mb-4">
+                                <div onClick={() => router('/admin/manual')} className="bg-[#3C6255] py-2 w-1/4 text-white cursor-pointer rounded-[10px] text-center">
+                                    <p>ยกเลิกการบันทึก</p>
+                                </div>
+                                <div onClick={() => setModalCancel(false)} className="bg-[#C1C1C1] py-2 w-1/4 cursor-pointer rounded-[10px] text-center">
+                                    <p>ยกเลิก</p>
+                                </div>
+                            </div>
+                        ]}
+                    >
+                        <div className="flex justify-center my-10">
+                            <p className="text-lg font-semibold">คุณต้องการยกเลิกการบันทึกข้อมูลนี้ ใช่หรือไม่?</p>
+                        </div>
+                    </Modal>
                 </div>
-            </div>
-            <p className='text-center text-xl font-semibold pb-3'>© 2023 COPYRIGHT 2023 WOODIFY. ALL RIGHTS RESERVED.</p>
-            {/* modal */}
-            <Modal
-                title={[
-                <div className="text-center font-medium text-[24px] mt-4">
-                    <p>ยืนยันการบันทึกข้อมูล</p>
-                </div>
-                ]}
-                className="Kanit"
-                centered
-                open={modalConfirmSave}
-                width={550}
-                onCancel={() => setModalConfirmSave(false)}
-                footer={[
-                <div className="flex items-center justify-center space-x-2 pt-3 mb-4">
-                    <div onClick={() => isCreateMode ? CreateManual(manualTitle, body, status, fileInputRef.current?.files?.[0]) : editManual(manualTitle, body, status, fileInputRef.current?.files?.[0], id)} className="bg-[#3C6255] py-2 w-1/4 text-white cursor-pointer rounded-[10px] text-center">
-                        <p>ยืนยันการบันทึก</p>
-                    </div>
-                    <div onClick={() => setModalConfirmSave(false)} className="bg-[#C1C1C1] py-2 w-1/4 cursor-pointer rounded-[10px] text-center">
-                        <p>ยกเลิก</p>
-                    </div>
-                </div>
-                ]}
-            >
-                <div className="flex justify-center my-10">
-                <p className="text-lg">คุณต้องการบันทึกข้อมูลนี้ ใช่หรือไม่?</p>
-                </div>
-            </Modal>
-            {/* modal */}
-            <Modal
-                title={[
-                <div className="text-center font-medium text-[24px] mt-4">
-                    <p>ยืนยันการยกเลิกการบันทึกข้อมูล</p>
-                </div>
-                ]}
-                className="Kanit"
-                centered
-                open={modalCancel}
-                width={550}
-                onCancel={() => setModalCancel(false)}
-                footer={[
-                <div className="flex items-center justify-center space-x-2 pt-3 mb-4">
-                    <div onClick={() => router('/admin/manual')} className="bg-[#3C6255] py-2 w-1/4 text-white cursor-pointer rounded-[10px] text-center">
-                        <p>ยกเลิกการบันทึก</p>
-                    </div>
-                    <div onClick={() => setModalCancel(false)} className="bg-[#C1C1C1] py-2 w-1/4 cursor-pointer rounded-[10px] text-center">
-                        <p>ยกเลิก</p>
-                    </div>
-                </div>
-                ]}
-            >
-                <div className="flex justify-center my-10">
-                <p className="text-lg font-semibold">คุณต้องการยกเลิกการบันทึกข้อมูลนี้ ใช่หรือไม่?</p>
-                </div>
-            </Modal>
+            </div>)}
         </div>
     );
 };
