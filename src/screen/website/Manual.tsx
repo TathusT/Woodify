@@ -43,8 +43,9 @@ const Manual: React.FC = () => {
       token: token,
       m_id: selectIdManual
     }).then((res) => {
-      if (res.data == 'delete success') {
+      if (res.data.message == 'delete success') {
         filterData();
+        setmodalDeleteManual(false)
       }
     }).catch((err) => console.log(err))
   }
@@ -169,7 +170,10 @@ const Manual: React.FC = () => {
                     </div>
                   </td>
                   <td className="py-5 rounded-r-[10px] text-center">
-                    <div onClick={() => clickModal()} className="flex justify-center">
+                    <div onClick={() => {
+                      setSelectIdManual(manual.m_id)
+                      clickModal()
+                    }} className="flex justify-center">
                       <img className="cursor-pointer" src={garbageIcon} alt="" />
                     </div>
                   </td>
@@ -195,7 +199,6 @@ const Manual: React.FC = () => {
           <div className="flex items-center justify-center space-x-2 font-semibold pt-3 mb-4">
             <div onClick={() => {
               deleteManual();
-              setmodalDeleteManual(false)
             }} className="bg-[#3C6255] py-2 w-1/4 text-white cursor-pointer rounded-[10px] text-center">
               <p>ยืนยันการลบ</p>
             </div>
