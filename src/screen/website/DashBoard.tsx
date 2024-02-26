@@ -138,9 +138,10 @@ const RenderColumn = ({ data }) => {
 }
 
 const DashBoard: React.FC = () => {
+  const fromDateWithYear = `${today.slice(0,4)}-01-01`
   const [dataColumn, setDataColumn] = useState();
   const [dataLine, setDataLine] = useState();
-  const [dateFrom, setDateFrom] = useState(today);
+  const [dateFrom, setDateFrom] = useState(fromDateWithYear);
   const [dateTo, setDateTo] = useState(today);
   const [pickerFrom, setPickerFrom] = useState();
   const [pickerTo, setPickerTo] = useState();
@@ -149,29 +150,7 @@ const DashBoard: React.FC = () => {
   const [classifyAll, setClassifyAll] = useState(0);
   const [classifyStatusWaitVerify, setClassifyStatusWaitVerify] = useState(0)
   const [userToday, setUserToday] = useState(0)
-
-
-  const getColumn = async () => {
-    await axios.post(`${path}/dashboard_classify_column`, {
-
-    })
-      .then((res) => {
-        setDataColumn(res.data)
-      })
-      .catch((err) => {
-        console.log(err);
-      })
-  }
-  const getLine = async () => {
-    await axios.post(`${path}/dashboard_classify_Line`)
-      .then((res) => {
-        setDataLine(res.data)
-      })
-      .catch((err) => {
-        console.log(err);
-      })
-  }
-
+  
   const filterData = async () => {
     let filter = {};
     if (dateTo != '') {
@@ -302,7 +281,7 @@ const DashBoard: React.FC = () => {
                 <div className="flex space-x-3 items-center py-4">
                   <div className="relative flex items-center">
                     <img className='absolute z-50 left-2' src={calendarIcon}></img>
-                    <DatePicker className="font-semibold" style={{ width: 150 }} suffixIcon={<img src={selectIcon}></img>} value={pickerFrom} defaultValue={dayjs(new Date())} onChange={(value) => dateFromPicker(value)} placeholder="เลือกวันที่เริ่ม" format="DD-MM-YYYY" />
+                    <DatePicker className="font-semibold" style={{ width: 150 }} suffixIcon={<img src={selectIcon}></img>} value={pickerFrom} defaultValue={dayjs().startOf('year').startOf('month')} onChange={(value) => dateFromPicker(value)} placeholder="เลือกวันที่เริ่ม" format="DD-MM-YYYY" />
                   </div>
                   <img src={arrowRightIcon}></img>
                   <div className="relative flex items-center">
