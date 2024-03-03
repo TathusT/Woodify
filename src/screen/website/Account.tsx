@@ -92,6 +92,9 @@ const Account: React.FC = () => {
     axios.post(`${path}/ban_user`, {
       u_id : selectUser.u_id
     })
+    .then((res) => {
+      console.log(res.data);
+    })
   }
 
   const filterData = async () => {
