@@ -86,6 +86,11 @@ const Account: React.FC = () => {
     axios.post(`${path}/delete_user`, {
       u_id : selectUser.u_id
     })
+    .then((res) => {
+      if(res.data.message == 'delete success'){
+        getUser();
+      }
+    })
   }
 
   const banUser = async () => {
@@ -93,7 +98,20 @@ const Account: React.FC = () => {
       u_id : selectUser.u_id
     })
     .then((res) => {
-      console.log(res.data);
+      if(res.data.message == 'ban success'){
+        getUser();
+      }
+    })
+  }
+
+  const activeUser = async () => {
+    axios.post(`${path}/ban_user`, {
+      u_id : selectUser.u_id
+    })
+    .then((res) => {
+      if(res.data.message == 'active success'){
+        getUser();
+      }
     })
   }
 
