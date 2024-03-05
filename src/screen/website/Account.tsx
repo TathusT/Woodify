@@ -13,6 +13,7 @@ import clockIcon from "../../assets/last-status-icon.svg"
 import blockIcon from "../../assets/block-icon.svg"
 import changeRoleIcon from "../../assets/change-role-icon.svg"
 import garbageIcon from "../../assets/garbage-red-icon.svg"
+import checkMarkIcon from "../../assets/check-mark-icon.svg"
 import { useNavigate } from "react-router-dom";
 const Account: React.FC = () => {
   const [infoWood, setInfoWood] = useState<any>()
@@ -105,7 +106,7 @@ const Account: React.FC = () => {
   }
 
   const activeUser = async () => {
-    axios.post(`${path}/ban_user`, {
+    axios.post(`${path}/active_user`, {
       u_id : selectUser.u_id
     })
     .then((res) => {
@@ -191,6 +192,17 @@ const Account: React.FC = () => {
         </a>
       ),
     },
+    {
+      key: '4',
+      label: (
+        <a onClick={() => clickModal("ปลดบล็อกบัญชี")} className="flex items-center Kanit space-x-2" rel="noopener noreferrer">
+          <img width={20} src={checkMarkIcon} alt="" />
+          <p>
+            ปลดบล็อก
+          </p>
+        </a>
+      ),
+    },
   ];
   function clickModal(title) {
     setmodalAddUser(true)
@@ -201,8 +213,10 @@ const Account: React.FC = () => {
       setConfirmButton("ยืนยันการบล็อก")
     } else if (title == 'เปลี่ยนบทบาท') {
       setConfirmButton("ยืนยันการเปลี่ยน")
-    } else {
+    } else if (title == "ลบบัญชี") {
       setConfirmButton("ยืนยันการลบ")
+    } else {
+      setConfirmButton("ยืนยันการปลดบล็อก")
     }
   }
   return (
@@ -287,7 +301,7 @@ const Account: React.FC = () => {
                   <td onClick={() => router(`/admin/user_profile/${user.u_id}`)} className="py-5 text-center">{user.email ? user.email : "-"}</td>
                   <td onClick={() => router(`/admin/user_profile/${user.u_id}`)} className="py-5 text-[#3C6255]">
                     <div className="flex justify-center items-center">
-                      <img className="mr-3" src={clockIcon} alt="" />
+                      <img className="mr-2" src={user.status == 'ACTIVE' ? checkMarkIcon : user.status == 'BAN' ? blockIcon : garbageIcon} alt="" />
                       <p>
                         {user.status}
                       </p>
@@ -339,6 +353,9 @@ const Account: React.FC = () => {
               if(confirmButton == 'ยืนยันการบล็อก'){
                 banUser();
               }
+              if(confirmButton == 'ยืนยันการปลดบล็อก'){
+                activeUser();
+              }
             }} className="bg-[#3C6255] py-2 w-1/2 text-white cursor-pointer rounded-[10px] text-center">
               <p>{confirmButton}</p>
             </div>
@@ -351,7 +368,7 @@ const Account: React.FC = () => {
           </div>
         ]}
       >
-        {confirmButton == 'ยืนยันการบล็อก' || confirmButton == 'ยืนยันการเปลี่ยน' || confirmButton == 'ยืนยันการลบ' ?
+        {confirmButton == 'ยืนยันการบล็อก' || confirmButton == 'ยืนยันการเปลี่ยน' || confirmButton == 'ยืนยันการลบ' || confirmButton == 'ยืนยันการปลดบล็อก' ?
           (
             <div className="flex flex-col items-center space-y-3">
               <img className="rounded-full w-32 h-32" src={`${selectUser.image}`} alt="" />
@@ -391,7 +408,7 @@ const Account: React.FC = () => {
           className='pt-1 pb-7'
         />
       <div className="flex justify-center font-semibold my-3 text-[18px] absolute bottom-0 right-[30%]">
-        <p>© 2023 COPYRIGHT WOODIFY. ALL RIGHTS RESERVED.</p>
+        <p>© 2024 COPYRIGHT WOODIFY. ALL RIGHTS RESERVED.</p>
       </div>
     </div>
   );

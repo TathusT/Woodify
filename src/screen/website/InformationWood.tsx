@@ -201,7 +201,7 @@ const InformationWood: React.FC = () => {
         </div>
       </Modal>
       <div className="flex justify-center font-semibold my-3 text-[18px]  absolute bottom-0 right-[30%]">
-        <p>© 2023 COPYRIGHT WOODIFY. ALL RIGHTS RESERVED.</p>
+        <p>© 2024 COPYRIGHT WOODIFY. ALL RIGHTS RESERVED.</p>
       </div>
     </div>
   );

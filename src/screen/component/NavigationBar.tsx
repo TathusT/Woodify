@@ -4,6 +4,8 @@ import LogoWoodify from "../../assets/logo_woodify.svg";
 import { getImage, useAuthenticationUserWebsite } from '../../tools/tools';
 import Arrow from "../../assets/setting_arrow.svg"
 import doorIcon from "../../assets/Logout-icon.svg"
+import iIcon from "../../assets/i-icon.svg"
+import qr from "../../assets/qr-code.svg"
 import axios from 'axios';
 import path from '../../../path';
 import { Modal } from "antd";
@@ -67,6 +69,7 @@ const NavigationBar: React.FC = () => {
   const { authenticationUser } = useAuthenticationUserWebsite();
   const router = useNavigate();
   const [modalSignout, setModalSignout] = useState(false);
+  const [modalQr, setModalqr] = useState(false);
   const menus = [
     {
       name: "หน้าหลัก",
@@ -216,24 +219,32 @@ const NavigationBar: React.FC = () => {
           </ul>
         </div>
         {user && (
-          <div className="border py-4 shadow-[0px_-1px_4px_0px_rgba(0,0,0,0.25)]">
-            <div className="flex items-center mb-5 pl-7 ">
-              <div className="w-50">
-                <div className="w-16 h-16 rounded-full bg-[#D9D9D9]">
-                  {user.image && <img className='rounded-full' src={user.image} alt="" />}
+          <div>
+            <div onClick={() => {
+                setModalqr(true)
+              }} className='flex justify-center items-center space-x-2 py-3 bg-[#FCEABC] cursor-pointer'>
+              <img src={iIcon} alt="" />
+              <p>กดเพื่อดู qr สำหรับเชื่อมต่อไลน์ </p>
+            </div>
+            <div className="border py-4 shadow-[0px_-1px_4px_0px_rgba(0,0,0,0.25)]">
+              <div className="flex items-center mb-5 pl-7 ">
+                <div className="w-50">
+                  <div className="w-16 h-16 rounded-full bg-[#D9D9D9]">
+                    {user.image && <img className='rounded-full' src={user.image} alt="" />}
+                  </div>
+                </div>
+                <div className="py-2 pl-7">
+                  <p className="pb-1 text-[20px] text-ellipsis line-clamp-1">{user.firstname} {user.lastname}</p>
+                  <p className="text-[18px] text-[#3C6255]">{user.role}</p>
                 </div>
               </div>
-              <div className="py-2 pl-7">
-                <p className="pb-1 text-[20px] text-ellipsis line-clamp-1">{user.firstname} {user.lastname}</p>
-                <p className="text-[18px] text-[#3C6255]">{user.role}</p>
-              </div>
-            </div>
-            <div onClick={() => {
-              setModalSignout(true)
-            }} className="flex justify-center items-center cursor-pointer">
-              <div className="flex justify-center items-center">
-                <img className='h-8' src={doorIcon} alt="" />
-                <p className="pl-2 text-[20px]">ออกจากระบบ</p>
+              <div onClick={() => {
+                setModalSignout(true)
+              }} className="flex justify-center items-center cursor-pointer">
+                <div className="flex justify-center items-center">
+                  <img className='h-8' src={doorIcon} alt="" />
+                  <p className="pl-2 text-[20px]">ออกจากระบบ</p>
+                </div>
               </div>
             </div>
           </div>
@@ -273,6 +284,32 @@ const NavigationBar: React.FC = () => {
       >
         <div className="flex justify-center my-10">
           <p className="text-lg">คุณต้องการออกจากระบบ ใช่หรือไม่?</p>
+        </div>
+      </Modal>
+      <Modal
+        title={[
+          <div className="text-center text-[24px] mt-4">
+            <p>Qr สำหรับเชื่อมต่อไลน์</p>
+          </div>
+        ]}
+        className="Kanit"
+        centered
+        open={modalQr}
+        width={650}
+        onCancel={() => setModalqr(false)}
+        footer={[
+          <div className="flex flex-col items-center pt-3 mb-5">
+            <div onClick={() => {
+                setModalqr(false)
+              }} className="bg-[#3C6255] py-2 w-1/4 text-white cursor-pointer rounded-[10px] text-center">
+              <p>ปิด</p>
+            </div>
+          </div>
+        ]}
+      >
+        <div className="flex flex-col items-center space-y-6 mt-10 mb-5">
+          <img width={250} src={qr} alt="" />
+          <p className="text-lg">โปรดแสกนตรงนี้เพื่อเชื่อมต่อไลน์กับบัญชีนี้</p>
         </div>
       </Modal>
     </div>

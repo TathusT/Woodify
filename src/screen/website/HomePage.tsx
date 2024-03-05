@@ -85,7 +85,7 @@ const HomePage: React.FC = () => {
                   <img src={LogoWoodify} width={96} alt="" />
                   <img src={logoIt} width={96} alt="" />
                 </div>
-                <p>© 2023 COPYRIGHT WOODIFY. ALL RIGHTS RESERVED.</p>
+                <p>© 2024 COPYRIGHT WOODIFY. ALL RIGHTS RESERVED.</p>
               </div>
         </div>
       </div>

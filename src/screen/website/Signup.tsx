@@ -183,7 +183,7 @@ const SignUpWeb: React.FC = () => {
             </div>
           </div>
           <div className="flex justify-center mb-5">
-            <p>© 2023 COPYRIGHT 2023 WOODIFY. ALL RIGHTS RESERVED.</p>
+            <p>© 2024 COPYRIGHT 2023 WOODIFY. ALL RIGHTS RESERVED.</p>
           </div>
         </div>
       )}

@@ -335,7 +335,7 @@ const ManageInformationWood: React.FC = () => {
                             </div>
                         </div>
                     </div>
-                    <p className='text-center text-xl font-semibold pb-3'>© 2023 COPYRIGHT 2023 WOODIFY. ALL RIGHTS RESERVED.</p>
+                    <p className='text-center text-xl font-semibold pb-3'>© 2024 COPYRIGHT 2023 WOODIFY. ALL RIGHTS RESERVED.</p>
                     {/* modal */}
                     <Modal
                         title={[
