@@ -55,8 +55,8 @@ const LoginLine: React.FC = () => {
             console.log(res.data);
 
             if (res.data.message == 'not_have_data' || res.data.message == "new_user") {
-              liff.logout();
               router('/line/signup', { state: { data: res.data } })
+              // liff.logout();
             }
             else {
               localStorage.setItem('access_token', res.data.line_access_token)

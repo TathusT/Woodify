@@ -18,7 +18,10 @@ import path from '../../../path';
 import { convertIsoToThaiDateTime, convertIsoToThaiDateTimeFullYear, getImage } from '../../tools/tools';
 import { useNavigate } from 'react-router-dom';
 import moment from 'moment';
+import dayjs from 'dayjs';
+import { GetToDay } from '../../tools/date';
 
+const today = GetToDay();
 const PieChart: any = Pie;
 
 
@@ -37,8 +40,8 @@ const ClassifyWood: React.FC = () => {
   const [filterWood, setFilterWood] = useState<any>('ไม้ทั้งหมด')
   const [pickerFrom, setPickerFrom] = useState();
   const [pickerTo, setPickerTo] = useState();
-  const [dateFrom, setDateFrom] = useState('');
-  const [dateTo, setDateTo] = useState('');
+  const [dateFrom, setDateFrom] = useState(today);
+  const [dateTo, setDateTo] = useState(today);
   const [data, setData] = useState<any>();
   const [userId, setUserId] = useState();
   const divRef = useRef<HTMLDivElement>(null);
@@ -396,12 +399,12 @@ const ClassifyWood: React.FC = () => {
               />
               <div className='relative flex items-center'>
                 <img className='absolute z-50 left-2' src={calendarIcon}></img>
-                <DatePicker style={{ width: 150 }} suffixIcon={<img src={selectIcon}></img>} value={pickerFrom} onChange={(value) => dateFromPicker(value)} />
+                <DatePicker style={{ width: 150 }} defaultValue={dayjs(new Date())} suffixIcon={<img src={selectIcon}></img>} value={pickerFrom} onChange={(value) => dateFromPicker(value)} />
               </div>
               <img src={arrowRightIcon}></img>
               <div className='relative flex items-center'>
                 <img className='absolute z-50 left-2' src={calendarIcon}></img>
-                <DatePicker style={{ width: 150 }} suffixIcon={<img src={selectIcon}></img>} value={pickerTo} onChange={(value) => dateToPicker(value)} />
+                <DatePicker style={{ width: 150 }} defaultValue={dayjs(new Date())} suffixIcon={<img src={selectIcon}></img>} value={pickerTo} onChange={(value) => dateToPicker(value)} />
               </div>
               <Select
                 defaultValue="ไม้ทั้งหมด"
@@ -415,8 +418,8 @@ const ClassifyWood: React.FC = () => {
                     label: "ไม้ทั้งหมด"
                   },
                   {
-                    value: "ไม้ยาง",
-                    label: "ไม้ยาง"
+                    value: "ไม้ยางนา",
+                    label: "ไม้ยางนา"
                   },
                   {
                     value: "ไม้ชิงชัน",

@@ -9,6 +9,9 @@ import { convertIsoToThaiDateTime, getImage, isoToThaiDateTime } from '../../too
 import Loading from '../component/Loading';
 import { io } from 'socket.io-client';
 import paperplane from '../../assets/icon-paperplane.svg';
+import clockIcon from "../../assets/wait-for-verification.svg"
+import passIcon from "../../assets/pass-verification.svg"
+import notPassIcon from "../../assets/not-pass-verification.svg"
 
 const ClassifyWoodDetail: React.FC = () => {
     const [modalCertification, setModalCertification] = useState(false);
@@ -103,13 +106,14 @@ const ClassifyWoodDetail: React.FC = () => {
 
     const addNote = async () => {
         const token = localStorage.getItem('access_token');
+        setMessage('');
         await axios.post(`${path}/note`, {
             token: token,
             description: message,
             c_id: c_id,
             sessionId: classify.session_id_note_room
         }).then((res) => {
-            setMessage('');
+            
         })
             .catch((err) => {
                 console.log(err);
@@ -118,13 +122,13 @@ const ClassifyWoodDetail: React.FC = () => {
 
     const addNoteVerify = async () => {
         const token = localStorage.getItem('access_token');
+        setMessage('');
         await axios.post(`${path}/note`, {
             token: token,
             description: description,
             c_id: c_id,
             sessionId: classify.session_id_note_room
         }).then((res) => {
-            setMessage('');
         })
             .catch((err) => {
                 console.log(err);
@@ -310,8 +314,9 @@ const ClassifyWoodDetail: React.FC = () => {
                                     value={valueBefore}
                                 />
                                 <div className="flex text-lg space-x-4 items-center">
-                                    <p>สถานะ:</p>
-                                    <p>{statusVerify == "WAITING_FOR_VERIFICATION" ? "รอการรับรอง" : statusVerify == 'PASSED_CERTIFICATION' ? "ผ่านการรับรอง" : "ไม่ผ่านการรับรอง"}</p>
+                                    <p>สถานะ: </p>
+                                    <img src={statusVerify == "WAITING_FOR_VERIFICATION" ? clockIcon : statusVerify == 'PASSED_CERTIFICATION' ? passIcon : notPassIcon} alt="" />
+                                    <p className={`${statusVerify == "WAITING_FOR_VERIFICATION" ? 'text-[#E4AD6C]' : statusVerify == 'PASSED_CERTIFICATION' ? "text-[#3C6255]" : "text-[#EB5050]"}`}>{statusVerify == "WAITING_FOR_VERIFICATION" ? "รอการรับรอง" : statusVerify == 'PASSED_CERTIFICATION' ? "ผ่านการรับรอง" : "ไม่ผ่านการรับรอง"}</p>
                                 </div>
                                 <div className="flex items-center space-x-2 text-lg">
                                     <div onClick={() => clickModal('ผ่าน')} className="bg-[#61876E] text-white py-2 px-5 rounded-[10px]">

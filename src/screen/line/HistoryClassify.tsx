@@ -14,12 +14,16 @@ import path from "../../../path";
 import Loading from "../component/Loading";
 import { convertIsoToThaiDateTime, convertIsoToThaiDateTimeFullYear, getImage } from "../../tools/tools";
 import moment from "moment";
+import { GetToDay } from "../../tools/date";
+import dayjs from "dayjs";
 const { Option } = Select;
 
 const thaiMonths = [
     "มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน",
     "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"
 ];
+
+const today = GetToDay();
 
 const Pies: any = Pie;
 
@@ -79,7 +83,7 @@ const HistoryClassify: React.FC<UserIdProps> = ({ userId }) => {
     const [backup, setBackup] = useState<any>();
     const [filter, setFilter] = useState<string[]>([]);
     const [isDelete, setIsDelete] = useState(false);
-    const [focusHistoryDelete, setFocusHistoryDelete] = useState<HistoryItem>();
+    const [focusHistoryDelete, setFocusHistoryDelete] = useState<any>();
     const [focusIndexDelete, setFocusIndexDelete] = useState<number>(0)
     const [selectFilter, setSelectFilter] = useState<any>([])
     const [pageSize, setPageSize] = useState(10);
@@ -90,8 +94,8 @@ const HistoryClassify: React.FC<UserIdProps> = ({ userId }) => {
     const [woodType, setWoodType] = useState<any>();
     const [pickerFrom, setPickerFrom] = useState();
     const [pickerTo, setPickerTo] = useState();
-    const [dateFrom, setDateFrom] = useState('');
-    const [dateTo, setDateTo] = useState('');
+    const [dateFrom, setDateFrom] = useState(today);
+    const [dateTo, setDateTo] = useState(today);
     const [isLoading, setIsLoading] = useState(true);
     const u_id = userId;
 
@@ -291,7 +295,7 @@ const HistoryClassify: React.FC<UserIdProps> = ({ userId }) => {
             <div className="bg-white rounded-lg space-y-2 mx-6">
                 <p className="text-center text-xl pt-2">จำนวนของแต่ละพันธุ์ไม้ที่ตรวจสอบ</p>
                 <div className="px-2 space-y-2 pb-2">
-                    {data && data.map((wood) => {
+                    {backup && backup.map((wood) => {
                         return (
                             <div key={wood.typeWood} className="bg-[#EFEFEF] flex justify-between items-center space-x-2 px-4 py-2 rounded-md">
                                 <div className="flex items-center space-x-2">
@@ -341,14 +345,20 @@ const HistoryClassify: React.FC<UserIdProps> = ({ userId }) => {
         }
         if (dateTo != '') {
             filter['create_at'] = filter['create_at'] || {};
-            filter['create_at']['lte'] = new Date(dateTo.replace(/-/g, '/'));
             filterGraph['create_at'] = filterGraph['create_at'] || {};
-            filterGraph['create_at']['lte'] = new Date(dateTo.replace(/-/g, '/'));
+            const dateToISO = new Date(dateTo + 'T16:59:59.999Z');
+            dateToISO.setDate(dateToISO.getDate());
+            filter['create_at']['lte'] = dateToISO;
+            filterGraph['create_at']['lte'] = dateToISO;
         }
         if (dateFrom != '') {
+            filter['create_at'] = filter['create_at'] || {};
             filterGraph['create_at'] = filterGraph['create_at'] || {};
+            filter['create_at']['gte'] = new Date(dateFrom.replace(/-/g, '/'));
             filterGraph['create_at']['gte'] = new Date(dateFrom.replace(/-/g, '/'));
         }
+        filter["status"] = true
+        filterGraph["status"] = true
 
         await axios.post(`${path}/classify_user_id`, {
             currentPage: currentPage,
@@ -389,20 +399,44 @@ const HistoryClassify: React.FC<UserIdProps> = ({ userId }) => {
             .catch((err) => {
                 console.log(err);
             })
-            setIsLoading(false)
+        setIsLoading(false)
     }
 
     const dateFromPicker = async (value) => {
-        const date = new Date(value);
-        const formattedDate = moment(date).format('YYYY-MM-DD');
-        setDateFrom(formattedDate);
+        if (value != null) {
+            const date = new Date(value);
+            const formattedDate = moment(date).format('YYYY-MM-DD');
+            setDateFrom(formattedDate);
+        }
+        else {
+            setDateFrom('')
+        }
         setPickerFrom(value);
     }
     const dateToPicker = async (value) => {
-        const date = new Date(value);
-        const formattedDate = moment(date).format('YYYY-MM-DD');
-        setDateTo(formattedDate);
+        if (value != null) {
+            const date = new Date(value);
+            const formattedDate = moment(date).format('YYYY-MM-DD');
+            setDateTo(formattedDate);
+        }
+        else {
+            setDateTo('')
+        }
         setPickerTo(value);
+    }
+
+    const deleteClassify = async () => {
+        await axios.post(`${path}/delete_classify`,{
+            c_id : focusHistoryDelete.c_id
+        })
+        .then((res) => {
+            if(res.data.message == 'delete success'){
+                filterData();
+            }
+        })
+        .catch((err) => {
+            console.log(err);
+        })
     }
 
     useEffect(() => {
@@ -417,11 +451,12 @@ const HistoryClassify: React.FC<UserIdProps> = ({ userId }) => {
                     <div className="w-screen h-screen fixed bg-black opacity-50 z-40"></div>
                     <div className="z-50 fixed w-11/12 p-5 bg-white rounded-2xl top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 space-y-4">
                         <p className="text-center text-2xl">ลบประวัติการตรวจสอบ</p>
-                        <img src={focusHistoryDelete?.img} alt="" />
-                        <p className="text-center text-xl">คุณต้องการลบ ไม้ประดู่ ใช่หรือไม่</p>
+                        <img src={getImage(focusHistoryDelete?.image)} alt="" />
+                        <p className="text-center text-xl">คุณต้องการลบ ไม้{focusHistoryDelete.select_result} ใช่หรือไม่</p>
                         <div className="grid grid-cols-2 gap-4">
                             <button onClick={() => {
-                                // deleteClassify(focusIndexDelete)
+                                setIsDelete(false);
+                                deleteClassify()
                             }} className="px-4 py-2 bg-[#FF6161] text-white flex item-center space-x-2 rounded-lg">
                                 <img src={Bin_Button} alt="" />
                                 ยืนยันการลบ
@@ -450,11 +485,11 @@ const HistoryClassify: React.FC<UserIdProps> = ({ userId }) => {
                     </div>
                     <div className="flex justify-between mx-6 py-4">
                         <div className="bg-white rounded-lg" style={{ width: "45%" }}>
-                            <DatePicker value={pickerFrom} onChange={(value) => dateFromPicker(value)} placeholder="เลือกวันที่เริ่ม" format="DD-MM-YYYY" style={{ width: "100%" }} />
+                            <DatePicker defaultValue={dayjs(new Date())} value={pickerFrom} onChange={(value) => dateFromPicker(value)} placeholder="เลือกวันที่เริ่ม" format="DD-MM-YYYY" style={{ width: "100%" }} />
                         </div>
                         <img style={{ width: "6%" }} src={Line} alt="" />
                         <div className="bg-white rounded-lg" style={{ width: "45%" }}>
-                            <DatePicker value={pickerTo} onChange={(value) => dateToPicker(value)} placeholder="เลือกวันที่สิ้นสุด" format="DD-MM-YYYY" style={{ width: "100%" }} />
+                            <DatePicker defaultValue={dayjs(new Date())} value={pickerTo} onChange={(value) => dateToPicker(value)} placeholder="เลือกวันที่สิ้นสุด" format="DD-MM-YYYY" style={{ width: "100%" }} />
                         </div>
                     </div>
                     {

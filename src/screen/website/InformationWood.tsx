@@ -137,7 +137,8 @@ const InformationWood: React.FC = () => {
           infoWood && infoWood.map((info, index) => {
             return (
               <div key={info.w_id} className="flex flex-col items-center col-span-2 space-y-3 box-shadow p-3 rounded-[10px] bg-white">
-                <div className="w-full aspect-[1.73/1] rounded-[10px] bg-center" style={{backgroundImage: `url(${getImage(info.wood_image[0]?.path)})`}}></div>
+                {/* <div className="w-full aspect-[1.73/1] rounded-[10px] bg-center" style={{backgroundImage: `url(${getImage(info.wood_image[0]?.path)})`}}></div> */}
+                <img className="w-full h-96 object-cover" src={getImage(info.wood_image[0]?.path)} alt="" />
                 <p className="text-[20px]">{info.common_name}</p>
                 <p className="text-left text-ellipsis line-clamp-2 text-[16px] font-medium">{info.place_of_origin}</p>
                 <div className="flex space-x-2 text-[#3C6255] font-medium">
@@ -200,7 +201,7 @@ const InformationWood: React.FC = () => {
           <p className="text-lg">ใช่หรือไม่?</p>
         </div>
       </Modal>
-      <div className="flex justify-center font-semibold my-3 text-[18px]  absolute bottom-0 right-[30%]">
+      <div className="flex justify-center font-semibold my-3 text-[18px] right-[30%]">
         <p>© 2024 COPYRIGHT WOODIFY. ALL RIGHTS RESERVED.</p>
       </div>
     </div>

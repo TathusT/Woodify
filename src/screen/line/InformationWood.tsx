@@ -17,7 +17,8 @@ const InformationWood: React.FC = () => {
   const getWoodData = async () => {
     await axios.get(`${path}/wood`)
       .then((res) => {
-        setWood(res.data)
+        const woodActive = res.data.filter((w) => w.status == true)
+        setWood(woodActive)
         setIsLoading(false)
       })
       .catch((err) => {

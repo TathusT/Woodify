@@ -18,7 +18,9 @@ import path from '../../../path';
 import { useParams } from 'react-router-dom';
 import { convertIsoToThaiDateTime, convertIsoToThaiDateTimeFullYear, getImage } from '../../tools/tools';
 import { Link, useNavigate } from "react-router-dom";
+import { GetToDay } from '../../tools/date';
 
+const today = GetToDay();
 const PieChart: any = Pie
 
 const UserProfile: React.FC = () => {
@@ -36,8 +38,8 @@ const UserProfile: React.FC = () => {
   const [filterWood, setFilterWood] = useState<any>('ไม้ทั้งหมด')
   const [pickerFrom, setPickerFrom] = useState();
   const [pickerTo, setPickerTo] = useState();
-  const [dateFrom, setDateFrom] = useState('');
-  const [dateTo, setDateTo] = useState('');
+  const [dateFrom, setDateFrom] = useState(today);
+  const [dateTo, setDateTo] = useState(today);
   const router = useNavigate();
   const { u_id } = useParams();
   const divRef = useRef<HTMLDivElement>(null);
@@ -107,15 +109,26 @@ const UserProfile: React.FC = () => {
 
 
   const dateFromPicker = async (value) => {
-    const date = new Date(value);
-    const formattedDate = moment(date).format('YYYY-MM-DD');
-    setDateFrom(formattedDate);
+    if (value != null) {
+      const date = new Date(value);
+      const formattedDate = moment(date).format('YYYY-MM-DD');
+      setDateFrom(formattedDate);
+    }
+    else {
+      setDateFrom('')
+    }
     setPickerFrom(value);
   }
+
   const dateToPicker = async (value) => {
-    const date = new Date(value);
-    const formattedDate = moment(date).format('YYYY-MM-DD');
-    setDateTo(formattedDate);
+    if (value != null) {
+      const date = new Date(value);
+      const formattedDate = moment(date).format('YYYY-MM-DD');
+      setDateTo(formattedDate);
+    }
+    else {
+      setDateTo('')
+    }
     setPickerTo(value);
   }
 
@@ -534,12 +547,12 @@ const UserProfile: React.FC = () => {
             />
             <div className='relative flex items-center'>
               <img className='absolute z-50 left-2' src={calendarIcon}></img>
-              <DatePicker value={pickerFrom} onChange={(value) => dateFromPicker(value)} style={{ width: 150 }} suffixIcon={<img src={selectIcon}></img>} />
+              <DatePicker value={pickerFrom} onChange={(value) => dateFromPicker(value)} defaultValue={dayjs(new Date())} style={{ width: 150 }} suffixIcon={<img src={selectIcon}></img>} />
             </div>
             <img src={arrowRightIcon}></img>
             <div className='relative flex items-center'>
               <img className='absolute z-50 left-2' src={calendarIcon}></img>
-              <DatePicker value={pickerTo} onChange={(value) => dateToPicker(value)} style={{ width: 150 }} suffixIcon={<img src={selectIcon}></img>} />
+              <DatePicker value={pickerTo} onChange={(value) => dateToPicker(value)} defaultValue={dayjs(new Date())} style={{ width: 150 }} suffixIcon={<img src={selectIcon}></img>} />
             </div>
             <Select
               defaultValue={filterWood}

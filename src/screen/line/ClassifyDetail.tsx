@@ -11,7 +11,10 @@ import { useLocation, useParams } from "react-router-dom";
 import { getImage, convertIsoToThaiDateTime } from "../../tools/tools";
 import path from "../../../path";
 import { io } from "socket.io-client";
-import Loading from "../component/Loading";
+import Loading from "../component/Loading"
+import clockIcon from "../../assets/wait-for-verification.svg"
+import passIcon from "../../assets/pass-verification.svg"
+import notPassIcon from "../../assets/not-pass-verification.svg"
 import axios from "axios";
 
 const { Option } = Select;
@@ -206,7 +209,7 @@ const ClassidyDetail: React.FC<UserIdProps> = ({ userAuthen }) => {
                     <div className="flex items-center space-x-2">
                         <img className="pr-2" src={Dot} alt="" />
                         สถานะ :
-                        <img className="pr-1" src={StatusWait} alt="" />
+                        <img className="pr-1" src={statusVerify == 'WAITING_FOR_VERIFICATION' ? clockIcon : statusVerify == 'PASSED_CERTIFICATION' ? passIcon : notPassIcon} alt="" />
                         {(() => {
                             switch (statusVerify) {
                                 case "WAITING_FOR_VERIFICATION":
@@ -302,7 +305,8 @@ const ClassidyDetail: React.FC<UserIdProps> = ({ userAuthen }) => {
             </div>
         )
     }
-
+    console.log(classify);
+    
 
     function RenderVerify() {
         const [openModalResult, setOpenModalResult] = useState(false)
@@ -318,7 +322,7 @@ const ClassidyDetail: React.FC<UserIdProps> = ({ userAuthen }) => {
         const onChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
             setTextAreaConfirm(e.target.value)
         };
-
+        
         const updateSelectResult = async () => {
             await axios.put(`${path}/update_select_result`, {
                 u_id: userId,
@@ -354,6 +358,7 @@ const ClassidyDetail: React.FC<UserIdProps> = ({ userAuthen }) => {
                         addNoteVerify();
                         setStatusVerify(status_verify)
                         setTextAreaConfirm('')
+                        getClassify();
                     }
                 })
                 .catch((err) => {
@@ -505,6 +510,7 @@ const ClassidyDetail: React.FC<UserIdProps> = ({ userAuthen }) => {
 
         const addNote = async () => {
             const token = localStorage.getItem('access_token');
+            setMessage('');
             await axios.post(`${path}/note`, {
                 token: token,
                 description: message,
@@ -512,11 +518,10 @@ const ClassidyDetail: React.FC<UserIdProps> = ({ userAuthen }) => {
                 sessionId: classify.session_id_note_room
             }).then((res) => {
                 // getNoteFromId();
-                setMessage('');
             })
-                .catch((err) => {
-                    console.log(err);
-                })
+            .catch((err) => {
+                console.log(err);
+            })
         }
 
         return (

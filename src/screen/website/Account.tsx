@@ -56,7 +56,7 @@ const Account: React.FC = () => {
     const token = localStorage.getItem('access_token')
     await axios.post(`${path}/send_email`, {
       email: email,
-      token : token
+      token: token
     })
       .then((res) => {
         if (res.data.message == 'email is expert') {
@@ -85,35 +85,35 @@ const Account: React.FC = () => {
 
   const deleteUser = async () => {
     axios.post(`${path}/delete_user`, {
-      u_id : selectUser.u_id
+      u_id: selectUser.u_id
     })
-    .then((res) => {
-      if(res.data.message == 'delete success'){
-        getUser();
-      }
-    })
+      .then((res) => {
+        if (res.data.message == 'delete success') {
+          getUser();
+        }
+      })
   }
 
   const banUser = async () => {
     axios.post(`${path}/ban_user`, {
-      u_id : selectUser.u_id
+      u_id: selectUser.u_id
     })
-    .then((res) => {
-      if(res.data.message == 'ban success'){
-        getUser();
-      }
-    })
+      .then((res) => {
+        if (res.data.message == 'ban success') {
+          getUser();
+        }
+      })
   }
 
   const activeUser = async () => {
     axios.post(`${path}/active_user`, {
-      u_id : selectUser.u_id
+      u_id: selectUser.u_id
     })
-    .then((res) => {
-      if(res.data.message == 'active success'){
-        getUser();
-      }
-    })
+      .then((res) => {
+        if (res.data.message == 'active success') {
+          getUser();
+        }
+      })
   }
 
   const filterData = async () => {
@@ -158,52 +158,53 @@ const Account: React.FC = () => {
   }, [selectRole, selectStatus, selectSearch])
   console.log(users);
 
-  const items: MenuProps['items'] = [
-    {
-      key: '1',
-      label: (
-        <a onClick={() => clickModal("บล็อกบัญชี")} className="flex items-center Kanit space-x-2" rel="noopener noreferrer">
-          <img width={20} src={blockIcon} alt="" />
-          <p>
-            บล็อกบัญชี
-          </p>
-        </a>
-      ),
-    },
-    {
-      key: '2',
-      label: (
-        <a onClick={() => clickModal("เปลี่ยนบทบาท")} className="flex items-center Kanit space-x-2" rel="noopener noreferrer">
-          <img width={20} src={changeRoleIcon} alt="" />
-          <p>
-            เปลี่ยนบทบาท
-          </p>
-        </a>
-      ),
-    },
-    {
-      key: '3',
-      label: (
-        <a onClick={() => clickModal("ลบบัญชี")} className="flex items-center Kanit space-x-2" rel="noopener noreferrer">
-          <img width={20} src={garbageIcon} alt="" />
-          <p>
-            ลบบัญชี
-          </p>
-        </a>
-      ),
-    },
-    {
-      key: '4',
-      label: (
-        <a onClick={() => clickModal("ปลดบล็อกบัญชี")} className="flex items-center Kanit space-x-2" rel="noopener noreferrer">
-          <img width={20} src={checkMarkIcon} alt="" />
-          <p>
-            ปลดบล็อก
-          </p>
-        </a>
-      ),
-    },
-  ];
+  const RenderMenu = ({user}) => {
+    const items: MenuProps['items'] = [
+      {
+        key: '1',
+        label: (
+          <a onClick={() => clickModal(user.status == 'BAN' ? 'ปลดบล็อก' : 'บล็อกบัญชี')} className="flex items-center Kanit space-x-2" rel="noopener noreferrer">
+            <img width={20} src={user.status == 'BAN' ? checkMarkIcon : blockIcon} alt="" />
+            <p>
+              {user.status == 'BAN' ? 'ปลดบล็อก' : 'บล็อกบัญชี'}
+            </p>
+          </a>
+        ),
+      },
+      {
+        key: '2',
+        label: (
+          <a onClick={() => clickModal("เปลี่ยนบทบาท")} className="flex items-center Kanit space-x-2" rel="noopener noreferrer">
+            <img width={20} src={changeRoleIcon} alt="" />
+            <p>
+              เปลี่ยนบทบาท
+            </p>
+          </a>
+        ),
+      },
+      {
+        key: '3',
+        label: (
+          <a onClick={() => clickModal(user.status == 'DELETE' ? 'ปลดบล็อก' : 'ลบบัญชี')} className="flex items-center Kanit space-x-2" rel="noopener noreferrer">
+            <img width={20} src={user.status == 'DELETE' ? checkMarkIcon : garbageIcon} alt="" />
+            <p>
+              {user.status == 'DELETE' ? 'ปลดบล็อก' : 'ลบบัญชี'}
+            </p>
+          </a>
+        ),
+      }
+    ];
+    return (
+      <Dropdown menu={{ items }} placement="bottomRight" trigger={['click']} arrow>
+        <img onClick={(e) => {
+          e.preventDefault()
+          setSelectUser(user);
+          setSelectRoleUpdate(user.role)
+        }} className="mx-auto" src={dotIcon} alt="" />
+      </Dropdown>
+    )
+  }
+
   function clickModal(title) {
     setmodalAddUser(true)
     setTitleModal(title)
@@ -299,7 +300,7 @@ const Account: React.FC = () => {
                   <td onClick={() => router(`/admin/user_profile/${user.u_id}`)} className="py-5 text-center">{user.firstname} {user.lastname}</td>
                   <td onClick={() => router(`/admin/user_profile/${user.u_id}`)} className="py-5 text-center">{user.role}</td>
                   <td onClick={() => router(`/admin/user_profile/${user.u_id}`)} className="py-5 text-center">{user.email ? user.email : "-"}</td>
-                  <td onClick={() => router(`/admin/user_profile/${user.u_id}`)} className="py-5 text-[#3C6255]">
+                  <td onClick={() => router(`/admin/user_profile/${user.u_id}`)} className="py-5 text-black">
                     <div className="flex justify-center items-center">
                       <img className="mr-2" src={user.status == 'ACTIVE' ? checkMarkIcon : user.status == 'BAN' ? blockIcon : garbageIcon} alt="" />
                       <p>
@@ -308,13 +309,7 @@ const Account: React.FC = () => {
                     </div>
                   </td>
                   <td className="py-5 rounded-r-[10px] text-center">
-                    <Dropdown menu={{ items }} placement="bottomRight" trigger={['click']} arrow>
-                      <img onClick={(e) => {
-                        e.preventDefault()
-                        setSelectUser(user);
-                        setSelectRoleUpdate(user.role)
-                      }} className="mx-auto" src={dotIcon} alt="" />
-                    </Dropdown>
+                    <RenderMenu user={user}/>
                   </td>
                 </tr>
               )
@@ -347,13 +342,13 @@ const Account: React.FC = () => {
               if (confirmButton == "ยืนยันการส่ง") {
                 sendMailToExpert();
               }
-              if(confirmButton == 'ยืนยันการลบ'){
+              if (confirmButton == 'ยืนยันการลบ') {
                 deleteUser();
               }
-              if(confirmButton == 'ยืนยันการบล็อก'){
+              if (confirmButton == 'ยืนยันการบล็อก') {
                 banUser();
               }
-              if(confirmButton == 'ยืนยันการปลดบล็อก'){
+              if (confirmButton == 'ยืนยันการปลดบล็อก') {
                 activeUser();
               }
             }} className="bg-[#3C6255] py-2 w-1/2 text-white cursor-pointer rounded-[10px] text-center">
@@ -401,12 +396,12 @@ const Account: React.FC = () => {
         }
       </Modal>
       <Pagination
-          current={currentPage}
-          total={totalPages * pageSize}
-          pageSize={pageSize}
-          onChange={handlePageChangePage}
-          className='pt-1 pb-7'
-        />
+        current={currentPage}
+        total={totalPages * pageSize}
+        pageSize={pageSize}
+        onChange={handlePageChangePage}
+        className='pt-1 pb-7'
+      />
       <div className="flex justify-center font-semibold my-3 text-[18px] absolute bottom-0 right-[30%]">
         <p>© 2024 COPYRIGHT WOODIFY. ALL RIGHTS RESERVED.</p>
       </div>
