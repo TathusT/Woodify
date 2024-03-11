@@ -36,15 +36,15 @@ const HomePage: React.FC = () => {
           <div className="w-[85%] absolute">
             <div className="mb-[40rem]">
               <p className="leading-[5rem] mb-[3rem] text-[48px] font-lexend select-none">
-                มาเริ่มการจัดการระบบจำแนกชนิดไม้เศรษฐกิจกัน<br />
-                กดเพื่อเริ่มได้เลย!
+                มาเริ่มต้นการจัดการระบบจำแนกชนิดไม้เศรษฐกิจได้เลย<br />
+                กดเข้าสู่ระบบเพื่อเริ่มได้เลย!
               </p>
-              <Link
+              {/* <Link
                 to={"/admin/login"}
                 className="bg-[#3C6255] font-semibold text-lg text-white px-8 py-3 rounded-xl"
               >
                 เริ่มเลย
-              </Link>
+              </Link> */}
             </div>
           </div>
           <img src={background} className="w-full" alt="" />
