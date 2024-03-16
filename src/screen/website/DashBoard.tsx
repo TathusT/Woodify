@@ -272,7 +272,7 @@ const DashBoard: React.FC = () => {
   return (
     <div className="min-h-screen flex flex-col">
       <p className="text-[32px] font-bold mt-10">หน้าหลัก</p>
-      {isLoading ? <div className="flex items-center justify-center flex-1 h-full"><Loading /></div> : (
+      {(isLoading || !dataColumn || !dataLine) ? <div className="flex items-center justify-center flex-1 h-full"><Loading /></div> : (
         <div>
           <div className="flex justify-between items-center">
             <div className="w-[70%]">

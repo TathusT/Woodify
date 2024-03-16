@@ -613,7 +613,7 @@ const UserProfile: React.FC = () => {
           className='pt-1 pb-5'
         />
       </div>)}
-      <div className="flex justify-center font-semibold my-3 text-[18px]">
+      <div className="flex justify-center font-semibold my-3 text-[18px] absolute bottom-0 right-0 left-0">
         <p>© 2024 COPYRIGHT WOODIFY. ALL RIGHTS RESERVED.</p>
       </div>
     </div>
