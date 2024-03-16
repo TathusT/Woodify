@@ -298,13 +298,13 @@ const Account: React.FC = () => {
                   </td>
                   <td onClick={() => router(`/admin/user_profile/${user.u_id}`)} className="py-5 text-center">{user.u_id}</td>
                   <td onClick={() => router(`/admin/user_profile/${user.u_id}`)} className="py-5 text-center">{user.firstname} {user.lastname}</td>
-                  <td onClick={() => router(`/admin/user_profile/${user.u_id}`)} className="py-5 text-center">{user.role}</td>
+                  <td onClick={() => router(`/admin/user_profile/${user.u_id}`)} className="py-5 text-center">{user.role == 'USER' ? "ผู้ใช้งานทั่วไป" : "ผู้เชี่ยวชาญ"}</td>
                   <td onClick={() => router(`/admin/user_profile/${user.u_id}`)} className="py-5 text-center">{user.email ? user.email : "-"}</td>
                   <td onClick={() => router(`/admin/user_profile/${user.u_id}`)} className="py-5 text-black">
                     <div className="flex justify-center items-center">
                       <img className="mr-2" src={user.status == 'ACTIVE' ? checkMarkIcon : user.status == 'BAN' ? blockIcon : garbageIcon} alt="" />
                       <p>
-                        {user.status}
+                      {user.status == 'ACTIVE' ? "กำลังใช้งาน" : user.status == 'BAN' ? "ถูกบล็อก" : "ถูกลบ"}
                       </p>
                     </div>
                   </td>
