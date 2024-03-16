@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import Dot from '../../assets/classify_dot.svg'
 import ArrowBack from '../../assets/arrow_back.svg'
 import { getImage } from "../../tools/tools";
-import { Select } from "antd";
+import { Select, Image  } from "antd";
 import axios from "axios";
 import path from "../../../path";
 import Loading from "../component/Loading";
@@ -117,7 +117,7 @@ const WoodDetail: React.FC = () => {
                             <div className={`grid grid-cols-${column} gap-2 pt-4`}>
                                 {wood &&
                                     wood.wood_image.map((img, index) => {
-                                        return <img onClick={() => setOpenAllImage(false)} className="rounded-lg w-full h-40 object-cover" key={index} src={getImage(img.path)} alt="" />
+                                        return <Image className="rounded-lg w-full h-40 object-cover" style={{height: '10rem'}} key={index} src={getImage(img.path)} alt=""/>
                                     })
                                 }
                             </div>
