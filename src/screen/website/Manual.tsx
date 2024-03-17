@@ -44,8 +44,10 @@ const Manual: React.FC = () => {
       m_id: selectIdManual
     }).then((res) => {
       if (res.data.message == 'delete success') {
-        filterData();
         setmodalDeleteManual(false)
+        setTimeout(() => {
+          filterData();
+        }, 1000);
       }
     }).catch((err) => console.log(err))
   }

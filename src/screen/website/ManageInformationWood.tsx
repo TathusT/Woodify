@@ -8,7 +8,7 @@ import path from "../../../path";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { getImage } from "../../tools/tools";
 import Loading from "../component/Loading";
-
+import FormData from "form-data";
 
 const ManageInformationWood: React.FC = () => {
     const [modalConfirmSave, setModalConfirmSave] = useState(false);
@@ -51,7 +51,6 @@ const ManageInformationWood: React.FC = () => {
     }, [])
 
     const updateWood = async () => {
-        // setIsLoading(true)
         let eng_name: any;
         let common_name: any;
         if (!Array.isArray(engName)) {
@@ -82,41 +81,37 @@ const ManageInformationWood: React.FC = () => {
             token: token
         }).then(async (res) => {
             if (res.data.message == "update success") {
-                if(deleteImage.length != 0){
+                if (deleteImage.length != 0) {
                     await axios.post(`${path}/image_wood_delete`, {
-                        id : w_id,
-                        delete_image : deleteImage
+                        id: w_id,
+                        delete_image: deleteImage
                     })
-                    .then((res) => {
-                        console.log(res.data);
-                        
-                    }).catch((err) => {
-                        console.log(err);
-                    })
+                        .then((res) => {
+                            console.log(res.data);
+
+                        }).catch((err) => {
+                            console.log(err);
+                        })
                 }
-                const files : any = fileInputRef.current?.files;
+                const files: any = fileInputRef.current?.files;
                 if (files?.length != 0) {
-                    console.log('test');
-                    
                     const formData = new FormData();
                     for (let i = 0; i < files.length; i++) {
                         const file = files[i];
                         formData.append('files', file);
                     }
-                    
                     formData.append('id', w_id)
                     formData.append('image_delete', JSON.stringify(deleteImage))
-                    await axios.put(`${path}/wood_image`, formData)
+                    axios.put(`${path}/wood_image`, formData)
                         .then((res) => {
-                            
                         })
                         .catch((err) => {
                             console.log(err);
                         })
                 }
-                router(`/admin/information_wood_detail/${w_id}`);
-                
+
             }
+            router(`/admin/information_wood_detail/${w_id}`);
         })
             .catch((err) => {
                 console.log(err);
@@ -126,6 +121,7 @@ const ManageInformationWood: React.FC = () => {
     const createWood = async () => {
         let eng_name: any;
         let common_name: any;
+        // setIsLoading(true)
         if (!Array.isArray(engName)) {
             eng_name = engName.split(',');
         }
@@ -134,11 +130,13 @@ const ManageInformationWood: React.FC = () => {
         }
 
         if (!Array.isArray(commonName)) {
-            common_name = engName.split(',');
+            common_name = commonName.split(',');
         }
         else {
             common_name = commonName;
         }
+        const files: any = fileInputRef.current?.files;
+
         const token = localStorage.getItem('access_token');
         await axios.post(`${path}/wood`, {
             common_name: common_name,
@@ -152,25 +150,27 @@ const ManageInformationWood: React.FC = () => {
             other: '',
             token: token
         }).then(async (res) => {
+            const w_id_create = res.data.data.w_id;
             if (res.data.message == "create success") {
-                const files = fileInputRef.current?.files;
-                const w_id_create = res.data.data.w_id;
-                if (files) {
+                if (files?.length != 0) {
                     const formData = new FormData();
                     for (let i = 0; i < files.length; i++) {
                         const file = files[i];
                         formData.append('files', file);
                     }
                     formData.append('id', w_id_create)
+                    console.log(formData);
+
                     await axios.put(`${path}/wood_image`, formData)
                         .then((res) => {
-                            router(`/admin/information_wood_detail/${w_id_create}`);
+                            console.log(res.data);
                         })
                         .catch((err) => {
                             console.log(err);
                         })
                 }
             }
+            router(`/admin/information_wood_detail/${w_id_create}`);
         })
             .catch((err) => {
                 console.log(err);
@@ -339,9 +339,9 @@ const ManageInformationWood: React.FC = () => {
                     {/* modal */}
                     <Modal
                         title={[
-                        <div className="text-center text-[24px] mt-4">
-                            <p>ยืนยันการบันทึกข้อมูล</p>
-                        </div>
+                            <div className="text-center text-[24px] mt-4">
+                                <p>ยืนยันการบันทึกข้อมูล</p>
+                            </div>
                         ]}
                         className="Kanit"
                         centered
@@ -349,30 +349,29 @@ const ManageInformationWood: React.FC = () => {
                         width={550}
                         onCancel={() => setModalConfirmSave(false)}
                         footer={[
-                        <div className="flex items-center justify-center space-x-2 pt-3 mb-4">
-                            <div onClick={() => 
-                                {
+                            <div className="flex items-center justify-center space-x-2 pt-3 mb-4">
+                                <div onClick={() => {
                                     setModalConfirmSave(false)
                                     w_id ? updateWood() : createWood()
                                 }} className="bg-[#3C6255] py-2 w-1/4 text-white cursor-pointer rounded-[10px] text-center">
-                            <p>ยืนยันการบันทึก</p>
+                                    <p>ยืนยันการบันทึก</p>
+                                </div>
+                                <div onClick={() => setModalConfirmSave(false)} className="bg-[#C1C1C1] py-2 w-1/4 cursor-pointer rounded-[10px] text-center">
+                                    <p>ยกเลิก</p>
+                                </div>
                             </div>
-                            <div onClick={() => setModalConfirmSave(false)} className="bg-[#C1C1C1] py-2 w-1/4 cursor-pointer rounded-[10px] text-center">
-                            <p>ยกเลิก</p>
-                            </div>
-                        </div>
                         ]}
                     >
                         <div className="flex justify-center my-10">
-                        <p className="text-lg">คุณต้องการบันทึกข้อมูลนี้ ใช่หรือไม่?</p>
+                            <p className="text-lg">คุณต้องการบันทึกข้อมูลนี้ ใช่หรือไม่?</p>
                         </div>
                     </Modal>
                     {/* modal */}
                     <Modal
                         title={[
-                        <div className="text-center text-[24px] mt-4">
-                            <p>ยืนยันการยกเลิกการบันทึกข้อมูล</p>
-                        </div>
+                            <div className="text-center text-[24px] mt-4">
+                                <p>ยืนยันการยกเลิกการบันทึกข้อมูล</p>
+                            </div>
                         ]}
                         className="Kanit"
                         centered
@@ -380,18 +379,18 @@ const ManageInformationWood: React.FC = () => {
                         width={550}
                         onCancel={() => setModalCancel(false)}
                         footer={[
-                        <div className="flex items-center justify-center space-x-2 pt-3 mb-4">
-                            <Link to={w_id?`/admin/information_wood_detail/${w_id}`:`/admin/information_wood`} className="bg-[#3C6255] py-2 w-1/4 text-white cursor-pointer rounded-[10px] text-center">
-                                <p>ยกเลิกการบันทึก</p>
-                            </Link>
-                            <div onClick={() => setModalCancel(false)} className="bg-[#C1C1C1] py-2 w-1/4 cursor-pointer rounded-[10px] text-center">
-                                <p>ยกเลิก</p>
+                            <div className="flex items-center justify-center space-x-2 pt-3 mb-4">
+                                <Link to={w_id ? `/admin/information_wood_detail/${w_id}` : `/admin/information_wood`} className="bg-[#3C6255] py-2 w-1/4 text-white cursor-pointer rounded-[10px] text-center">
+                                    <p>ยกเลิกการบันทึก</p>
+                                </Link>
+                                <div onClick={() => setModalCancel(false)} className="bg-[#C1C1C1] py-2 w-1/4 cursor-pointer rounded-[10px] text-center">
+                                    <p>ยกเลิก</p>
+                                </div>
                             </div>
-                        </div>
                         ]}
                     >
                         <div className="flex justify-center my-10">
-                        <p className="text-lg">คุณต้องการยกเลิกการบันทึกข้อมูลนี้ ใช่หรือไม่?</p>
+                            <p className="text-lg">คุณต้องการยกเลิกการบันทึกข้อมูลนี้ ใช่หรือไม่?</p>
                         </div>
                     </Modal>
                 </div>

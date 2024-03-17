@@ -29,6 +29,7 @@ const ManageManual: React.FC = () => {
         try {
             const formData = new FormData();
             const token = localStorage.getItem('access_token');
+            setIsLoading(true)
             if (token) {
                 formData.append('title', title);
                 formData.append('body', body);
